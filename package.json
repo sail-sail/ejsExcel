@@ -1,0 +1,13 @@
+{
+    "author": "sail",
+    "homepage": "",
+    "bugs": {
+        "url": "",
+        "email": "151263555@qq.com"
+    },
+    "name": "ejsExcel",
+    "version": "0.0.1",
+    "main": "ejsExcel",
+    "readme":"ejsExcel",
+    "description": ""
+}

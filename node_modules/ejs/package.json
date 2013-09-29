@@ -1,0 +1,29 @@
+{
+  "name": "ejs",
+  "description": "Embedded JavaScript templates",
+  "version": "0.8.3",
+  "author": {
+    "name": "TJ Holowaychuk",
+    "email": "tj@vision-media.ca"
+  },
+  "keywords": [
+    "template",
+    "engine",
+    "ejs"
+  ],
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  },
+  "main": "./lib/ejs.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/visionmedia/ejs.git"
+  },
+  "readme": "",
+  "_id": "ejs@0.8.3",
+  "dist": {
+    "shasum": "5aa22ce1ff2042f1b1998b6d98b043be14b2d16e"
+  },
+  "_from": "ejs"
+}

@@ -1,0 +1,13 @@
+{
+    "author": "sail",
+    "homepage": "",
+    "bugs": {
+        "url": "",
+        "email": "sailnode@gmail.com"
+    },
+    "name": "hzip",
+    "version": "0.0.1",
+    "main": "hzip.js",
+    "readme":"hzip",
+    "description": ""
+}

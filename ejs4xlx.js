@@ -9,10 +9,7 @@
  * Module dependencies.
  */
 
-var Wind = require("Wind");
-var Binding = Wind.Async.Binding;
 var fs = require('fs');
-var readAsync = Binding.fromStandard(fs.readFile);
 var path = require('path');
 var basename = path.basename;
 var dirname = path.dirname;
@@ -88,7 +85,7 @@ function rethrow(err, str, filename, lineno){
  * @api public
  */
 
-var parse = exports.parse = eval(Wind.compile("async",function(str, options){
+var parse = exports.parse = function(str, options){
 	//sail 2013-04-21
 	if(Buffer.isBuffer(str)) str = str.toString();
 	options = options || {};
@@ -119,7 +116,6 @@ var parse = exports.parse = eval(Wind.compile("async",function(str, options){
   var consumeEOL = false;
   var pixEq = "";
   for (var i = 0, len = str.length; i < len; ++i) {
-	$await(Wind.Async.sleep(0));
     if (str.slice(i, open.length + i) == open) {
       i += open.length;
       
@@ -150,10 +146,10 @@ var parse = exports.parse = eval(Wind.compile("async",function(str, options){
         var name = js.trim().slice(7).trim();
         if (!filename) throw new Error('filename option is required for includes');
         var path = resolveInclude(name, filename);
-        include = $await(readAsync(path, 'utf8'));
+        include = fs.readSync(path, 'utf8');
         extname = path.extname(path);
         if(extname === "ejs") {
-        	include = $await(exports.parse(include, { filename: path, open: open, close: close }));
+        	include = exports.parse(include, { filename: path, open: open, close: close });
         	buf.push("' + (function(){" + include + "})() + '");
         } else {
         	buf.push("'" + include + " '");
@@ -184,12 +180,12 @@ var parse = exports.parse = eval(Wind.compile("async",function(str, options){
     	  var arrName = nameArr[1].trim();
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<row r="/gm);
-    	  var mthLt = mthArr.getLast();
+    	  var mthLt = mthArr[mthArr.length-1];
     	  var repNum = 0;
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_rLen = "+arrName+";if(typeOf("+arrName+")==='array'){I_rLen=("+arrName+").length;};for(var I_m=0;I_m<I_rLen;I_m++){$await(Wind.Async.sleep(0));"+iName+"var "+itemName+"="+arrName+"[I_m];if(typeOf("+arrName+")===\"number\"){"+itemName+"=I_m;}"+pixJs+";buf.push('"+mthLt;
+    			  return "');var I_rLen = "+arrName+";if(Array.isArray("+arrName+")){I_rLen=("+arrName+").length;};for(var I_m=0;I_m<I_rLen;I_m++){$await(Wind.Async.sleep(0));"+iName+"var "+itemName+"="+arrName+"[I_m];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m;}"+pixJs+";buf.push('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -220,12 +216,12 @@ var parse = exports.parse = eval(Wind.compile("async",function(str, options){
     	  var arrName = nameArr[1].trim();
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<c r="/gm);
-    	  var mthLt = mthArr.getLast();
+    	  var mthLt = mthArr[mthArr.length-1];
     	  var repNum = 0;
     	  strTmp = strTmp.replace(/<c r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_cLen = "+arrName+";if(typeOf("+arrName+")==='array'){I_cLen=("+arrName+").length;};for(var I_c=0;I_c<I_cLen;I_c++){$await(Wind.Async.sleep(0));"+iName+"var "+itemName+"="+arrName+"[I_c];if(typeOf("+arrName+")===\"number\"){"+itemName+"=I_c;}"+pixJs+";buf.push('"+mthLt;
+    			  return "');var I_cLen = "+arrName+";if(Array.isArray("+arrName+")){I_cLen=("+arrName+").length;};for(var I_c=0;I_c<I_cLen;I_c++){$await(Wind.Async.sleep(0));"+iName+"var "+itemName+"="+arrName+"[I_c];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c;}"+pixJs+";buf.push('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -261,7 +257,7 @@ var parse = exports.parse = eval(Wind.compile("async",function(str, options){
     	isRowBegin = false;
     	var strTmp = buf.join('')+"\"";
   	    var mthArr = strTmp.match(/<row\s+r="\d+"/gm);
-  	    var mthLt = mthArr.getLast();
+  	    var mthLt = mthArr[mthArr.length-1];
   	    //行号
   	    rowRn = mthLt.replace(/<row\s+r="/gm,"").replace(/"/gm,"");
   	    var repNum = 0;
@@ -285,7 +281,7 @@ var parse = exports.parse = eval(Wind.compile("async",function(str, options){
     	isCbegin = false;
     	var strTmp = buf.join('')+"\"";
     	var mthArr = strTmp.match(/<c\s+r="\D+\d+"/gm);
-    	var mthLt = mthArr.getLast();
+    	var mthLt = mthArr[mthArr.length-1];
   		var cellRn = mthLt.replace(/<c\sr="/gm,"").replace(/\d+"/gm,"");
   		var repNum = 0;
   		strTmp = strTmp.replace(/<c\s+r="\D+\d+"/gm,function(s){
@@ -332,7 +328,7 @@ var parse = exports.parse = eval(Wind.compile("async",function(str, options){
   buf.push("');\nreturn buf.join('');");
   //console.log(buf.join(''));
   return buf.join('');
-}));
+};
 
 /**
  * Resolve include `name` relative to `filename`.

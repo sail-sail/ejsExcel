@@ -40,13 +40,13 @@
 
   ejs4xlx = require("./ejs4xlx");
 
-  ejs = require("ejs");
+  ejs = require("./lib/ejs");
 
-  Hzip = require("hzip");
+  Hzip = require("./lib/hzip");
 
-  Wind = require("wind");
+  Wind = require("./lib/wind");
 
-  xml2json = require("xml2json");
+  xml2json = require("./lib/xml2json");
 
   Task = Wind.Async.Task;
 

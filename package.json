@@ -1,13 +1,20 @@
 {
-    "author": "sail",
+    "author": "sail,黄智勇",
     "homepage": "",
     "bugs": {
         "url": "",
         "email": "151263555@qq.com"
     },
-    "name": "ejsExcel",
-    "version": "0.0.1",
+    "keywords":[
+    	"ejsexcel",
+    	"ejs",
+    	"Excel",
+    	"nodejs"
+    ],
+    "name": "ejsexcel",
+    "version": "0.0.4",
     "main": "ejsExcel",
-    "readme":"ejsExcel",
-    "description": ""
+    "readme":"ejsexcel",
+    "license": "MIT",
+    "description": "像写jsp或者ejs一样导出Excel"
 }

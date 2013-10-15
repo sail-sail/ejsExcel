@@ -1,9 +1,15 @@
 ejsExcel  
-简单的说就是像写jsp一样导出Excel  
+简单的说就是像写jsp一样导出Excel 
+   
 npm install ejsexcel  
-测试node ejsExcel.js  
-====
-ejsExcel  
-作者: sail 黄智勇  
+  
+cd ejsExcel/test  
+node testExcel.js  
+  
+then look at test.xlxs and the test2.xlxs  
+  
+====  
+auto: sail 黄智勇  
 QQ: 151263555  
-邮箱: 151263555@qq.com  
+email: 151263555@qq.com  
+  

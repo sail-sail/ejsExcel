@@ -1,5 +1,6 @@
 ejsExcel  
 简单的说就是像写jsp一样导出Excel 
+test文件夹里面有例子 node testExcel.js 可测试
    
 npm install ejsexcel  
   

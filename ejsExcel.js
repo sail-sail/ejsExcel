@@ -44,7 +44,7 @@
 
   Hzip = require("./lib/hzip");
 
-  Wind = require("./lib/wind");
+  Wind = require("./lib/Wind");
 
   xml2json = require("./lib/xml2json");
 

@@ -221,7 +221,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_rLen = "+arrName+";if(typeOf("+arrName+")==='array'){I_rLen=("+arrName+").length;};for(var I_m=0;I_m<I_rLen;I_m++){$await(Wind.Async.sleep(0));"+iName+"var "+itemName+"="+arrName+"[I_m];if(typeOf("+arrName+")===\"number\"){"+itemName+"=I_m;}"+pixJs+";buf.push('"+mthLt;
+    			  return "');var I_rLen = "+arrName+";if(Array.isArray("+arrName+")){I_rLen=("+arrName+").length;};for(var I_m=0;I_m<I_rLen;I_m++){$await(Wind.Async.sleep(0));"+iName+"var "+itemName+"="+arrName+"[I_m];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m;}"+pixJs+";buf.push('"+mthLt;
     		  }
     		  return s;
     	  });

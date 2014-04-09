@@ -194,7 +194,7 @@ var parse = exports.parse = function(str, options){
       } 
 	  //sail 2014-04-09 --begin
       else if(0 == js.indexOf('forRBegin')) {
-    	  var name = js.slice(11);
+    	  var name = js.slice(9);
     	  var nameArr = [];
     	  nameArr[0] = name.substring(0,name.indexOf(" in "));
     	  //var nameArr = name.split(" in ");
@@ -229,26 +229,8 @@ var parse = exports.parse = function(str, options){
     	  js = '';
       }
       else if(0 == js.indexOf('forREnd')) {
-    	  var name = js.slice(9);
-    	  var nameArr = [];
-    	  nameArr[0] = name.substring(0,name.indexOf(" in "));
-    	  //var nameArr = name.split(" in ");
-    	  nameArr[1] = name.substring(name.indexOf(" in ")+4);
-    	  var pixJs = "";
-    	  if(nameArr[1].indexOf("|||") !== -1) {
-    		  pixJs = nameArr[1].substring(nameArr[1].indexOf("|||")+3);
-    		  nameArr[1] = nameArr[1].substring(0,nameArr[1].indexOf("|||"));
-    	  }
-    	  var itemName = nameArr[0].trim();
-    	  var iName = "";
-    	  if(itemName.indexOf(",") !== -1) {
-    		  var tmpArr = itemName.split(",");
-    		  itemName = tmpArr[0].trim();
-    		  if(tmpArr[1].trim() !== "") {
-    			  iName = "var "+tmpArr[1].trim()+"=I_m;";
-    		  }
-    	  }
-    	  var arrName = nameArr[1].trim();
+    	  var rjsStr = js.slice(7);
+    	  var r_num = eval("("+rjsStr+")");
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<row r="/gm);
     	  var mthLt = mthArr.getLast();
@@ -256,7 +238,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');}buf.push('"+mthLt;
+    			  return "');_r+="+r_num+";}_r-="+r_num+";buf.push('"+mthLt;
     		  }
     		  return s;
     	  });

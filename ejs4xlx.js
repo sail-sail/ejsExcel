@@ -216,7 +216,7 @@ var parse = exports.parse = function(str, options){
     	  var arrName = nameArr[1].trim();
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<row r="/gm);
-    	  var mthLt = mthArr.getLast();
+    	  var mthLt = mthArr[mthArr.length-1];
     	  var repNum = 0;
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
@@ -230,15 +230,14 @@ var parse = exports.parse = function(str, options){
       }
       else if(0 == js.indexOf('forREnd')) {
     	  var rjsStr = js.slice(7);
-    	  var r_num = eval("("+rjsStr+")");
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<row r="/gm);
-    	  var mthLt = mthArr.getLast();
+    	  var mthLt = mthArr[mthArr.length-1];
     	  var repNum = 0;
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');_r+="+r_num+";}_r-="+r_num+";buf.push('"+mthLt;
+    			  return "');_r+=Number(eval('"+rjsStr+"'));}_r-=Number(eval('"+rjsStr+"'));buf.push('"+mthLt;
     		  }
     		  return s;
     	  });

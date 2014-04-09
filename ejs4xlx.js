@@ -191,7 +191,80 @@ var parse = exports.parse = function(str, options){
     	  });
     	  buf = [strTmp]
     	  js = '';
-      } else if(0 === js.trim().indexOf('forCell')) {
+      } 
+	  //sail 2014-04-09 --begin
+      else if(0 == js.indexOf('forRBegin')) {
+    	  var name = js.slice(11);
+    	  var nameArr = [];
+    	  nameArr[0] = name.substring(0,name.indexOf(" in "));
+    	  //var nameArr = name.split(" in ");
+    	  nameArr[1] = name.substring(name.indexOf(" in ")+4);
+    	  var pixJs = "";
+    	  if(nameArr[1].indexOf("|||") !== -1) {
+    		  pixJs = nameArr[1].substring(nameArr[1].indexOf("|||")+3);
+    		  nameArr[1] = nameArr[1].substring(0,nameArr[1].indexOf("|||"));
+    	  }
+    	  var itemName = nameArr[0].trim();
+    	  var iName = "";
+    	  if(itemName.indexOf(",") !== -1) {
+    		  var tmpArr = itemName.split(",");
+    		  itemName = tmpArr[0].trim();
+    		  if(tmpArr[1].trim() !== "") {
+    			  iName = "var "+tmpArr[1].trim()+"=I_m;";
+    		  }
+    	  }
+    	  var arrName = nameArr[1].trim();
+    	  var strTmp = buf.join('');
+    	  var mthArr = strTmp.match(/<row r="/gm);
+    	  var mthLt = mthArr.getLast();
+    	  var repNum = 0;
+    	  strTmp = strTmp.replace(/<row r="/gm,function(s){
+    		  repNum++;
+    		  if(mthArr.length === repNum) {
+    			  return "');var I_rLen = "+arrName+";if(typeOf("+arrName+")==='array'){I_rLen=("+arrName+").length;};for(var I_m=0;I_m<I_rLen;I_m++){$await(Wind.Async.sleep(0));"+iName+"var "+itemName+"="+arrName+"[I_m];if(typeOf("+arrName+")===\"number\"){"+itemName+"=I_m;}"+pixJs+";buf.push('"+mthLt;
+    		  }
+    		  return s;
+    	  });
+    	  buf = [strTmp];
+    	  js = '';
+      }
+      else if(0 == js.indexOf('forREnd')) {
+    	  var name = js.slice(9);
+    	  var nameArr = [];
+    	  nameArr[0] = name.substring(0,name.indexOf(" in "));
+    	  //var nameArr = name.split(" in ");
+    	  nameArr[1] = name.substring(name.indexOf(" in ")+4);
+    	  var pixJs = "";
+    	  if(nameArr[1].indexOf("|||") !== -1) {
+    		  pixJs = nameArr[1].substring(nameArr[1].indexOf("|||")+3);
+    		  nameArr[1] = nameArr[1].substring(0,nameArr[1].indexOf("|||"));
+    	  }
+    	  var itemName = nameArr[0].trim();
+    	  var iName = "";
+    	  if(itemName.indexOf(",") !== -1) {
+    		  var tmpArr = itemName.split(",");
+    		  itemName = tmpArr[0].trim();
+    		  if(tmpArr[1].trim() !== "") {
+    			  iName = "var "+tmpArr[1].trim()+"=I_m;";
+    		  }
+    	  }
+    	  var arrName = nameArr[1].trim();
+    	  var strTmp = buf.join('');
+    	  var mthArr = strTmp.match(/<row r="/gm);
+    	  var mthLt = mthArr.getLast();
+    	  var repNum = 0;
+    	  strTmp = strTmp.replace(/<row r="/gm,function(s){
+    		  repNum++;
+    		  if(mthArr.length === repNum) {
+    			  return "');}buf.push('"+mthLt;
+    		  }
+    		  return s;
+    	  });
+    	  buf = [strTmp];
+    	  js = '';
+      }
+      //sail 2014-04-09 --end
+	  else if(0 === js.trim().indexOf('forCell')) {
     	  var name = js.trim().slice(7).trim();
     	  isForCellBegin = true;
     	  isForCellEnd = false;

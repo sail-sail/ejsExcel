@@ -2,7 +2,7 @@
     "author": "sail,黄智勇",
     "homepage": "",
     "bugs": {
-        "url": "",
+        "url": "https://gitcafe.com/sail/ejsExcel",
         "email": "151263555@qq.com"
     },
     "keywords":[
@@ -12,9 +12,14 @@
     	"nodejs"
     ],
     "name": "ejsexcel",
-    "version": "0.0.5",
+    "version": "1.0.0",
     "main": "ejsExcel",
-    "readme":"ejsexcel",
+    "readme":"README.md",
     "license": "MIT",
-    "description": "像写jsp或者ejs一样导出Excel"
+    "description": "通过Excel模板导出Excel",
+    "repository" : {
+        "type": "git",
+        "url": "https://gitcafe.com/sail/ejsExcel.git"
+	},
+	"engines": { "node": "v0.10.*" }
 }

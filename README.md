@@ -1,12 +1,9 @@
 ejsExcel  
-简单的说就是像写jsp一样导出Excel 
+像写jsp一样导出Excel, 通过Excel模板导出Excel
    
 npm install ejsexcel  
   
-cd ejsExcel/test  
-node testExcel.js  
-  
-then look at test.xlxs and the test2.xlxs  
+  安装nodejs之后,执行test目录下面的test.bat
   
 ====  
 auto: sail 黄智勇  

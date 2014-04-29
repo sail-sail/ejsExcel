@@ -1,5 +1,5 @@
 (function() {
-  var Binding, Hzip, Task, Wind, charPlus, charToNum, ejs, ejs4xlx, existsAsync, fs, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, readFileAsync, render, renderExcel, renderPath, replaceLast, sharedStrings2, sheetSufStr, str2Xml, xjOp, xml2json, zlib;
+  var Binding, Hzip, Task, Wind, charPlus, charToNum, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, readFileAsync, render, renderExcel, renderPath, replaceLast, sharedStrings2, sheetEntrieRel2, sheetSufStr, str2Xml, xjOp, xml2json, zlib;
 
   require.extensions['.node_' + process.platform + "_" + process.arch] = function(module, filename) {
     return require.extensions['.node'](module, filename);
@@ -38,15 +38,52 @@
 
   zlib = require("zlib");
 
-  ejs4xlx = require("./ejs4xlx");
+  crypto = require("crypto");
 
-  ejs = require("./lib/ejs");
+  ejs4xlx = void 0;
 
-  Hzip = require("./lib/hzip");
+  try {
+    ejs4xlx = require("ejs4xlx");
+  } catch (_error) {
+    err = _error;
+    ejs4xlx = require("./ejs4xlx");
+  }
 
-  Wind = require("./lib/Wind");
+  ejs = void 0;
 
-  xml2json = require("./lib/xml2json");
+  try {
+    ejs = require("ejs");
+  } catch (_error) {
+    err = _error;
+    ejs = require("./lib/ejs");
+  }
+
+  Hzip = void 0;
+
+  try {
+    Hzip = require("hzip");
+  } catch (_error) {
+    err = _error;
+    Hzip = require("./lib/hzip");
+  }
+
+  Wind = void 0;
+
+  try {
+    Wind = require("wind");
+  } catch (_error) {
+    err = _error;
+    Wind = require("./lib/Wind");
+  }
+
+  xml2json = void 0;
+
+  try {
+    xml2json = require("xml2json");
+  } catch (_error) {
+    err = _error;
+    xml2json = require("./lib/xml2json");
+  }
 
   Task = Wind.Async.Task;
 
@@ -134,9 +171,15 @@
     );
 });
 
-  sharedStrings2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">\n	<%\n	var _data_ = _args._data_;\n	var _charPlus_ = _args._charPlus_;\n	var _charToNum_ = _args._charToNum_;\n	var _str2Xml_ = _args._str2Xml_;\n	var _acVar_ = _args._acVar_;\n	var _ps_ = _args._ps_;\n	\n	//字符串\n	var ssArr = _acVar_.sharedStrings;\n	for(var i=0; i<ssArr.length; i++) {\n	$await(Wind.Async.sleep(0));\n	%>\n	<si>\n		<t xml:space=\"preserve\"><%=ssArr[i]%></t>\n		<phoneticPr fontId=\"1\" type=\"noConversion\"/>\n	</si>\n	<%}%>\n</sst>");
+  sharedStrings2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\"><%\nvar _acVar_ = _args._acVar_;\nvar ssArr = _acVar_.sharedStrings;\nfor(var i=0; i<ssArr.length; i++) {\n$await(Wind.Async.sleep(0));\n%><si><t xml:space=\"preserve\"><%=ssArr[i]%></t><phoneticPr fontId=\"1\" type=\"noConversion\"/></si><%}%></sst>");
 
-  sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\n%>";
+  sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\n%>";
+
+  drawingRelBuf2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>");
+
+  sheetEntrieRel2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>");
+
+  drawingBuf2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"></xdr:wsDr>");
 
   xjOp = {
     object: true,
@@ -174,7 +217,7 @@
     return _builder_$0.m(this,
         _builder_$0.e(function() {
             this.$caller = _caller_$0;
-            var anonymous, begin, buffer2, cItem, data, end, endElement, entries, entry, hzip, i, phoneticPr, reXmlEq, row, sharedStringsTmp2, sheetBuf, sheetBuf2, sheetDataElementState, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, src2, startElement, str2, updateEntryAsync, xjOpTmp, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2;
+            var anonymous, begin, buffer2, cItem, data, end, endElement, entry, hzip, i, m_c_i, mciNum, mciNumArr, mergeCell, phoneticPr, reXmlEq, ref0, ref1, refArr, row, sharedStringsTmp2, sheetBuf, sheetBuf2, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, src2, startElement, str2, updateEntryAsync, xjOpTmp, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _len5, _len6, _m, _n, _o, _ref, _ref1, _ref2, _ref3, _ref4;
             data = {
                 "_data_": _data_
             };
@@ -184,8 +227,38 @@
             data._acVar_ = {
                 "sharedStrings": []
             };
-            data._ps_ = function (str) {
-                var arr, index, val;
+            data._ps_ = function (str, buf) {
+                var arr, i, index, isC7, k, tmpStr, val, _i, _j, _ref, _ref1;
+                if (str === "") {
+                    for (i = _i = _ref = buf.length - 1; (_ref <= - 1) ? (_i < - 1) : (_i > - 1); i = (_ref <= - 1) ? (++ _i) : (-- _i)) {
+                        isC7 = false;
+                        tmpStr = "";
+                        for (k = _j = _ref1 = buf[i].length - 1; (_ref1 <= - 1) ? (_j < - 1) : (_j > - 1); k = (_ref1 <= - 1) ? (++ _j) : (-- _j)) {
+                            if (isC7) {
+                                tmpStr = buf[i].charAt(k) + tmpStr;
+                            }
+                            if (buf[i].charAt(k) === "<" && buf[i].charAt(k + 1) === "c") {
+                                isC7 = true;
+                            }
+                        }
+                        if (isC7) {
+                            buf[i] = tmpStr;
+                            break;
+                        } else {
+                            buf.pop();
+                        }
+                    }
+                    buf.push = function (puhStr) {
+                        if (puhStr.indexOf("</v></c>") !== - 1) {
+                            Array.prototype.push.apply(buf, [puhStr.replace("</v></c>", "")]);
+                            buf.push = Array.prototype.push;
+                        } else {
+                            Array.prototype.push.apply(buf, [puhStr]);
+                        }
+                        return this;
+                    };
+                    return "";
+                }
                 val = str2Xml(str);
                 arr = data._acVar_.sharedStrings;
                 index = arr.indexOf(val);
@@ -235,170 +308,466 @@
             };
             hzip = new Hzip(exlBuf);
             updateEntryAsync = Binding.fromStandard(hzip.updateEntry);
-            entries = hzip.entries;
-            shsEntry = hzip.getEntry("xl/sharedStrings.xml");
-            return _builder_$0.n(inflateRawAsync(shsEntry.cfile), function (_result_$) {
-                shsStr = _result_$;
-                shsObj = xml2json.toJson(shsStr);
+            return _builder_$0.n(updateEntryAsync.apply(hzip, ["xl/calcChain.xml"]), function () {
                 sheetEntries = [];
-                for ((_i = 0, _len = entries.length); _i < _len; _i ++) {
-                    entry = entries[_i];
+                sheetEntrieRels = [];
+                _ref = hzip.entries;
+                for ((_i = 0, _len = _ref.length); _i < _len; _i ++) {
+                    entry = _ref[_i];
                     if (entry.fileName.indexOf("xl/worksheets/sheet") === 0) {
                         sheetEntries.push(entry);
+                    } else if (entry.fileName.indexOf("xl/worksheets/_rels/") === 0) {
+                        sheetEntrieRels.push(entry);
                     }
                 }
                 sheetEntries.sort(function (arg0, arg1) {
                     return arg0.fileName > arg1.fileName;
                 });
-                return _builder_$0.f(
-                    _builder_$0.e(function() {
-                        (i = _j = 0, _len1 = sheetEntries.length)
-                        return _builder_$0.a(function() {
-                            return _j < _len1;
-                        }, function() {
-                            i = ++ _j;
-                        },
-                            _builder_$0.e(function() {
-                                entry = sheetEntries[i];
-                                return _builder_$0.n(inflateRawAsync(entry.cfile), function (_result_$) {
-                                    sheetBuf = _result_$;
-                                    xjOpTmp = {
-                                        "object": true,
-                                        "reversible": true,
-                                        "coerce": false,
-                                        "trim": false,
-                                        "sanitize": true
-                                    };
-                                    sheetDataElementState = "";
-                                    startElement = xml2json.toJson.startElement;
-                                    endElement = xml2json.toJson.endElement;
-                                    xjOpTmp.startElement = function (elementName, attrs) {
-                                        if (elementName === "sheetData") {
-                                            sheetDataElementState = "start";
-                                        }
-                                        startElement.apply(this, arguments);
-                                    };
-                                    xjOpTmp.endElement = function (elementName) {
-                                        if (elementName === "sheetData") {
-                                            sheetDataElementState = "end";
-                                        }
-                                        endElement.apply(this, arguments);
-                                    };
-                                    xjOpTmp.sanitizeFn = function (value) {
-                                        if (isString(value)) {
-                                            return value;
-                                        }
-                                        if (sheetDataElementState === "start") {
-                                            return value;
-                                        }
-                                        value = value.replace(/[&<>]/gm, function (g1, g2) {
-                                            if (g1 === "&") {
-                                                return "&amp;";
-                                            } else if (g1 === "<") {
-                                                return "&lt;";
-                                            } else if (g1 === ">") {
-                                                return "&gt;";
-                                            }
-                                            return g1;
-                                        });
-                                        return value;
-                                    };
-                                    sheetObj = xml2json.toJson(sheetBuf, xjOpTmp);
-                                    if (sheetObj.worksheet.sheetData.row === void 0) {
-                                        return _builder_$0.j();
-                                    } else if (! isArray(sheetObj.worksheet.sheetData.row)) {
-                                        sheetObj.worksheet.sheetData.row = [sheetObj.worksheet.sheetData.row];
-                                    }
-                                    _ref = sheetObj.worksheet.sheetData.row;
-                                    for ((_k = 0, _len2 = _ref.length); _k < _len2; _k ++) {
-                                        row = _ref[_k];
-                                        if (row.c === void 0) {
-                                            continue;
-                                        } else if (! isArray(row.c)) {
-                                            row.c = [row.c];
-                                        }
-                                        _ref1 = row.c;
-                                        for ((_l = 0, _len3 = _ref1.length); _l < _len3; _l ++) {
-                                            cItem = _ref1[_l];
-                                            if (cItem.t === "s" && cItem.v !== void 0) {
-                                                if (! isArray(shsObj.sst.si)) {
-                                                    shsObj.sst.si = [shsObj.sst.si];
-                                                }
-                                                si = shsObj.sst.si[cItem.v["$t"]];
-                                                phoneticPr = si.phoneticPr;
-                                                si2 = {
-                                                    "t": {
-                                                        "$t": ""
-                                                    }
-                                                };
-                                                if (isArray(si.r)) {
-                                                    _ref2 = si.r;
-                                                    for ((_m = 0, _len4 = _ref2.length); _m < _len4; _m ++) {
-                                                        sirTp = _ref2[_m];
-                                                        si2.t["$t"] += sirTp.t["$t"];
-                                                    }
-                                                } else {
-                                                    si2.t["$t"] = si.t["$t"];
-                                                }
-                                                cItem.v["$t"] = si2.t["$t"];
-                                                if (cItem.v !== void 0) {
-                                                    if (cItem.v["$t"] === void 0 || cItem.v["$t"] === "") {
-                                                        continue;
-                                                    }
-                                                    begin = cItem.v["$t"].indexOf("<%");
-                                                    end = cItem.v["$t"].indexOf("%>");
-                                                    if (begin === - 1 || end === - 1) {
-                                                        cItem.v["$t"] = "<%='" + cItem.v["$t"].replace(/'/gm, "\\'") + "'%>";
-                                                    }
-                                                }
-                                            }
+                sheetEntrieRels.sort(function (arg0, arg1) {
+                    return arg0.fileName > arg1.fileName;
+                });
+                data._img_ = (function (imgPh, xdr_frt, fileName, rowNum, cellNum) {
+                    var _builder_$1 = Wind.b["async"];
+                    var _arguments_$ = arguments;
+                    var _caller_$0 = this.$caller;
+                    return _builder_$1.m(this,
+                        _builder_$1.e(function() {
+                            this.$caller = _caller_$0;
+                            var cfileName, drawingBuf, drawingObj, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, exist, hashMd5, imgBaseName, imgBuf, itHs, md5Str, sei, _j, _k, _l, _len1, _len2, _len3, _ref1, _ref2, _ref3;
+                            if (! isString(imgPh) || imgPh.trim() === "") {
+                                return _builder_$1.g("");
+                            }
+                            return _builder_$1.n(existsAsync(imgPh), function (_result_$) {
+                                exist = _result_$;
+                                if (! exist) {
+                                    return _builder_$1.g("");
+                                }
+                                imgBaseName = path.basename(imgPh);
+                                return _builder_$1.n(readFileAsync(imgPh), function (_result_$) {
+                                    imgBuf = _result_$;
+                                    hashMd5 = crypto.createHash("md5");
+                                    md5Str = hashMd5.update(imgBuf).digest("hex");
+                                    md5Str = "a" + md5Str;
+                                    cfileName = "xl/media/" + md5Str + ".png";
+                                    itHs = false;
+                                    _ref1 = hzip.entries;
+                                    for ((_j = 0, _len1 = _ref1.length); _j < _len1; _j ++) {
+                                        entryTmp = _ref1[_j];
+                                        if (entryTmp.fileName === cfileName) {
+                                            itHs = true;
+                                            break;
                                         }
                                     }
-                                    sheetBuf2 = new Buffer(sheetSufStr + xml2json.toXml(sheetObj, "", {
-                                        "reSanitize": false
-                                    }));
-                                    reXmlEq = {
-                                        "reXmlEq": function (pixEq, jsStr, str) {
-                                            if (pixEq === "=") {
-                                                jsStr = "_ps_(" + jsStr + ")";
-                                            } else if (pixEq === "~") {
-                                                jsStr = "_pi_(" + jsStr + ",buf)";
-                                            } else if (pixEq === "#") {
-                                                jsStr = "_pf_(" + jsStr + ",buf)";
+                                    return _builder_$1.f(
+                                        _builder_$1.e(function() {
+                                            if (! itHs) {
+                                                return _builder_$1.n(updateEntryAsync.apply(hzip, [cfileName, imgBuf, false]), function () {
+                                                    return _builder_$1.h();
+                                                });
+                                            } else {
+                                                return _builder_$1.h();
                                             }
-                                            return {
-                                                "jsStr": jsStr,
-                                                "str": str
+                                        }),
+                                        _builder_$1.e(function() {
+                                            sei = fileName.substring(fileName.length - 5, fileName.length - 4);
+                                            sei = Number(sei) - 1;
+                                            drawingRelBuf = void 0;
+                                            _ref2 = hzip.entries;
+                                            return _builder_$1.f(
+                                                _builder_$1.e(function() {
+                                                    (_k = 0, _len2 = _ref2.length)
+                                                    return _builder_$1.a(function() {
+                                                        return _k < _len2;
+                                                    }, function() {
+                                                        _k ++;
+                                                    },
+                                                        _builder_$1.e(function() {
+                                                            entryImgTmp = _ref2[_k];
+                                                            if (entryImgTmp.fileName === "xl/drawings/_rels/drawing" + (sei + 1) + ".xml.rels") {
+                                                                return _builder_$1.n(inflateRawAsync(entryImgTmp.cfile), function (_result_$) {
+                                                                    drawingRelBuf = _result_$;
+                                                                    return _builder_$1.i();
+                                                                });
+                                                            } else {
+                                                                return _builder_$1.h();
+                                                            }
+                                                        })
+                                                    );
+                                                }),
+                                                _builder_$1.e(function() {
+                                                    drawingRelObj = xml2json.toJson(drawingRelBuf, xjOp);
+                                                    if (drawingRelObj["Relationships"]["Relationship"] === void 0) {
+                                                        drawingRelObj["Relationships"]["Relationship"] = [];
+                                                    } else if (! isArray(drawingRelObj["Relationships"]["Relationship"])) {
+                                                        drawingRelObj["Relationships"]["Relationship"] = [drawingRelObj["Relationships"]["Relationship"]];
+                                                    }
+                                                    drawingRelObj["Relationships"]["Relationship"].push({
+                                                        "Id": md5Str,
+                                                        "Type": "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+                                                        "Target": "../media/" + md5Str + ".png"
+                                                    });
+                                                    drawingRelStr = xml2json.toXml(drawingRelObj, "", {
+                                                        "reSanitize": false
+                                                    });
+                                                    return _builder_$1.n(updateEntryAsync.apply(hzip, ["xl/drawings/_rels/drawing" + (sei + 1) + ".xml.rels", new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n" + drawingRelStr)]), function () {
+                                                        drawingBuf = void 0;
+                                                        _ref3 = hzip.entries;
+                                                        return _builder_$1.f(
+                                                            _builder_$1.e(function() {
+                                                                (_l = 0, _len3 = _ref3.length)
+                                                                return _builder_$1.a(function() {
+                                                                    return _l < _len3;
+                                                                }, function() {
+                                                                    _l ++;
+                                                                },
+                                                                    _builder_$1.e(function() {
+                                                                        entryImgTmp = _ref3[_l];
+                                                                        if (entryImgTmp.fileName === "xl/drawings/drawing" + (sei + 1) + ".xml") {
+                                                                            return _builder_$1.n(inflateRawAsync(entryImgTmp.cfile), function (_result_$) {
+                                                                                drawingBuf = _result_$;
+                                                                                return _builder_$1.i();
+                                                                            });
+                                                                        } else {
+                                                                            return _builder_$1.h();
+                                                                        }
+                                                                    })
+                                                                );
+                                                            }),
+                                                            _builder_$1.e(function() {
+                                                                drawingObj = xml2json.toJson(drawingBuf, xjOp);
+                                                                if (drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"] === void 0) {
+                                                                    drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"] = [];
+                                                                } else if (! isArray(drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"])) {
+                                                                    drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"] = [drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"]];
+                                                                }
+                                                                if (xdr_frt === void 0) {
+                                                                    xdr_frt = { };
+                                                                }
+                                                                if (xdr_frt["from"] === void 0) {
+                                                                    xdr_frt["from"] = { };
+                                                                }
+                                                                if (xdr_frt["from"]["col"] === void 0) {
+                                                                    xdr_frt["from"]["col"] = String(cellNum - 1);
+                                                                }
+                                                                if (xdr_frt["from"]["colOff"] === void 0) {
+                                                                    xdr_frt["from"]["colOff"] = "0";
+                                                                }
+                                                                if (xdr_frt["from"]["row"] === void 0) {
+                                                                    xdr_frt["from"]["row"] = String(rowNum - 1);
+                                                                }
+                                                                if (xdr_frt["from"]["rowOff"] === void 0) {
+                                                                    xdr_frt["from"]["rowOff"] = "0";
+                                                                }
+                                                                if (xdr_frt["to"] === void 0) {
+                                                                    xdr_frt["to"] = { };
+                                                                }
+                                                                if (xdr_frt["to"]["col"] === void 0) {
+                                                                    xdr_frt["to"]["col"] = String(cellNum);
+                                                                }
+                                                                if (xdr_frt["to"]["colOff"] === void 0) {
+                                                                    xdr_frt["to"]["colOff"] = "0";
+                                                                }
+                                                                if (xdr_frt["to"]["row"] === void 0) {
+                                                                    xdr_frt["to"]["row"] = String(rowNum);
+                                                                }
+                                                                if (xdr_frt["to"]["rowOff"] === void 0) {
+                                                                    xdr_frt["to"]["rowOff"] = "0";
+                                                                }
+                                                                drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"].push({
+                                                                    "editAs": "oneCell",
+                                                                    "xdr:from": {
+                                                                        "xdr:col": {
+                                                                            "$t": xdr_frt["from"]["col"]
+                                                                        },
+                                                                        "xdr:colOff": {
+                                                                            "$t": xdr_frt["from"]["colOff"]
+                                                                        },
+                                                                        "xdr:row": {
+                                                                            "$t": xdr_frt["from"]["row"]
+                                                                        },
+                                                                        "xdr:rowOff": {
+                                                                            "$t": xdr_frt["from"]["rowOff"]
+                                                                        }
+                                                                    },
+                                                                    "xdr:to": {
+                                                                        "xdr:col": {
+                                                                            "$t": xdr_frt["to"]["col"]
+                                                                        },
+                                                                        "xdr:colOff": {
+                                                                            "$t": xdr_frt["to"]["colOff"]
+                                                                        },
+                                                                        "xdr:row": {
+                                                                            "$t": xdr_frt["to"]["row"]
+                                                                        },
+                                                                        "xdr:rowOff": {
+                                                                            "$t": xdr_frt["to"]["rowOff"]
+                                                                        }
+                                                                    },
+                                                                    "xdr:pic": {
+                                                                        "xdr:nvPicPr": {
+                                                                            "xdr:cNvPr": {
+                                                                                "id": "2",
+                                                                                "name": imgBaseName,
+                                                                                "descr": imgBaseName
+                                                                            },
+                                                                            "xdr:cNvPicPr": {
+                                                                                "a:picLocks": {
+                                                                                    "noChangeAspect": "1"
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        "xdr:blipFill": {
+                                                                            "a:blip": {
+                                                                                "xmlns:r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+                                                                                "r:embed": md5Str
+                                                                            },
+                                                                            "a:stretch": {
+                                                                                "a:fillRect": {
+                                                                                    "$t": ""
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        "xdr:spPr": {
+                                                                            "a:xfrm": {
+                                                                                "a:off": {
+                                                                                    "x": "0",
+                                                                                    "y": "0"
+                                                                                },
+                                                                                "a:ext": {
+                                                                                    "cx": "2342857",
+                                                                                    "cy": "1780953"
+                                                                                }
+                                                                            },
+                                                                            "a:prstGeom": {
+                                                                                "prst": "rect",
+                                                                                "a:avLst": {
+                                                                                    "$t": ""
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "xdr:clientData": {
+                                                                        "$t": ""
+                                                                    }
+                                                                });
+                                                                drawingStr = xml2json.toXml(drawingObj, "", {
+                                                                    "reSanitize": false
+                                                                });
+                                                                return _builder_$1.n(updateEntryAsync.apply(hzip, ["xl/drawings/drawing" + (sei + 1) + ".xml", new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n" + drawingStr)]), function () {
+                                                                    return _builder_$1.g("");
+                                                                });
+                                                            })
+                                                        );
+                                                    });
+                                                })
+                                            );
+                                        })
+                                    );
+                                });
+                            });
+                        })
+                    );
+                });
+                shsEntry = hzip.getEntry("xl/sharedStrings.xml");
+                if (shsEntry === void 0) {
+                    return _builder_$0.g(exlBuf);
+                }
+                return _builder_$0.n(inflateRawAsync(shsEntry.cfile), function (_result_$) {
+                    shsStr = _result_$;
+                    shsObj = xml2json.toJson(shsStr);
+                    return _builder_$0.f(
+                        _builder_$0.e(function() {
+                            (i = _j = 0, _len1 = sheetEntries.length)
+                            return _builder_$0.a(function() {
+                                return _j < _len1;
+                            }, function() {
+                                i = ++ _j;
+                            },
+                                _builder_$0.e(function() {
+                                    entry = sheetEntries[i];
+                                    return _builder_$0.n(inflateRawAsync(entry.cfile), function (_result_$) {
+                                        sheetBuf = _result_$;
+                                        xjOpTmp = {
+                                            "object": true,
+                                            "reversible": true,
+                                            "coerce": false,
+                                            "trim": false,
+                                            "sanitize": true
+                                        };
+                                        sheetDataElementState = "";
+                                        startElement = xml2json.toJson.startElement;
+                                        endElement = xml2json.toJson.endElement;
+                                        xjOpTmp.startElement = function (elementName, attrs) {
+                                            if (elementName === "sheetData") {
+                                                sheetDataElementState = "start";
+                                            }
+                                            startElement.apply(this, arguments);
+                                        };
+                                        xjOpTmp.endElement = function (elementName) {
+                                            if (elementName === "sheetData") {
+                                                sheetDataElementState = "end";
+                                            }
+                                            endElement.apply(this, arguments);
+                                        };
+                                        xjOpTmp.sanitizeFn = function (value) {
+                                            if (isString(value)) {
+                                                return value;
+                                            }
+                                            if (sheetDataElementState === "start") {
+                                                return value;
+                                            }
+                                            value = value.replace(/[&<>]/gm, function (g1, g2) {
+                                                if (g1 === "&") {
+                                                    return "&amp;";
+                                                } else if (g1 === "<") {
+                                                    return "&lt;";
+                                                } else if (g1 === ">") {
+                                                    return "&gt;";
+                                                }
+                                                return g1;
+                                            });
+                                            return value;
+                                        };
+                                        sheetObj = xml2json.toJson(sheetBuf, xjOpTmp);
+                                        if (sheetObj.worksheet.sheetData.row === void 0) {
+                                            return _builder_$0.j();
+                                        } else if (! isArray(sheetObj.worksheet.sheetData.row)) {
+                                            sheetObj.worksheet.sheetData.row = [sheetObj.worksheet.sheetData.row];
+                                        }
+                                        if (sheetObj.worksheet.mergeCells !== void 0 && sheetObj.worksheet.mergeCells.mergeCell !== void 0) {
+                                            if (! isArray(sheetObj.worksheet.mergeCells.mergeCell)) {
+                                                sheetObj.worksheet.mergeCells.mergeCell = [sheetObj.worksheet.mergeCells.mergeCell];
+                                            }
+                                        }
+                                        _ref1 = sheetObj.worksheet.sheetData.row;
+                                        for ((_k = 0, _len2 = _ref1.length); _k < _len2; _k ++) {
+                                            row = _ref1[_k];
+                                            if (row.c !== void 0) {
+                                                if (! isArray(row.c)) {
+                                                    row.c = [row.c];
+                                                }
+                                                _ref2 = row.c;
+                                                for ((_l = 0, _len3 = _ref2.length); _l < _len3; _l ++) {
+                                                    cItem = _ref2[_l];
+                                                    if (cItem.t === "s" && cItem.v !== void 0) {
+                                                        if (! isArray(shsObj.sst.si)) {
+                                                            shsObj.sst.si = [shsObj.sst.si];
+                                                        }
+                                                        si = shsObj.sst.si[cItem.v["$t"]];
+                                                        phoneticPr = si.phoneticPr;
+                                                        si2 = {
+                                                            "t": {
+                                                                "$t": ""
+                                                            }
+                                                        };
+                                                        if (isArray(si.r)) {
+                                                            _ref3 = si.r;
+                                                            for ((_m = 0, _len4 = _ref3.length); _m < _len4; _m ++) {
+                                                                sirTp = _ref3[_m];
+                                                                si2.t["$t"] += sirTp.t["$t"];
+                                                            }
+                                                        } else {
+                                                            si2.t["$t"] = si.t["$t"];
+                                                        }
+                                                        cItem.v["$t"] = si2.t["$t"];
+                                                        if (cItem.v !== void 0) {
+                                                            if (! (cItem.v["$t"] === void 0 || cItem.v["$t"] === "")) {
+                                                                begin = cItem.v["$t"].indexOf("<%");
+                                                                end = cItem.v["$t"].indexOf("%>");
+                                                                if (begin === - 1 || end === - 1) {
+                                                                    cItem.v["$t"] = "<%='" + cItem.v["$t"].replace(/'/gm, "\\'") + "'%>";
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    if (sheetObj.worksheet.mergeCells !== void 0 && sheetObj.worksheet.mergeCells.mergeCell !== void 0) {
+                                                        mciNumArr = [];
+                                                        _ref4 = sheetObj.worksheet.mergeCells.mergeCell;
+                                                        for ((m_c_i = _n = 0, _len5 = _ref4.length); _n < _len5; m_c_i = ++ _n) {
+                                                            mergeCell = _ref4[m_c_i];
+                                                            if (mergeCell.ref !== void 0) {
+                                                                refArr = mergeCell.ref.split(":");
+                                                                ref0 = refArr[0];
+                                                                ref1 = refArr[1];
+                                                                if (charToNum(cItem.r.replace(/\d+/, "")) >= charToNum(ref0.replace(/\d+/, "")) && Number(cItem.r.replace(/\D+/, "")) >= Number(ref0.replace(/\D+/, ""))) {
+                                                                    if (cItem.v !== void 0) {
+                                                                        cItem.v["$t"] += "<% _mergeCellArr_.push(_charPlus_('" + ref0.replace(/\d+/, "") + "',_c)+(" + Number(ref0.replace(/\D+/, "")) + "+_r)+':'+_charPlus_('" + ref1.replace(/\d+/, "") + "',_c)+(" + Number(ref1.replace(/\D+/, "")) + "+_r)) %>";
+                                                                    } else {
+                                                                        cItem["$t"] += "<% _mergeCellArr_.push(_charPlus_('" + ref0.replace(/\d+/, "") + "',_c)+(" + Number(ref0.replace(/\D+/, "")) + "+_r)+':'+_charPlus_('" + ref1.replace(/\d+/, "") + "',_c)+(" + Number(ref1.replace(/\D+/, "")) + "+_r)) %>";
+                                                                    }
+                                                                    mciNumArr.push(m_c_i);
+                                                                }
+                                                            }
+                                                        }
+                                                        for ((_o = 0, _len6 = mciNumArr.length); _o < _len6; _o ++) {
+                                                            mciNum = mciNumArr[_o];
+                                                            sheetObj.worksheet.mergeCells.mergeCell.splice(mciNum, 1);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if (sheetObj.worksheet.mergeCells !== void 0) {
+                                            sheetObj.worksheet.mergeCells = {
+                                                "$t": "<% for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
                                             };
                                         }
-                                    };
-                                    str2 = ejs4xlx.parse(sheetBuf2, reXmlEq);
-                                    str2 = "function anonymous(_args) {\n" + str2 + "\n}";
-                                    anonymous = eval(Wind.compile("async", str2));
-                                    return _builder_$0.n(anonymous.call(this, data), function (_result_$) {
-                                        src2 = _result_$;
-                                        buffer2 = new Buffer(src2);
-                                        return _builder_$0.n(updateEntryAsync.apply(hzip, [entry.fileName, buffer2]), function () {
-                                            return _builder_$0.h();
+                                        sheetBuf2 = new Buffer(sheetSufStr + xml2json.toXml(sheetObj, "", {
+                                            "reSanitize": false
+                                        }));
+                                        reXmlEq = {
+                                            "reXmlEq": function (pixEq, jsStr, str) {
+                                                if (pixEq === "=") {
+                                                    jsStr = "_ps_(" + jsStr + ",buf)";
+                                                } else if (pixEq === "~") {
+                                                    jsStr = "_pi_(" + jsStr + ",buf)";
+                                                } else if (pixEq === "#") {
+                                                    jsStr = "_pf_(" + jsStr + ",buf)";
+                                                } else if (pixEq === "I") {
+                                                    jsStr = "_img_(" + jsStr + ",buf)";
+                                                }
+                                                return {
+                                                    "jsStr": jsStr,
+                                                    "str": str
+                                                };
+                                            }
+                                        };
+                                        reXmlEq.fileName = entry.fileName;
+                                        str2 = ejs4xlx.parse(sheetBuf2, reXmlEq);
+                                        str2 = "function (_args) {\n" + str2 + "\n}";
+                                        anonymous = void 0;
+                                        try {
+                                            anonymous = eval(Wind.compile("async", str2));
+                                        } catch (_error) {
+                                            err = _error;
+                                            console.log(str2);
+                                            return _builder_$0.k(err);
+                                        }
+                                        return _builder_$0.n(anonymous.call(this, data), function (_result_$) {
+                                            src2 = _result_$;
+                                            buffer2 = new Buffer(src2);
+                                            return _builder_$0.n(updateEntryAsync.apply(hzip, [entry.fileName, buffer2]), function () {
+                                                return _builder_$0.h();
+                                            });
                                         });
                                     });
+                                })
+                            );
+                        }),
+                        _builder_$0.e(function() {
+                            sharedStringsTmp2 = ejs4xlx.parse(sharedStrings2);
+                            sharedStringsTmp2 = "function anonymous(_args) {\n" + sharedStringsTmp2 + "\n}";
+                            anonymous = eval(Wind.compile("async", sharedStringsTmp2));
+                            return _builder_$0.n(anonymous.call(this, data), function (_result_$) {
+                                sharedStringsTmp2 = _result_$;
+                                buffer2 = new Buffer(sharedStringsTmp2);
+                                return _builder_$0.n(updateEntryAsync.apply(hzip, ["xl/sharedStrings.xml", buffer2]), function () {
+                                    return _builder_$0.g(hzip.buffer);
                                 });
-                            })
-                        );
-                    }),
-                    _builder_$0.e(function() {
-                        sharedStringsTmp2 = ejs4xlx.parse(sharedStrings2);
-                        sharedStringsTmp2 = "function anonymous(_args) {\n" + sharedStringsTmp2 + "\n}";
-                        anonymous = eval(Wind.compile("async", sharedStringsTmp2));
-                        return _builder_$0.n(anonymous.call(this, data), function (_result_$) {
-                            sharedStringsTmp2 = _result_$;
-                            buffer2 = new Buffer(sharedStringsTmp2);
-                            return _builder_$0.n(updateEntryAsync.apply(hzip, ["xl/sharedStrings.xml", buffer2]), function () {
-                                return _builder_$0.g(hzip.buffer);
                             });
-                        });
-                    })
-                );
+                        })
+                    );
+                });
             });
         })
     );
@@ -485,8 +854,9 @@
 });
 
   getExcelEns = function(sharedStr, sheets) {
-    var cEle, cont, crStr, cs, enr, ens, headsArr, i, k, numcr, numcrArr, row, sharedJson, sheet, sheetStr, sheetsEns, sir, vStr, vStr2, _i, _j, _k, _l, _len, _len1, _len2, _len3, _m, _n, _ref, _ref1, _ref2, _ref3;
+    var cEle, cont, crStr, cs, enr, ens, headsArr, i, k, numcr, numcrArr, row, sharedJson, sheet, sheetHeadsArr, sheetStr, sheetsEns, sir, vStr, vStr2, _i, _j, _k, _l, _len, _len1, _len2, _len3, _m, _n, _ref, _ref1, _ref2, _ref3;
     sheetsEns = [];
+
     /*
     object: Returns a Javascript object instead of a JSON string
     reversible: Makes the JSON reversible to XML (*)
@@ -500,13 +870,13 @@
       '"': '&quot;',
       "'": '&apos;'
     };
-    */
-
+     */
     if (isString(sharedStr) || Buffer.isBuffer(sharedStr)) {
       sharedJson = xml2json.toJson(sharedStr);
     } else {
       sharedJson = sharedStr;
     }
+    sheetHeadsArr = [];
     for (_i = 0, _len = sheets.length; _i < _len; _i++) {
       sheetStr = sheets[_i];
       ens = [];
@@ -517,6 +887,7 @@
       }
       row = sheet.worksheet.sheetData.row;
       headsArr = [];
+      sheetHeadsArr.push(headsArr);
       _ref = sheet.worksheet.sheetData.row[1].c;
       for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
         cEle = _ref[_j];
@@ -584,13 +955,17 @@
       }
       sheetsEns.push(ens);
     }
-    return sheetsEns;
+    return {
+      sheetsEns: sheetsEns,
+      sheetHeadsArr: sheetHeadsArr
+    };
   };
 
   str2Xml = function(str) {
     if (!isString(str)) {
       return str;
     }
+
     /*
     arr2 = []
     buf = new Buffer str
@@ -607,8 +982,7 @@
      '&quot;':'"',
      '&apos;':"'",
      '&amp;' :'&'
-    */
-
+     */
     str = str.replace(/[&<>]/gm, function(s) {
       if (s === "&") {
         return "&amp;";

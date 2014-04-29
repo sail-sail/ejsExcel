@@ -16,6 +16,16 @@ var dirname = path.dirname;
 var extname = path.extname;
 var join = path.join;
 
+var isType = function(type) {
+  return function(obj) {
+  return Object.prototype.toString.call(obj) === "[object " + type + "]";
+    };
+};
+var isObject = isType("Object");
+var isString = isType("String");
+var isArray = Array.isArray || isType("Array");
+var isFunction = isType("Function");
+
 /**
  * Filters.
  * 
@@ -108,7 +118,9 @@ var parse = exports.parse = function(str, options){
   var isForCellBegin = false;
   var isForCellEnd = false;
   //行号
-  var rowRn = 1;
+  var rowRn = undefined;
+  //列号
+  var cellRn = undefined;
   var isCEnd = false;
   var isCbegin = false;
   var isRowBegin = false;
@@ -141,9 +153,10 @@ var parse = exports.parse = function(str, options){
         js = js.substring(0, js.length - 2);
         consumeEOL = true;
       }
-
-      if (0 == js.trim().indexOf('include')) {
-        var name = js.trim().slice(7).trim();
+      
+      js = js.trim();
+      if (0 == js.indexOf('include')) {
+        var name = js.slice(7);
         if (!filename) throw new Error('filename option is required for includes');
         var path = resolveInclude(name, filename);
         include = fs.readSync(path, 'utf8');
@@ -155,8 +168,8 @@ var parse = exports.parse = function(str, options){
         	buf.push("'" + include + " '");
         }
         js = '';
-      } else if(0 == js.trim().indexOf('forRow')) {
-    	  var name = js.trim().slice(6).trim();
+      } else if(0 == js.indexOf('forRow')) {
+    	  var name = js.slice(6);
     	  isForRowBegin = true;
     	  isForRowEnd = false;
     	  var nameArr = [];
@@ -189,10 +202,10 @@ var parse = exports.parse = function(str, options){
     		  }
     		  return s;
     	  });
-    	  buf = [strTmp]
+    	  buf = [strTmp];
     	  js = '';
-      } 
-	  //sail 2014-04-09 --begin
+      }
+      //sail 2014-04-09 --begin
       else if(0 == js.indexOf('forRBegin')) {
     	  var name = js.slice(9);
     	  var nameArr = [];
@@ -245,8 +258,8 @@ var parse = exports.parse = function(str, options){
     	  js = '';
       }
       //sail 2014-04-09 --end
-	  else if(0 === js.trim().indexOf('forCell')) {
-    	  var name = js.trim().slice(7).trim();
+      else if(0 === js.indexOf('forCell')) {
+    	  var name = js.slice(7);
     	  isForCellBegin = true;
     	  isForCellEnd = false;
     	  var nameArr = [];
@@ -279,8 +292,19 @@ var parse = exports.parse = function(str, options){
     		  }
     		  return s;
     	  });
-    	  buf = [strTmp]
+    	  buf = [strTmp];
     	  js = '';
+      }
+      //图片
+      else if(0 == js.indexOf('_img_(')) {
+    	  if(options !== undefined && options.fileName !== undefined) {
+    		  js = js.substring(0,js.length-1);
+    		  var cellNum = 1;
+    		  for(var sei=0; sei<cellRn.length; sei++) {
+    			  cellNum += cellRn.charCodeAt(sei)-65+(cellRn.length-1-sei)*26;
+    		  }
+    		  js = "$await("+js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\","+rowRn+","+cellNum+"))";
+    	  }
       }
 
       while (~(n = js.indexOf("\n", n))) n++, lineno++;
@@ -289,7 +313,7 @@ var parse = exports.parse = function(str, options){
         if (js.lastIndexOf('//') > js.lastIndexOf('\n')) js += '\n';
         //sail 2012-04-21
         //=,- 符号时生成的字符串针对xml转义符进行转义,在ejsExcel中会使用到
-        if(reXmlEq !== undefined && (pixEq === "=" || pixEq === "-" || pixEq === "~" || pixEq === "#")) {
+        if(reXmlEq !== undefined && (pixEq === "=" || pixEq === "~" || pixEq === "#")) {
         	var rxeObj = reXmlEq(pixEq,js,buf.join(''));
         	js = rxeObj.jsStr;
         	buf = [rxeObj.str];
@@ -336,7 +360,7 @@ var parse = exports.parse = function(str, options){
     	var strTmp = buf.join('')+"\"";
     	var mthArr = strTmp.match(/<c\s+r="\D+\d+"/gm);
     	var mthLt = mthArr[mthArr.length-1];
-  		var cellRn = mthLt.replace(/<c\sr="/gm,"").replace(/\d+"/gm,"");
+  		cellRn = mthLt.replace(/<c\sr="/gm,"").replace(/\d+"/gm,"");
   		var repNum = 0;
   		strTmp = strTmp.replace(/<c\s+r="\D+\d+"/gm,function(s){
   	  	  repNum++;
@@ -380,7 +404,7 @@ var parse = exports.parse = function(str, options){
   }
 
   buf.push("');\nreturn buf.join('');");
-  //console.log(buf.join(''));
+  //fs.writeFileSync("C:/abc.js",buf.join(''));
   return buf.join('');
 };
 

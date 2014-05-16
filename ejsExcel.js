@@ -610,7 +610,7 @@
                                             endElement.apply(this, arguments);
                                         };
                                         xjOpTmp.sanitizeFn = function (value) {
-                                            if (isString(value)) {
+                                            if (! isString(value)) {
                                                 return value;
                                             }
                                             if (sheetDataElementState === "start") {

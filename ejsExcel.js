@@ -930,7 +930,7 @@
               _ref2 = sharedJson.sst.si[vStr].r;
               for (_m = 0, _len3 = _ref2.length; _m < _len3; _m++) {
                 sir = _ref2[_m];
-                if (sir.t === void 0) {
+                if (sir.t === void 0 || sir.t["$t"] === void 0) {
                   continue;
                 }
                 vStr2 += sir.t["$t"];

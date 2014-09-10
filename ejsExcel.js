@@ -1,5 +1,5 @@
 (function() {
-  var Binding, Hzip, Task, Wind, charPlus, charToNum, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, readFileAsync, render, renderExcel, renderPath, replaceLast, sharedStrings2, sheetEntrieRel2, sheetSufStr, str2Xml, xjOp, xml2json, zlib;
+  var Binding, Hzip, Task, Wind, charPlus, charToNum, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, readFileAsync, render, renderExcel, renderPath, replaceLast, sharedStrings2, sheetEntrieRel2, sheetSufStr, str2Xml, xjOp, xml2json, zlib;
 
   require.extensions['.node_' + process.platform + "_" + process.arch] = function(module, filename) {
     return require.extensions['.node'](module, filename);
@@ -853,6 +853,106 @@
     );
 });
 
+  getExcelArr = (function (buffer) {
+    var _builder_$0 = Wind.b["async"];
+    var _arguments_$ = arguments;
+    var _caller_$0 = this.$caller;
+    return _builder_$0.m(this,
+        _builder_$0.e(function() {
+            this.$caller = _caller_$0;
+            var buf, cEle, crStr, cs, enr, ens, entries, entry, fileName, hzip, i, numcr, numcrArr, row, sharedJson, sharedStr, sheet, sheetArr, sheetStr, sheets, sheetsEns, sir, vStr, vStr2, _i, _j, _k, _l, _len, _len1, _len2, _len3, _m, _ref, _ref1;
+            sharedStr = null;
+            sheets = [];
+            hzip = new Hzip(buffer);
+            entries = hzip.entries;
+            return _builder_$0.f(
+                _builder_$0.e(function() {
+                    (_i = 0, _len = entries.length)
+                    return _builder_$0.a(function() {
+                        return _i < _len;
+                    }, function() {
+                        _i ++;
+                    },
+                        _builder_$0.e(function() {
+                            entry = entries[_i];
+                            fileName = entry.fileName;
+                            if (fileName === "xl/sharedStrings.xml" || /xl\/worksheets\/sheet\d+\.xml/gm.test(fileName)) {
+                                return _builder_$0.n(inflateRawAsync(entry.cfile), function (_result_$) {
+                                    buf = _result_$;
+                                    if (/xl\/worksheets\/sheet\d+\.xml/gm.test(fileName)) {
+                                        sheets.push(buf);
+                                    } else {
+                                        sharedStr = buf;
+                                    }
+                                    return _builder_$0.h();
+                                });
+                            } else {
+                                return _builder_$0.h();
+                            }
+                        })
+                    );
+                }),
+                _builder_$0.e(function() {
+                    sheetsEns = [];
+                    sharedJson = xml2json.toJson(sharedStr);
+                    sheetArr = [];
+                    for ((_j = 0, _len1 = sheets.length); _j < _len1; _j ++) {
+                        sheetStr = sheets[_j];
+                        ens = [];
+                        sheet = xml2json.toJson(sheetStr);
+                        if (sheet.worksheet.sheetData.row === void 0) {
+                            continue;
+                        }
+                        if (! isArray(sheet.worksheet.sheetData.row)) {
+                            sheet.worksheet.sheetData.row = [sheet.worksheet.sheetData.row];
+                        }
+                        for ((i = _k = 0, _ref = sheet.worksheet.sheetData.row.length); (0 <= _ref) ? (_k < _ref) : (_k > _ref); i = (0 <= _ref) ? (++ _k) : (-- _k)) {
+                            row = sheet.worksheet.sheetData.row[i];
+                            cs = row.c;
+                            enr = [];
+                            ens[parseInt(row.r) - 1] = enr;
+                            numcrArr = [];
+                            for ((_l = 0, _len2 = cs.length); _l < _len2; _l ++) {
+                                cEle = cs[_l];
+                                crStr = cEle.r;
+                                crStr = crStr.replace(row.r, "");
+                                numcr = charToNum(crStr);
+                                numcrArr.push(numcr);
+                                if (cEle.v === void 0) {
+                                    continue;
+                                }
+                                vStr = cEle.v["$t"];
+                                if (cEle.t === "s") {
+                                    if (sharedJson.sst.si[vStr].t !== void 0) {
+                                        vStr = sharedJson.sst.si[vStr].t["$t"];
+                                    } else {
+                                        vStr2 = "";
+                                        if (! isArray(sharedJson.sst.si[vStr].r)) {
+                                            sharedJson.sst.si[vStr].r = [sharedJson.sst.si[vStr].r];
+                                        }
+                                        _ref1 = sharedJson.sst.si[vStr].r;
+                                        for ((_m = 0, _len3 = _ref1.length); _m < _len3; _m ++) {
+                                            sir = _ref1[_m];
+                                            if (sir.t === void 0 || sir.t["$t"] === void 0) {
+                                                continue;
+                                            }
+                                            vStr2 += sir.t["$t"];
+                                        }
+                                        vStr = vStr2;
+                                    }
+                                }
+                                enr[numcr] = vStr;
+                            }
+                        }
+                        sheetArr.push(ens);
+                    }
+                    return _builder_$0.g(sheetArr);
+                })
+            );
+        })
+    );
+});
+
   getExcelEns = function(sharedStr, sheets) {
     var cEle, cont, crStr, cs, enr, ens, headsArr, i, k, numcr, numcrArr, row, sharedJson, sheet, sheetHeadsArr, sheetStr, sheetsEns, sir, vStr, vStr2, _i, _j, _k, _l, _len, _len1, _len2, _len3, _m, _n, _ref, _ref1, _ref2, _ref3;
     sheetsEns = [];
@@ -1075,5 +1175,7 @@
   exports.getExcelEns = getExcelEns;
 
   exports.renderExcel = renderExcel;
+
+  exports.getExcelArr = getExcelArr;
 
 }).call(this);

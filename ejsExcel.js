@@ -660,11 +660,16 @@
                                                                 "$t": ""
                                                             }
                                                         };
-                                                        if (isArray(si.r)) {
+                                                        if (si.r !== void 0) {
+                                                            if (! isArray(si.r)) {
+                                                                si.r = [si.r];
+                                                            }
                                                             _ref3 = si.r;
                                                             for ((_m = 0, _len4 = _ref3.length); _m < _len4; _m ++) {
                                                                 sirTp = _ref3[_m];
-                                                                si2.t["$t"] += sirTp.t["$t"];
+                                                                if (sirTp.t) {
+                                                                    si2.t["$t"] += sirTp.t["$t"];
+                                                                }
                                                             }
                                                         } else {
                                                             si2.t["$t"] = si.t["$t"];

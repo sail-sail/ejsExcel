@@ -67,13 +67,13 @@
     Hzip = require("./lib/hzip");
   }
 
-  Wind = void 0;
-
-  try {
-    Wind = require("wind");
-  } catch (_error) {
-    err = _error;
-    Wind = require("./lib/Wind");
+  if (typeof Wind === "undefined") {
+    try {
+      Wind = require("wind");
+    } catch (_error) {
+      err = _error;
+      Wind = require("./lib/Wind");
+    }
   }
 
   xml2json = void 0;
@@ -295,6 +295,7 @@
             };
             data._pi_ = function (str, buf) {
                 var i, _i, _ref;
+                str = str2Xml(str);
                 for (i = _i = _ref = buf.length - 1; (_ref <= - 1) ? (_i < - 1) : (_i > - 1); i = (_ref <= - 1) ? (++ _i) : (-- _i)) {
                     if (/\s+t="s"/gm.test(buf[i]) === true) {
                         buf[i] = replaceLast(buf[i], /\s+t="s"/gm, "");
@@ -616,13 +617,17 @@
                                             if (sheetDataElementState === "start") {
                                                 return value;
                                             }
-                                            value = value.replace(/[&<>]/gm, function (g1, g2) {
+                                            value = value.replace(/[&<>"']/gm, function (g1, g2) {
                                                 if (g1 === "&") {
                                                     return "&amp;";
                                                 } else if (g1 === "<") {
                                                     return "&lt;";
                                                 } else if (g1 === ">") {
                                                     return "&gt;";
+                                                } else if (g1 === "\"") {
+                                                    return "&quot;";
+                                                } else if (g1 === "'") {
+                                                    return "&apos;";
                                                 }
                                                 return g1;
                                             });
@@ -649,7 +654,7 @@
                                                 _ref2 = row.c;
                                                 for ((_l = 0, _len3 = _ref2.length); _l < _len3; _l ++) {
                                                     cItem = _ref2[_l];
-                                                    if (cItem.t === "s" && cItem.v !== void 0) {
+                                                    if (cItem.t === "s" && cItem.v && ! isNaN(Number(cItem.v["$t"])) && ! cItem.f) {
                                                         if (! isArray(shsObj.sst.si)) {
                                                             shsObj.sst.si = [shsObj.sst.si];
                                                         }
@@ -680,9 +685,16 @@
                                                                 begin = cItem.v["$t"].indexOf("<%");
                                                                 end = cItem.v["$t"].indexOf("%>");
                                                                 if (begin === - 1 || end === - 1) {
-                                                                    cItem.v["$t"] = "<%='" + cItem.v["$t"].replace(/'/gm, "\\'") + "'%>";
+                                                                    cItem.v["$t"] = "<%='" + str2Xml(cItem.v["$t"].replace(/'/gm, "\\'")) + "'%>";
                                                                 }
                                                             }
+                                                        }
+                                                    } else {
+                                                        if (cItem.f && cItem.f["$t"]) {
+                                                            cItem.f["$t"] = str2Xml(cItem.f["$t"]);
+                                                        }
+                                                        if (cItem.v && cItem.v["$t"]) {
+                                                            cItem.v["$t"] = str2Xml(cItem.v["$t"]);
                                                         }
                                                     }
                                                     if (sheetObj.worksheet.mergeCells !== void 0 && sheetObj.worksheet.mergeCells.mergeCell !== void 0) {
@@ -1088,13 +1100,17 @@
      '&apos;':"'",
      '&amp;' :'&'
      */
-    str = str.replace(/[&<>]/gm, function(s) {
+    str = str.replace(/[&<>"']/gm, function(s) {
       if (s === "&") {
         return "&amp;";
       } else if (s === "<") {
         return "&lt;";
       } else if (s === ">") {
         return "&gt;";
+      } else if (s === "\"") {
+        return "&quot;";
+      } else if (s === "'") {
+        return "&apos;";
       }
       return s;
     });

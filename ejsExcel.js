@@ -1,5 +1,5 @@
 (function() {
-  var Binding, Hzip, Task, Wind, charPlus, charToNum, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, readFileAsync, render, renderExcel, renderPath, replaceLast, sharedStrings2, sheetEntrieRel2, sheetSufStr, str2Xml, xjOp, xml2json, zlib;
+  var Binding, Hzip, Task, Wind, charPlus, charToNum, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelArrCb, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2, sheetEntrieRel2, sheetSufStr, str2Xml, xjOp, xml2json, zlib;
 
   require.extensions['.node_' + process.platform + "_" + process.arch] = function(module, filename) {
     return require.extensions['.node'](module, filename);
@@ -189,7 +189,7 @@
     sanitize: false
   };
 
-  exports.renderExcelCb = function(exlBuf, _data_, callback) {
+  renderExcelCb = function(exlBuf, _data_, callback) {
     var tmpFn;
     tmpFn = (function () {
     var _builder_$0 = Wind.b["async"];
@@ -870,6 +870,29 @@
     );
 });
 
+  getExcelArrCb = function(buffer, callback) {
+    var tmpFn;
+    tmpFn = (function (buffer) {
+    var _builder_$0 = Wind.b["async"];
+    var _arguments_$ = arguments;
+    var _caller_$0 = this.$caller;
+    return _builder_$0.m(this,
+        _builder_$0.e(function() {
+            this.$caller = _caller_$0;
+            var rvObj;
+            return _builder_$0.n(getExcelArr(buffer), function (_result_$) {
+                rvObj = _result_$;
+                if (callback) {
+                    callback(rvObj);
+                }
+                return _builder_$0.h();
+            });
+        })
+    );
+});
+    tmpFn(buffer).start();
+  };
+
   getExcelArr = (function (buffer) {
     var _builder_$0 = Wind.b["async"];
     var _arguments_$ = arguments;
@@ -925,6 +948,12 @@
                         }
                         for ((i = _k = 0, _ref = sheet.worksheet.sheetData.row.length); (0 <= _ref) ? (_k < _ref) : (_k > _ref); i = (0 <= _ref) ? (++ _k) : (-- _k)) {
                             row = sheet.worksheet.sheetData.row[i];
+                            if (! row.c) {
+                                continue;
+                            }
+                            if (! isArray(row.c)) {
+                                row.c = [row.c];
+                            }
                             cs = row.c;
                             enr = [];
                             ens[parseInt(row.r) - 1] = enr;
@@ -1197,6 +1226,10 @@
 
   exports.renderExcel = renderExcel;
 
+  exports.renderExcelCb = renderExcelCb;
+
   exports.getExcelArr = getExcelArr;
+
+  exports.getExcelArrCb = getExcelArrCb;
 
 }).call(this);

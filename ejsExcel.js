@@ -751,21 +751,19 @@
                                         };
                                         reXmlEq.fileName = entry.fileName;
                                         str2 = ejs4xlx.parse(sheetBuf2, reXmlEq);
-                                        str2 = "function (_args) {\n" + str2 + "\n}";
+                                        str2 = "(function (_args) {\n" + str2 + "\n})";
                                         anonymous = void 0;
                                         try {
-                                            anonymous = eval(Wind.compile("async", str2));
+                                            anonymous = eval(str2);
                                         } catch (_error) {
                                             err = _error;
                                             console.log(str2);
                                             return _builder_$0.k(err);
                                         }
-                                        return _builder_$0.n(anonymous.call(this, data), function (_result_$) {
-                                            src2 = _result_$;
-                                            buffer2 = new Buffer(src2);
-                                            return _builder_$0.n(updateEntryAsync.apply(hzip, [entry.fileName, buffer2]), function () {
-                                                return _builder_$0.h();
-                                            });
+                                        src2 = anonymous.call(this, data);
+                                        buffer2 = new Buffer(src2);
+                                        return _builder_$0.n(updateEntryAsync.apply(hzip, [entry.fileName, buffer2]), function () {
+                                            return _builder_$0.h();
                                         });
                                     });
                                 })

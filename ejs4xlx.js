@@ -198,7 +198,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_rLen = "+arrName+";if(Array.isArray("+arrName+")){I_rLen=("+arrName+").length;};for(var I_m=0;I_m<I_rLen;I_m++){$await(Wind.Async.sleep(0));"+iName+"var "+itemName+"="+arrName+"[I_m];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m;}"+pixJs+";buf.push('"+mthLt;
+    			  return "');var I_rLen = "+arrName+";if(Array.isArray("+arrName+")){I_rLen=("+arrName+").length;};for(var I_m=0;I_m<I_rLen;I_m++){"+iName+"var "+itemName+"="+arrName+"[I_m];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m;}"+pixJs+";buf.push('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -234,7 +234,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_rLen = "+arrName+";if(Array.isArray("+arrName+")){I_rLen=("+arrName+").length;};for(var I_m=0;I_m<I_rLen;I_m++){$await(Wind.Async.sleep(0));"+iName+"var "+itemName+"="+arrName+"[I_m];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m;}"+pixJs+";buf.push('"+mthLt;
+    			  return "');var I_rLen = "+arrName+";if(Array.isArray("+arrName+")){I_rLen=("+arrName+").length;};for(var I_m=0;I_m<I_rLen;I_m++){"+iName+"var "+itemName+"="+arrName+"[I_m];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m;}"+pixJs+";buf.push('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -288,7 +288,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<c r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_cLen = "+arrName+";if(Array.isArray("+arrName+")){I_cLen=("+arrName+").length;};for(var I_c=0;I_c<I_cLen;I_c++){$await(Wind.Async.sleep(0));"+iName+"var "+itemName+"="+arrName+"[I_c];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c;}"+pixJs+";buf.push('"+mthLt;
+    			  return "');var I_cLen = "+arrName+";if(Array.isArray("+arrName+")){I_cLen=("+arrName+").length;};for(var I_c=0;I_c<I_cLen;I_c++){"+iName+"var "+itemName+"="+arrName+"[I_c];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c;}"+pixJs+";buf.push('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -303,7 +303,7 @@ var parse = exports.parse = function(str, options){
     		  for(var sei=0; sei<cellRn.length; sei++) {
     			  cellNum += cellRn.charCodeAt(sei)-65+(cellRn.length-1-sei)*26;
     		  }
-    		  js = "$await("+js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\","+rowRn+","+cellNum+"))";
+    		  js = js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\","+rowRn+","+cellNum+").start()";
     	  }
       }
 

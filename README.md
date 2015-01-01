@@ -1,5 +1,7 @@
 ejsExcel  
-像写jsp一样导出Excel, 通过Excel模板导出Excel
+BI商业智能报表系统
+
+通过Excel模板导出Excel
    
 npm install ejsexcel  
   

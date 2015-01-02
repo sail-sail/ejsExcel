@@ -1145,20 +1145,17 @@
   };
 
   charPlus = function(str, num) {
-    var arr, i, i_$_, k, minus, tmp, _i, _j, _ref;
+    var arr, i, k, minus, tmp, _i;
     if (num === 0) {
       return str;
     }
-    arr = [];
-    for (i_$_ = _i = 0, _ref = str.length; 0 <= _ref ? _i < _ref : _i > _ref; i_$_ = 0 <= _ref ? ++_i : --_i) {
-      arr[i_$_] = str.charAt(i_$_);
-    }
+    arr = str.split("");
     minus = false;
     if (num < 0) {
       minus = true;
       num = Math.abs(num);
     }
-    for (k = _j = 0; 0 <= num ? _j < num : _j > num; k = 0 <= num ? ++_j : --_j) {
+    for (k = _i = 0; 0 <= num ? _i < num : _i > num; k = 0 <= num ? ++_i : --_i) {
       i = 0;
       while (true) {
         tmp = "";
@@ -1166,6 +1163,9 @@
           tmp = "A";
         } else {
           tmp = "Z";
+        }
+        if (arr.length - 1 - i === -1) {
+          arr.shift("A");
         }
         if (arr[arr.length - 1 - i] !== tmp) {
           if (arr.length - 1 - i >= 0) {
@@ -1189,11 +1189,10 @@
         } else {
           if (minus) {
             arr[arr.length - 1 - i] = "Z";
-            i++;
           } else {
             arr[arr.length - 1 - i] = "A";
-            i++;
           }
+          i++;
           continue;
         }
       }

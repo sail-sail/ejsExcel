@@ -295,6 +295,9 @@
             };
             data._pi_ = function (str, buf) {
                 var i, _i, _ref;
+                if (isNaN(Number(str))) {
+                    return data._ps_(str, buf);
+                }
                 str = str2Xml(str);
                 for (i = _i = _ref = buf.length - 1; (_ref <= - 1) ? (_i < - 1) : (_i > - 1); i = (_ref <= - 1) ? (++ _i) : (-- _i)) {
                     if (/\s+t="s"/gm.test(buf[i]) === true) {

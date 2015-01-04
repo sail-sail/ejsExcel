@@ -695,9 +695,11 @@
                                                     } else {
                                                         if (cItem.f && cItem.f["$t"]) {
                                                             cItem.f["$t"] = str2Xml(cItem.f["$t"]);
-                                                        }
-                                                        if (cItem.v && cItem.v["$t"]) {
-                                                            cItem.v["$t"] = str2Xml(cItem.v["$t"]);
+                                                            delete cItem["v"];
+                                                        } else {
+                                                            if (cItem.v && cItem.v["$t"]) {
+                                                                cItem.v["$t"] = str2Xml(cItem.v["$t"]);
+                                                            }
                                                         }
                                                     }
                                                     if (sheetObj.worksheet.mergeCells !== void 0 && sheetObj.worksheet.mergeCells.mergeCell !== void 0) {

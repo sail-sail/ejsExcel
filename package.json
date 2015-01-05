@@ -1,6 +1,6 @@
 {
-    "author": "sail,黄智勇",
-    "homepage": "",
+    "author": "sail 黄智勇",
+    "homepage": "https://gitcafe.com/sail/ejsExcel",
     "bugs": {
         "url": "https://gitcafe.com/sail/ejsExcel",
         "email": "151263555@qq.com"
@@ -12,7 +12,7 @@
     	"nodejs"
     ],
     "name": "ejsexcel",
-    "version": "1.1.0",
+    "version": "1.1.2",
     "main": "ejsExcel",
     "readme":"README.md",
     "license": "MIT",

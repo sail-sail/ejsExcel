@@ -748,8 +748,10 @@
                                                             }
                                                         }
                                                     } else {
-                                                        if (cItem.f && cItem.f["$t"]) {
-                                                            cItem.f["$t"] = str2Xml(cItem.f["$t"]);
+                                                        if (cItem.f) {
+                                                            if (cItem.f["$t"] !== void 0) {
+                                                                cItem.f["$t"] = str2Xml(cItem.f["$t"]);
+                                                            }
                                                             delete cItem["v"];
                                                         } else {
                                                             if (cItem.v && cItem.v["$t"]) {

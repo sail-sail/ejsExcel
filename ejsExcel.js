@@ -1232,7 +1232,7 @@
     tmpAdd = num;
     while (true) {
       if (i === -1) {
-        arr.unshift("A");
+        arr.unshift(String.fromCharCode(64));
         i = 0;
       }
       tmpNum = arr[i].charCodeAt(0) - 65 + tmpAdd;

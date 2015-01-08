@@ -1223,57 +1223,25 @@
   };
 
   charPlus = function(str, num) {
-    var arr, i, k, minus, tmp, _i;
+    var arr, i, tmpAdd, tmpNum;
     if (num === 0) {
       return str;
     }
     arr = str.split("");
-    minus = false;
-    if (num < 0) {
-      minus = true;
-      num = Math.abs(num);
-    }
-    for (k = _i = 0; 0 <= num ? _i < num : _i > num; k = 0 <= num ? ++_i : --_i) {
-      i = 0;
-      while (true) {
-        tmp = "";
-        if (minus) {
-          tmp = "A";
-        } else {
-          tmp = "Z";
-        }
-        if (arr.length - 1 - i === -1) {
-          arr.shift("A");
-        }
-        if (arr[arr.length - 1 - i] !== tmp) {
-          if (arr.length - 1 - i >= 0) {
-            tmp = typeof minus === "function" ? minus(-{
-              1: 1
-            }) : void 0;
-            if (minus) {
-              tmp = -1;
-            } else {
-              tmp = 1;
-            }
-            arr[arr.length - 1 - i] = String.fromCharCode(arr[arr.length - 1 - i].charCodeAt(0) + tmp);
-          } else {
-            if (minus) {
-              arr.shift();
-            } else {
-              arr.unshift("A");
-            }
-          }
-          break;
-        } else {
-          if (minus) {
-            arr[arr.length - 1 - i] = "Z";
-          } else {
-            arr[arr.length - 1 - i] = "A";
-          }
-          i++;
-          continue;
-        }
+    i = arr.length - 1;
+    tmpAdd = num;
+    while (true) {
+      if (i === -1) {
+        arr.unshift("A");
+        i = 0;
       }
+      tmpNum = arr[i].charCodeAt(0) - 65 + tmpAdd;
+      arr[i] = String.fromCharCode(tmpNum % 26 + 65);
+      tmpAdd = Math.floor(tmpNum / 26);
+      if (tmpAdd === 0) {
+        break;
+      }
+      i--;
     }
     return arr.join("");
   };

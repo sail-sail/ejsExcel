@@ -130,6 +130,9 @@ var parse = exports.parse = function(str, options){
   var isRowBegin = false;
   var isRowEnd = false;
   var consumeEOL = false;
+  
+  var forRBegin = false;
+  var forREnd = false;
   var pixEq = "";
   for (var i = 0, len = str.length; i < len; ++i) {
     if (str.slice(i, open.length + i) == open) {
@@ -212,6 +215,8 @@ var parse = exports.parse = function(str, options){
       }
       //sail 2014-04-09 --begin
       else if(0 == js.indexOf('forRBegin')) {
+    	  forRBegin = true;
+    	  forREnd = false;
     	  var uid = uniqueID();
     	  var name = js.slice(9);
     	  var nameArr = [];
@@ -248,15 +253,17 @@ var parse = exports.parse = function(str, options){
     	  js = '';
       }
       else if(0 == js.indexOf('forREnd')) {
+    	  forRBegin = false;
+    	  forREnd = true;
     	  var rjsStr = js.slice(7);
     	  var strTmp = buf.join('');
-    	  var mthArr = strTmp.match(/<row r="/gm);
+    	  var mthArr = strTmp.match(/<\/row>/gm);
     	  var mthLt = mthArr[mthArr.length-1];
     	  var repNum = 0;
-    	  strTmp = strTmp.replace(/<row r="/gm,function(s){
+    	  strTmp = strTmp.replace(/<\/row>/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');_r+=Number(eval('"+rjsStr+"'));}_r-=Number(eval('"+rjsStr+"'));buf.push('"+mthLt;
+    			  return "</row>');_r+=Number(eval('"+rjsStr+"'));}_r-=Number(eval('"+rjsStr+"'));buf.push('";
     		  }
     		  return s;
     	  });
@@ -341,15 +348,15 @@ var parse = exports.parse = function(str, options){
     	isRowEnd = true;
     	isRowBegin = false;
     	var strTmp = buf.join('')+"\"";
-  	    var mthArr = strTmp.match(/<row\s+r="\d+"/gm);
+  	    var mthArr = strTmp.match(/<row r="\d+"/gm);
   	    var mthLt = mthArr[mthArr.length-1];
   	    //行号
-  	    rowRn = mthLt.replace(/<row\s+r="/gm,"").replace(/"/gm,"");
+  	    rowRn = mthLt.replace(/<row r="/gm,"").replace(/"/gm,"");
   	    var repNum = 0;
-  	    strTmp = strTmp.replace(/<row\s+r="\d+"/gm,function(s){
+  	    strTmp = strTmp.replace(/<row r="\d+"/gm,function(s){
   	  		repNum++;
   	  		if(mthArr.length === repNum) {
-  	  			return "<row r=\"');_c=0;buf.push("+rowRn+"+_r);buf.push('\"";
+  	  			return "<row r=\"');_c=0;_row="+rowRn+"+_r;buf.push(_row);buf.push('\"";
   	  		}
   	  		return s;
   	    });
@@ -365,14 +372,14 @@ var parse = exports.parse = function(str, options){
     	isCEnd = true;
     	isCbegin = false;
     	var strTmp = buf.join('')+"\"";
-    	var mthArr = strTmp.match(/<c\s+r="\D+\d+"/gm);
+    	var mthArr = strTmp.match(/<c r="[A-Z]+[0-9]+"/gm);
     	var mthLt = mthArr[mthArr.length-1];
-  		cellRn = mthLt.replace(/<c\sr="/gm,"").replace(/\d+"/gm,"");
+  		cellRn = mthLt.replace(/<c r="/gm,"").replace(/\d+"/gm,"");
   		var repNum = 0;
-  		strTmp = strTmp.replace(/<c\s+r="\D+\d+"/gm,function(s){
+  		strTmp = strTmp.replace(/<c r="[A-Z]+[0-9]+"/gm,function(s){
   	  	  repNum++;
   	  	  if(mthArr.length === repNum) {
-  	  		  return "<c r=\"');buf.push(_charPlus_('"+cellRn+"',_c));buf.push("+rowRn+"+_r);buf.push('\"";
+  	  		  return "<c r=\"');_cell=_charPlus_('"+cellRn+"',_c);_rc=_cell+_row;buf.push(_rc);buf.push('\"";
   	  	  }
   	  	  return s;
   	    });

@@ -173,7 +173,7 @@
 
   sharedStrings2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\"><%\nvar _acVar_ = _args._acVar_;\nvar ssArr = _acVar_.sharedStrings;\nfor(var i=0; i<ssArr.length; i++) {\n$await(Wind.Async.sleep(0));\n%><si><t xml:space=\"preserve\"><%=ssArr[i]%></t><phoneticPr fontId=\"1\" type=\"noConversion\"/></si><%}%></sst>");
 
-  sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\n%>";
+  sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _cell = \"\";\nvar _rc = \"\";\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\n%>";
 
   drawingRelBuf2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>");
 
@@ -814,6 +814,7 @@
                                         reXmlEq.fileName = entry.fileName;
                                         str2 = ejs4xlx.parse(sheetBuf2, reXmlEq);
                                         str2 = "(function (_args) {\n" + str2 + "\n})";
+                                        fs.writeFileSync("C:/abc.js", str2);
                                         anonymous = void 0;
                                         try {
                                             anonymous = eval(str2);
@@ -1224,7 +1225,7 @@
 
   charPlus = function(str, num) {
     var arr, i, tmpAdd, tmpNum;
-    if (num === 0) {
+    if (num === 0 || str === "") {
       return str;
     }
     arr = str.split("");

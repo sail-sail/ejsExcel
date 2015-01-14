@@ -379,7 +379,7 @@ var parse = exports.parse = function(str, options){
   		strTmp = strTmp.replace(/<c r="[A-Z]+[0-9]+"/gm,function(s){
   	  	  repNum++;
   	  	  if(mthArr.length === repNum) {
-  	  		  return "<c r=\"');_cell=_charPlus_('"+cellRn+"',_c);_rc=_cell+_row;buf.push(_rc);buf.push('\"";
+  	  		  return "<c r=\"');_col=_charPlus_('"+cellRn+"',_c);_rc=_col+_row;buf.push(_rc);buf.push('\"";
   	  	  }
   	  	  return s;
   	    });

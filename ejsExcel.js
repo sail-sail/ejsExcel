@@ -814,7 +814,6 @@
                                         reXmlEq.fileName = entry.fileName;
                                         str2 = ejs4xlx.parse(sheetBuf2, reXmlEq);
                                         str2 = "(function (_args) {\n" + str2 + "\n})";
-                                        fs.writeFileSync("C:/abc.js", str2);
                                         anonymous = void 0;
                                         try {
                                             anonymous = eval(str2);

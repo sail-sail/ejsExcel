@@ -1106,8 +1106,16 @@
         sheet = sheetStr;
       }
       row = sheet.worksheet.sheetData.row;
+      if (row === void 0 || row.length === void 0 || row.length < 2) {
+        continue;
+      }
       headsArr = [];
       sheetHeadsArr.push(headsArr);
+      if (sheet.worksheet.sheetData.row[1].c === void 0) {
+        sheet.worksheet.sheetData.row[1].c = [];
+      } else if (!isArray(sheet.worksheet.sheetData.row[1].c)) {
+        sheet.worksheet.sheetData.row[1].c = [sheet.worksheet.sheetData.row[1].c];
+      }
       _ref = sheet.worksheet.sheetData.row[1].c;
       for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
         cEle = _ref[_j];
@@ -1126,6 +1134,11 @@
       for (i = _k = 2, _ref1 = sheet.worksheet.sheetData.row.length; 2 <= _ref1 ? _k < _ref1 : _k > _ref1; i = 2 <= _ref1 ? ++_k : --_k) {
         row = sheet.worksheet.sheetData.row[i];
         cs = row.c;
+        if (cs === void 0 || cs === null) {
+          cs = [];
+        } else if (!isArray(cs)) {
+          cs = [cs];
+        }
         enr = {};
         ens.push(enr);
         numcrArr = [];

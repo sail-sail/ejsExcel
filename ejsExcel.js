@@ -234,7 +234,7 @@
     return _builder_$0.m(this,
         _builder_$0.e(function() {
             this.$caller = _caller_$0;
-            var _imgFn_, anonymous, begin, buffer2, cItem, data, end, endElement, entry, hzip, i, imgTk, imgTkArr, l, len1, len2, len3, len4, len5, len6, len7, len8, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, phoneticPr, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, reg, row, sharedStringsTmp2, sheetBuf, sheetBuf2, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, src2, startElement, str2, t, updateEntryAsync, xjOpTmp;
+            var _imgFn_, anonymous, begin, buffer2, cItem, data, end, endElement, entry, hzip, i, imgTk, imgTkArr, l, len1, len2, len3, len4, len5, len6, len7, len8, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, phoneticPr, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, row, sharedStringsTmp2, sheetBuf, sheetBuf2, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, src2, startElement, str2, t, updateEntryAsync, xjOpTmp;
             data = {
                 "_data_": _data_
             };
@@ -760,31 +760,19 @@
                                                                 begin = cItem.v["$t"].indexOf("<%");
                                                                 end = cItem.v["$t"].indexOf("%>");
                                                                 if (begin === - 1 || end === - 1) {
-                                                                    cItem.v["$t"] = "<%='" + str2Xml(cItem.v["$t"].replace(/'/gm, "\\'")) + "'%>";
-                                                                } else {
-                                                                    cItem.v["$t"] = "%>" + cItem.v["$t"] + "<%=";
-                                                                    reg = new RegExp("%>([\\s\\S]*?)<%=", "gm");
-                                                                    cItem.v["$t"] = cItem.v["$t"].replace(reg, function (strTmp) {
-                                                                        strTmp = strTmp.substring("%>".length, strTmp.length - "<%=".length);
-                                                                        strTmp = strTmp.replace(/'/gm, "\\'");
-                                                                        strTmp = str2Xml(strTmp);
-                                                                        strTmp = "%><%='" + strTmp + "'%><%=";
-                                                                        return strTmp;
-                                                                    });
-                                                                    cItem.v["$t"] = cItem.v["$t"].substring("%>".length, cItem.v["$t"].length - "<%=".length);
-                                                                    cItem.v["$t"] = cItem.v["$t"].replace(/%><%=/gm, "+");
+                                                                    cItem.v["$t"] = "<%='" + cItem.v["$t"].replace(/'/gm, "\\'") + "'%>";
                                                                 }
                                                             }
                                                         }
                                                     } else {
                                                         if (cItem.f) {
                                                             if (cItem.f["$t"] !== void 0) {
-                                                                cItem.f["$t"] = str2Xml(cItem.f["$t"]);
+                                                                cItem.f["$t"] = cItem.f["$t"];
                                                             }
                                                             delete cItem["v"];
                                                         } else {
                                                             if (cItem.v && cItem.v["$t"]) {
-                                                                cItem.v["$t"] = str2Xml(cItem.v["$t"]);
+                                                                cItem.v["$t"] = cItem.v["$t"];
                                                             }
                                                         }
                                                     }

@@ -760,19 +760,19 @@
                                                                 begin = cItem.v["$t"].indexOf("<%");
                                                                 end = cItem.v["$t"].indexOf("%>");
                                                                 if (begin === - 1 || end === - 1) {
-                                                                    cItem.v["$t"] = "<%='" + cItem.v["$t"].replace(/'/gm, "\\'") + "'%>";
+                                                                    cItem.v["$t"] = "<%='" + str2Xml(cItem.v["$t"].replace(/'/gm, "\\'")) + "'%>";
                                                                 }
                                                             }
                                                         }
                                                     } else {
                                                         if (cItem.f) {
                                                             if (cItem.f["$t"] !== void 0) {
-                                                                cItem.f["$t"] = cItem.f["$t"];
+                                                                cItem.f["$t"] = str2Xml(cItem.f["$t"]);
                                                             }
                                                             delete cItem["v"];
                                                         } else {
                                                             if (cItem.v && cItem.v["$t"]) {
-                                                                cItem.v["$t"] = cItem.v["$t"];
+                                                                cItem.v["$t"] = str2Xml(cItem.v["$t"]);
                                                             }
                                                         }
                                                     }

@@ -820,12 +820,16 @@
                                         reXmlEq = {
                                             "reXmlEq": function (pixEq, jsStr, str) {
                                                 if (pixEq === "=") {
+                                                    jsStr = jsStr.replace(/\n/gm, "\\n").replace(/\r/gm, "\\r").replace(/\t/gm, "\\t");
                                                     jsStr = "_ps_(" + jsStr + ",buf)";
                                                 } else if (pixEq === "~") {
+                                                    jsStr = jsStr.replace(/\n/gm, "\\n").replace(/\r/gm, "\\r").replace(/\t/gm, "\\t");
                                                     jsStr = "_pi_(" + jsStr + ",buf)";
                                                 } else if (pixEq === "#") {
+                                                    jsStr = jsStr.replace(/\n/gm, "\\n").replace(/\r/gm, "\\r").replace(/\t/gm, "\\t");
                                                     jsStr = "_pf_(" + jsStr + ",buf)";
                                                 } else if (pixEq === "I") {
+                                                    jsStr = jsStr.replace(/\n/gm, "\\n").replace(/\r/gm, "\\r").replace(/\t/gm, "\\t");
                                                     jsStr = "_img_(" + jsStr + ",buf)";
                                                 }
                                                 return {

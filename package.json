@@ -12,11 +12,11 @@
     	"nodejs"
     ],
     "name": "ejsexcel",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "main": "ejsExcel",
     "readme":"README.md",
     "license": "MIT",
-    "description": "通过Excel模板导出Excel",
+    "description": "nodejs通过Excel模板导出Excel",
     "repository" : {
         "type": "git",
         "url": "https://git.oschina.net/ccteams/ejsExcel.git"

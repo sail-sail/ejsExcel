@@ -133,6 +133,7 @@ var parse = exports.parse = function(str, options){
   
   var forRBegin = false;
   var forREnd = false;
+  var forRNumArr = [];
   var ifRBegin = false;
   var ifREnd = false;
   var pixEq = "";
@@ -219,6 +220,7 @@ var parse = exports.parse = function(str, options){
       else if(0 == js.indexOf('ifRBegin')) {
     	  ifRBegin = true;
     	  ifREnd = false;
+    	  forRNumArr.push(0);
     	  var jsStr = js.slice(8);
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<row r="/gm);
@@ -236,6 +238,7 @@ var parse = exports.parse = function(str, options){
       } else if(0 == js.indexOf('ifREnd')) {
     	  ifRBegin = false;
     	  ifREnd = true;
+    	  var rjsNum = forRNumArr.pop();
     	  var rjsStr = js.slice(6);
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<\/row>/gm);
@@ -244,7 +247,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<\/row>/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "</row>');_r+=Number(eval('"+rjsStr+"'));}_r-=Number(eval('"+rjsStr+"'));buf.push('";
+    			  return "</row>');_r+="+rjsNum+";}_r-="+rjsNum+";buf.push('";
     		  }
     		  return s;
     	  });
@@ -256,6 +259,7 @@ var parse = exports.parse = function(str, options){
       else if(0 == js.indexOf('forRBegin')) {
     	  forRBegin = true;
     	  forREnd = false;
+    	  forRNumArr.push(0);
     	  var uid = uniqueID();
     	  var name = js.slice(9);
     	  var nameArr = [];
@@ -294,7 +298,7 @@ var parse = exports.parse = function(str, options){
       else if(0 == js.indexOf('forREnd')) {
     	  forRBegin = false;
     	  forREnd = true;
-    	  var rjsStr = js.slice(7);
+    	  var rjsNum = forRNumArr.pop();
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<\/row>/gm);
     	  var mthLt = mthArr[mthArr.length-1];
@@ -302,7 +306,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<\/row>/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "</row>');_r+=Number(eval('"+rjsStr+"'));}_r-=Number(eval('"+rjsStr+"'));buf.push('";
+    			  return "</row>');_r+="+rjsNum+";}_r-="+rjsNum+";buf.push('";
     		  }
     		  return s;
     	  });
@@ -380,6 +384,11 @@ var parse = exports.parse = function(str, options){
     else if(str.substr(i,8) === "<row r=\"") {
     	isRowBegin = true;
   		isRowEnd = false;
+  		if(forRBegin && !forREnd) {
+  			if(forRNumArr.length !== 0) {
+  				forRNumArr[forRNumArr.length-1]++;
+  			}
+  		}
   		i += 7;
     	buf.push("<row r=\"");
     }

@@ -133,6 +133,8 @@ var parse = exports.parse = function(str, options){
   
   var forRBegin = false;
   var forREnd = false;
+  var ifRBegin = false;
+  var ifREnd = false;
   var pixEq = "";
   for (var i = 0, len = str.length; i < len; ++i) {
     if (str.slice(i, open.length + i) == open) {
@@ -213,6 +215,43 @@ var parse = exports.parse = function(str, options){
     	  buf = [strTmp];
     	  js = '';
       }
+      //sail 2015-06-24 --begin
+      else if(0 == js.indexOf('ifRBegin')) {
+    	  ifRBegin = true;
+    	  ifREnd = false;
+    	  var jsStr = js.slice(8);
+    	  var strTmp = buf.join('');
+    	  var mthArr = strTmp.match(/<row r="/gm);
+    	  var mthLt = mthArr[mthArr.length-1];
+    	  var repNum = 0;
+    	  strTmp = strTmp.replace(/<row r="/gm,function(s){
+    		  repNum++;
+    		  if(mthArr.length === repNum) {
+    			  return "');if("+jsStr+"){buf.push('"+mthLt;
+    		  }
+    		  return s;
+    	  });
+    	  buf = [strTmp];
+    	  js = '';
+      } else if(0 == js.indexOf('ifREnd')) {
+    	  ifRBegin = false;
+    	  ifREnd = true;
+    	  var rjsStr = js.slice(6);
+    	  var strTmp = buf.join('');
+    	  var mthArr = strTmp.match(/<\/row>/gm);
+    	  var mthLt = mthArr[mthArr.length-1];
+    	  var repNum = 0;
+    	  strTmp = strTmp.replace(/<\/row>/gm,function(s){
+    		  repNum++;
+    		  if(mthArr.length === repNum) {
+    			  return "</row>');_r+=Number(eval('"+rjsStr+"'));}_r-=Number(eval('"+rjsStr+"'));buf.push('";
+    		  }
+    		  return s;
+    	  });
+    	  buf = [strTmp];
+    	  js = '';
+      }
+      //sail 2015-06-24 --end
       //sail 2014-04-09 --begin
       else if(0 == js.indexOf('forRBegin')) {
     	  forRBegin = true;

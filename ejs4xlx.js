@@ -134,6 +134,9 @@ var parse = exports.parse = function(str, options){
   var forRBegin = false;
   var forREnd = false;
   var forRNumArr = [];
+  var forCBegin = false;
+  var forCEnd = false;
+  var forCNumArr = [];
   var ifRBegin = false;
   var ifREnd = false;
   var pixEq = "";
@@ -248,6 +251,99 @@ var parse = exports.parse = function(str, options){
     		  repNum++;
     		  if(mthArr.length === repNum) {
     			  return "</row>');_r+="+rjsNum+";}_r-="+rjsNum+";buf.push('";
+    		  }
+    		  return s;
+    	  });
+    	  buf = [strTmp];
+    	  js = '';
+      }
+      else if(0 == js.indexOf('ifCBegin')) {
+    	  ifCBegin = true;
+    	  ifCEnd = false;
+    	  forCNumArr.push(0);
+    	  var jsStr = js.slice(8);
+    	  var strTmp = buf.join('');
+    	  var mthArr = strTmp.match(/<c r="/gm);
+    	  var mthLt = mthArr[mthArr.length-1];
+    	  var repNum = 0;
+    	  strTmp = strTmp.replace(/<c r="/gm,function(s){
+    		  repNum++;
+    		  if(mthArr.length === repNum) {
+    			  return "');if("+jsStr+"){buf.push('"+mthLt;
+    		  }
+    		  return s;
+    	  });
+    	  buf = [strTmp];
+    	  js = '';
+      } else if(0 == js.indexOf('ifCEnd')) {
+    	  ifCBegin = false;
+    	  ifCEnd = true;
+    	  var rjsNum = forCNumArr.pop();
+    	  var rjsStr = js.slice(6);
+    	  var strTmp = buf.join('');
+    	  var mthArr = strTmp.match(/<\/c>/gm);
+    	  var mthLt = mthArr[mthArr.length-1];
+    	  var repNum = 0;
+    	  strTmp = strTmp.replace(/<\/c>/gm,function(s){
+    		  repNum++;
+    		  if(mthArr.length === repNum) {
+    			  return "</c>');_c+="+rjsNum+";}_c-="+rjsNum+";buf.push('";
+    		  }
+    		  return s;
+    	  });
+    	  buf = [strTmp];
+    	  js = '';
+      }
+      else if(0 == js.indexOf('forCBegin')) {
+    	  forCBegin = true;
+    	  forCEnd = false;
+    	  forCNumArr.push(1);
+    	  var uid = uniqueID();
+    	  var name = js.slice(9);
+    	  nameArr[0] = name.substring(0,name.indexOf(" in "));
+    	  //var nameArr = name.split(" in ");
+    	  nameArr[1] = name.substring(name.indexOf(" in ")+4);
+    	  var pixJs = "";
+    	  if(nameArr[1].indexOf("|||") !== -1) {
+    		  pixJs = nameArr[1].substring(nameArr[1].indexOf("|||")+3);
+    		  nameArr[1] = nameArr[1].substring(0,nameArr[1].indexOf("|||"));
+    	  }
+    	  var itemName = nameArr[0].trim();
+    	  var iName = "";
+    	  if(itemName.indexOf(",") !== -1) {
+    		  var tmpArr = itemName.split(",");
+    		  itemName = tmpArr[0].trim();
+    		  if(tmpArr[1].trim() !== "") {
+    			  iName = "var "+tmpArr[1].trim()+"=I_c"+uid+";";
+    		  }
+    	  }
+    	  var arrName = nameArr[1].trim();
+    	  var strTmp = buf.join('');
+    	  var mthArr = strTmp.match(/<c r="/gm);
+    	  var mthLt = mthArr[mthArr.length-1];
+    	  var repNum = 0;
+    	  strTmp = strTmp.replace(/<c r="/gm,function(s){
+    		  repNum++;
+    		  if(mthArr.length === repNum) {
+    			  return "');var I_cLen"+uid+"="+arrName+";if(Array.isArray("+arrName+")){I_cLen"+uid+"=("+arrName+").length;};for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push('"+mthLt;
+    		  }
+    		  return s;
+    	  });
+    	  buf = [strTmp];
+    	  js = '';
+    	  
+      } else if(0 == js.indexOf('forCEnd')) {
+    	  forCBegin = false;
+    	  forCEnd = true;
+    	  var rjsNum = forCNumArr.pop();
+    	  var strTmp = buf.join('');
+    	  var mthArr = strTmp.match(/<\/c>/gm);
+    	  var mthLt = mthArr[mthArr.length-1];
+    	  var repNum = 0;
+    	  strTmp = strTmp.replace(/<\/c>/gm,function(s){
+    		  repNum++;
+    		  if(mthArr.length === repNum) {
+    			  return "</c>');_c+="+rjsNum+";}_c-="+rjsNum+";buf.push('";
     		  }
     		  return s;
     	  });
@@ -384,6 +480,7 @@ var parse = exports.parse = function(str, options){
     else if(str.substr(i,8) === "<row r=\"") {
     	isRowBegin = true;
   		isRowEnd = false;
+  		forCNumArr = []
   		if(forRBegin && !forREnd) {
   			if(forRNumArr.length !== 0) {
   				forRNumArr[forRNumArr.length-1]++;
@@ -413,6 +510,11 @@ var parse = exports.parse = function(str, options){
     else if(str.substr(i,6) === "<c r=\"") {
     	isCbegin = true;
     	isCEnd = false;
+    	if(forCBegin && !forCEnd) {
+  			if(forCNumArr.length !== 0) {
+  				forCNumArr[forCNumArr.length-1]++;
+  			}
+  		}
     	i += 5;
     	buf.push("<c r=\"");
     }

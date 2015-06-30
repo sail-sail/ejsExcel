@@ -29,6 +29,16 @@ var UID = Date.now()
 var uniqueID = function() {
 	return (UID++).toString(36);
 }
+var charToNum = function(str) {
+  var code, i, l, num, ref;
+  str = new String(str);
+  num = 0;
+  for (i = l = 0, ref = str.length; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
+    code = str.charCodeAt(i);
+    num += code - 65 + (str.length - 1 - i) * 26;
+  }
+  return num;
+};
 
 /**
  * Filters.
@@ -139,6 +149,8 @@ var parse = exports.parse = function(str, options){
   var forCNumArr = [];
   var ifRBegin = false;
   var ifREnd = false;
+  var ifCBegin = false;
+  var ifCEnd = false;
   var pixEq = "";
   for (var i = 0, len = str.length; i < len; ++i) {
     if (str.slice(i, open.length + i) == open) {
@@ -223,7 +235,7 @@ var parse = exports.parse = function(str, options){
       else if(0 == js.indexOf('ifRBegin')) {
     	  ifRBegin = true;
     	  ifREnd = false;
-    	  forRNumArr.push(0);
+    	  forRNumArr.push(rowRn);
     	  var jsStr = js.slice(8);
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<row r="/gm);
@@ -241,7 +253,8 @@ var parse = exports.parse = function(str, options){
       } else if(0 == js.indexOf('ifREnd')) {
     	  ifRBegin = false;
     	  ifREnd = true;
-    	  var rjsNum = forRNumArr.pop();
+    	  if(forRNumArr.length === 0) throw new Error("ifREnd must begin with ifRBegin");
+    	  var rjsNum = rowRn-forRNumArr.pop();
     	  var rjsStr = js.slice(6);
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<\/row>/gm);
@@ -260,7 +273,7 @@ var parse = exports.parse = function(str, options){
       else if(0 == js.indexOf('ifCBegin')) {
     	  ifCBegin = true;
     	  ifCEnd = false;
-    	  forCNumArr.push(0);
+    	  forCNumArr.push(cellRn);
     	  var jsStr = js.slice(8);
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<c r="/gm);
@@ -278,7 +291,8 @@ var parse = exports.parse = function(str, options){
       } else if(0 == js.indexOf('ifCEnd')) {
     	  ifCBegin = false;
     	  ifCEnd = true;
-    	  var rjsNum = forCNumArr.pop();
+    	  if(forCNumArr.length === 0) throw new Error("ifCEnd must be begin with ifCBegin");
+    	  var rjsNum = charToNum(cellRn)-charToNum(forCNumArr.pop());
     	  var rjsStr = js.slice(6);
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<\/c>/gm);
@@ -297,7 +311,7 @@ var parse = exports.parse = function(str, options){
       else if(0 == js.indexOf('forCBegin')) {
     	  forCBegin = true;
     	  forCEnd = false;
-    	  forCNumArr.push(1);
+    	  forCNumArr.push(cellRn);
     	  var uid = uniqueID();
     	  var name = js.slice(9);
     	  nameArr[0] = name.substring(0,name.indexOf(" in "));
@@ -335,7 +349,8 @@ var parse = exports.parse = function(str, options){
       } else if(0 == js.indexOf('forCEnd')) {
     	  forCBegin = false;
     	  forCEnd = true;
-    	  var rjsNum = forCNumArr.pop();
+    	  if(forCNumArr.length === 0) throw new Error("forCEnd must be begin with forCBegin");
+    	  var rjsNum = charToNum(cellRn)-charToNum(forCNumArr.pop());
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<\/c>/gm);
     	  var mthLt = mthArr[mthArr.length-1];
@@ -355,7 +370,7 @@ var parse = exports.parse = function(str, options){
       else if(0 == js.indexOf('forRBegin')) {
     	  forRBegin = true;
     	  forREnd = false;
-    	  forRNumArr.push(0);
+    	  forRNumArr.push(rowRn);
     	  var uid = uniqueID();
     	  var name = js.slice(9);
     	  var nameArr = [];
@@ -394,7 +409,8 @@ var parse = exports.parse = function(str, options){
       else if(0 == js.indexOf('forREnd')) {
     	  forRBegin = false;
     	  forREnd = true;
-    	  var rjsNum = forRNumArr.pop();
+    	  if(forRNumArr.length === 0) throw new Error("forREnd must begin with forRBegin");
+    	  var rjsNum = rowRn-forRNumArr.pop();
     	  var strTmp = buf.join('');
     	  var mthArr = strTmp.match(/<\/row>/gm);
     	  var mthLt = mthArr[mthArr.length-1];
@@ -481,11 +497,6 @@ var parse = exports.parse = function(str, options){
     	isRowBegin = true;
   		isRowEnd = false;
   		forCNumArr = []
-  		if(forRBegin && !forREnd) {
-  			if(forRNumArr.length !== 0) {
-  				forRNumArr[forRNumArr.length-1]++;
-  			}
-  		}
   		i += 7;
     	buf.push("<row r=\"");
     }
@@ -510,11 +521,6 @@ var parse = exports.parse = function(str, options){
     else if(str.substr(i,6) === "<c r=\"") {
     	isCbegin = true;
     	isCEnd = false;
-    	if(forCBegin && !forCEnd) {
-  			if(forCNumArr.length !== 0) {
-  				forCNumArr[forCNumArr.length-1]++;
-  			}
-  		}
     	i += 5;
     	buf.push("<c r=\"");
     }

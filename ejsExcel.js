@@ -368,16 +368,30 @@
                                 return _builder_$1.g("");
                             }
                             if (! Buffer.isBuffer(imgPh) && ! isString(imgPh)) {
-                                return _builder_$1.k("<%_img_(imgPh)%> imgPh must be buffer or string!");
+                                return _builder_$1.g("");
                             }
                             return _builder_$1.f(
                                 _builder_$1.e(function() {
                                     if (isString(imgPh)) {
-                                        return _builder_$1.n(readFileAsync(imgPh), function (_result_$) {
-                                            imgBuf = _result_$;
-                                            imgBaseName = path.basename(imgPh);
-                                            return _builder_$1.h();
-                                        });
+                                        return _builder_$1.f(
+                                            _builder_$1.l(
+                                                _builder_$1.e(function() {
+                                                    return _builder_$1.n(readFileAsync(imgPh), function (_result_$) {
+                                                        imgBuf = _result_$;
+                                                        return _builder_$1.h();
+                                                    });
+                                                }),
+                                                function (_error) {
+                                                    err = _error;
+                                                    return _builder_$1.g("");
+                                                },
+                                                null
+                                            ),
+                                            _builder_$1.e(function() {
+                                                imgBaseName = path.basename(imgPh);
+                                                return _builder_$1.h();
+                                            })
+                                        );
                                     } else {
                                         imgBuf = imgPh;
                                         return _builder_$1.h();

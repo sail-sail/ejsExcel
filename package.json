@@ -12,7 +12,7 @@
     	"nodejs"
     ],
     "name": "ejsexcel",
-    "version": "1.6.4",
+    "version": "1.6.5",
     "main": "ejsExcel",
     "readme":"README.md",
     "license": "MIT",

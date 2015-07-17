@@ -1291,7 +1291,7 @@
     str2 = "";
     i = 0;
     while (true) {
-      str = String.fromCharCode(strNum % 26 + 65) + str2;
+      str2 = String.fromCharCode(strNum % 26 + 65) + str2;
       strNum = Math.floor(strNum / 26);
       if (strNum === 0) {
         break;

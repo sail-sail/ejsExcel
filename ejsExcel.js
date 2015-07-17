@@ -1277,27 +1277,27 @@
   };
 
   charPlus = function(str, num) {
-    var arr, i, tmpAdd, tmpNum;
-    if (num === 0 || str === "") {
-      return str;
+    var code, i, l, ref, str2, strNum;
+    str = new String(str);
+    strNum = 0;
+    for (i = l = 0, ref = str.length; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
+      code = str.charCodeAt(i);
+      strNum += code - 65 + (str.length - 1 - i) * 26;
     }
-    arr = str.split("");
-    i = arr.length - 1;
-    tmpAdd = num;
+    strNum += num;
+    if (strNum < 0) {
+      return "A";
+    }
+    str2 = "";
+    i = 0;
     while (true) {
-      if (i === -1) {
-        arr.unshift(String.fromCharCode(64));
-        i = 0;
-      }
-      tmpNum = arr[i].charCodeAt(0) - 65 + tmpAdd;
-      arr[i] = String.fromCharCode(tmpNum % 26 + 65);
-      tmpAdd = Math.floor(tmpNum / 26);
-      if (tmpAdd === 0) {
+      str2 += String.fromCharCode(strNum % 26 + 65);
+      strNum = Math.floor(strNum / 26);
+      if (strNum === 0) {
         break;
       }
-      i--;
     }
-    return arr.join("");
+    return str2;
   };
 
   charToNum = function(str) {

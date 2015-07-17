@@ -314,6 +314,7 @@ var parse = exports.parse = function(str, options){
     	  forCNumArr.push(cellRn);
     	  var uid = uniqueID();
     	  var name = js.slice(9);
+    	  var nameArr = [];
     	  nameArr[0] = name.substring(0,name.indexOf(" in "));
     	  //var nameArr = name.split(" in ");
     	  nameArr[1] = name.substring(name.indexOf(" in ")+4);

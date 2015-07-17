@@ -1277,7 +1277,7 @@
   };
 
   charPlus = function(str, num) {
-    var code, i, l, ref, str2, strNum;
+    var ch, code, i, l, ref, strNum, temp;
     str = new String(str);
     strNum = 0;
     for (i = l = 0, ref = str.length; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
@@ -1288,16 +1288,22 @@
     if (strNum < 0) {
       return "A";
     }
-    str2 = "";
-    i = 0;
-    while (true) {
-      str2 = String.fromCharCode(strNum % 26 + 65) + str2;
-      strNum = Math.floor(strNum / 26);
-      if (strNum === 0) {
-        break;
+    strNum++;
+    temp = "";
+    ch = "";
+    while (strNum >= 1) {
+      i = strNum % 26;
+      if (i !== 0) {
+        ch = String.fromCharCode(65 + i - 1);
+        temp = ch + temp;
+      } else {
+        ch = "Z";
+        temp = ch + temp;
+        strNum--;
       }
+      strNum = Math.floor(strNum / 26);
     }
-    return str2;
+    return temp;
   };
 
   charToNum = function(str) {

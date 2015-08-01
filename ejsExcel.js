@@ -753,7 +753,7 @@
                                                                 begin = cItem.v["$t"].indexOf("<%");
                                                                 end = cItem.v["$t"].indexOf("%>");
                                                                 if (begin === - 1 || end === - 1) {
-                                                                    cItem.v["$t"] = "<%='" + str2Xml(cItem.v["$t"].replace(/'/gm, "\\'")) + "'%>";
+                                                                    cItem.v["$t"] = "<%='" + cItem.v["$t"].replace(/'/gm, "\\'") + "'%>";
                                                                 }
                                                             }
                                                         }

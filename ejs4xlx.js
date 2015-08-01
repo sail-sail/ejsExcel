@@ -17,9 +17,9 @@ var extname = path.extname;
 var join = path.join;
 
 var isType = function(type) {
-  return function(obj) {
-  return Object.prototype.toString.call(obj) === "[object " + type + "]";
-    };
+	return function(obj) {
+		return Object.prototype.toString.call(obj) === "[object " + type + "]";
+	};
 };
 var isObject = isType("Object");
 var isString = isType("String");
@@ -30,14 +30,16 @@ var uniqueID = function() {
 	return (UID++).toString(36);
 }
 var charToNum = function(str) {
-  var code, i, l, num, ref;
+  var i, j, len, m, ref, temp, val;
   str = new String(str);
-  num = 0;
-  for (i = l = 0, ref = str.length; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
-    code = str.charCodeAt(i);
-    num += code - 65 + (str.length - 1 - i) * 26;
+  val = 0;
+  len = str.length;
+  for (j = m = 0, ref = len; 0 <= ref ? m < ref : m > ref; j = 0 <= ref ? ++m : --m) {
+    i = len - 1 - j;
+    temp = str.charCodeAt(i) - 65 + 1;
+    val += temp * Math.pow(26, j);
   }
-  return num;
+  return val;
 };
 
 /**

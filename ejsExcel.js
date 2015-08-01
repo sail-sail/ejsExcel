@@ -1,26 +1,5 @@
 (function() {
-  var Binding, Hzip, Task, Wind, charPlus, charToNum, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelArrCb, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, l, len1, passVer, path, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2, sheetEntrieRel2, sheetSufStr, str, str2Xml, verArr, versionArr, xjOp, xml2json, zlib;
-
-  versionArr = ["v0.10.", "v0.12."];
-
-  passVer = false;
-
-  for (l = 0, len1 = versionArr.length; l < len1; l++) {
-    str = versionArr[l];
-    if (process.version.indexOf(str) === 0) {
-      passVer = true;
-    }
-  }
-
-  if (!passVer) {
-    throw new Error("nodejs now version " + process.version + " must be " + versionArr.join("x ") + "x");
-  }
-
-  verArr = process.version.split(".");
-
-  require.extensions['.node_' + verArr[0] + verArr[1] + "_" + process.platform + "_" + process.arch] = function(module, filename) {
-    return require.extensions['.node'](module, filename);
-  };
+  var Binding, Hzip, Task, Wind, charPlus, charToNum, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelArrCb, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2, sheetEntrieRel2, sheetSufStr, str2Xml, xjOp, xml2json, zlib;
 
   isType = function(type) {
     return function(obj) {
@@ -119,7 +98,7 @@
     return _builder_$0.m(this,
         _builder_$0.e(function() {
             this.$caller = _caller_$0;
-            var anonymous, buffer2, data, entries, flt, len2, m, src, updateEntryAsync;
+            var anonymous, buffer2, data, entries, flt, l, len1, src, str, updateEntryAsync;
             if (hzip === void 0 || hzip === null) {
                 hzip = new Hzip(buffer);
             }
@@ -146,14 +125,14 @@
             };
             return _builder_$0.f(
                 _builder_$0.e(function() {
-                    (m = 0, len2 = filter.length)
+                    (l = 0, len1 = filter.length)
                     return _builder_$0.a(function() {
-                        return m < len2;
+                        return l < len1;
                     }, function() {
-                        m ++;
+                        l ++;
                     },
                         _builder_$0.e(function() {
-                            flt = filter[m];
+                            flt = filter[l];
                             return _builder_$0.f(
                                 _builder_$0.e(function() {
                                     if (! flt.notEjs) {
@@ -234,7 +213,7 @@
     return _builder_$0.m(this,
         _builder_$0.e(function() {
             this.$caller = _caller_$0;
-            var _imgFn_, anonymous, begin, buffer2, cItem, data, end, endElement, entry, hzip, i, imgTk, imgTkArr, len2, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, phoneticPr, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, row, sharedStringsTmp2, sheetBuf, sheetBuf2, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, src2, startElement, str2, t, u, updateEntryAsync, xjOpTmp;
+            var _imgFn_, anonymous, begin, buffer2, cItem, data, end, endElement, entry, hzip, i, imgTk, imgTkArr, l, len1, len2, len3, len4, len5, len6, len7, len8, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, phoneticPr, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, row, sharedStringsTmp2, sheetBuf, sheetBuf2, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, src2, startElement, str2, t, updateEntryAsync, xjOpTmp;
             data = {
                 "_data_": _data_
             };
@@ -245,9 +224,9 @@
                 "sharedStrings": []
             };
             data._ps_ = function (str, buf) {
-                var arr, i, index, m, ref, val;
+                var arr, i, index, l, ref, val;
                 if (str === "") {
-                    for (i = m = ref = buf.length - 1; (ref <= - 1) ? (m < - 1) : (m > - 1); i = (ref <= - 1) ? (++ m) : (-- m)) {
+                    for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {
                         if (/<v>/gm.test(buf[i])) {
                             buf[i] = replaceLast(buf[i], /<v>/gm, "");
                             buf[i] = replaceLast(buf[i], /\s+t="s"/gm, "");
@@ -276,15 +255,15 @@
                 return index;
             };
             data._pf_ = function (str, buf) {
-                var i, m, n, ref, ref2;
+                var i, l, m, ref, ref2;
                 str = str2Xml(str);
-                for (i = m = ref = buf.length - 1; (ref <= - 1) ? (m < - 1) : (m > - 1); i = (ref <= - 1) ? (++ m) : (-- m)) {
+                for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {
                     if (/<v>/gm.test(buf[i]) === true) {
                         buf[i] = replaceLast(buf[i], /<v>/gm, "<f>");
                         break;
                     }
                 }
-                for (i = n = ref2 = buf.length - 1; (ref2 <= - 1) ? (n < - 1) : (n > - 1); i = (ref2 <= - 1) ? (++ n) : (-- n)) {
+                for (i = m = ref2 = buf.length - 1; (ref2 <= - 1) ? (m < - 1) : (m > - 1); i = (ref2 <= - 1) ? (++ m) : (-- m)) {
                     if (/\s+t="s"/gm.test(buf[i]) === true) {
                         buf[i] = replaceLast(buf[i], /\s+t="s"/gm, "");
                         break;
@@ -302,12 +281,12 @@
                 return str;
             };
             data._pi_ = function (str, buf) {
-                var i, m, ref;
+                var i, l, ref;
                 if (isNaN(Number(str))) {
                     return data._ps_(str, buf);
                 }
                 str = str2Xml(str);
-                for (i = m = ref = buf.length - 1; (ref <= - 1) ? (m < - 1) : (m > - 1); i = (ref <= - 1) ? (++ m) : (-- m)) {
+                for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {
                     if (/\s+t="s"/gm.test(buf[i]) === true) {
                         buf[i] = replaceLast(buf[i], /\s+t="s"/gm, "");
                         break;
@@ -324,8 +303,8 @@
                 sheetEntries = [];
                 sheetEntrieRels = [];
                 ref = hzip.entries;
-                for ((m = 0, len2 = ref.length); m < len2; m ++) {
-                    entry = ref[m];
+                for ((l = 0, len1 = ref.length); l < len1; l ++) {
+                    entry = ref[l];
                     if (entry.fileName.indexOf("xl/worksheets/sheet") === 0) {
                         sheetEntries.push(entry);
                     } else if (entry.fileName.indexOf("xl/worksheets/_rels/") === 0) {
@@ -345,7 +324,7 @@
                     return _builder_$1.m(this,
                         _builder_$1.e(function() {
                             this.$caller = _caller_$0;
-                            var cfileName, drawingBuf, drawingObj, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, eny, hashMd5, imgBaseName, imgBuf, imgPh, itHs, len3, len4, len5, len6, md5Str, n, o, p, q, ref2, ref3, ref4, ref5, sei, xdr_frt;
+                            var cfileName, drawingBuf, drawingObj, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, eny, hashMd5, imgBaseName, imgBuf, imgPh, itHs, len2, len3, len4, len5, m, md5Str, n, o, p, ref2, ref3, ref4, ref5, sei, xdr_frt;
                             if (isString(imgOpt) || Buffer.isBuffer(imgOpt)) {
                                 imgOpt = {
                                     "imgPh": imgOpt
@@ -407,8 +386,8 @@
                                     cfileName = "xl/media/" + md5Str + ".png";
                                     itHs = false;
                                     ref2 = hzip.entries;
-                                    for ((n = 0, len3 = ref2.length); n < len3; n ++) {
-                                        entryTmp = ref2[n];
+                                    for ((m = 0, len2 = ref2.length); m < len2; m ++) {
+                                        entryTmp = ref2[m];
                                         if (entryTmp.fileName === cfileName) {
                                             itHs = true;
                                             break;
@@ -431,14 +410,14 @@
                                             ref3 = hzip.entries;
                                             return _builder_$1.f(
                                                 _builder_$1.e(function() {
-                                                    (o = 0, len4 = ref3.length)
+                                                    (n = 0, len3 = ref3.length)
                                                     return _builder_$1.a(function() {
-                                                        return o < len4;
+                                                        return n < len3;
                                                     }, function() {
-                                                        o ++;
+                                                        n ++;
                                                     },
                                                         _builder_$1.e(function() {
-                                                            entryImgTmp = ref3[o];
+                                                            entryImgTmp = ref3[n];
                                                             if (entryImgTmp.fileName === "xl/drawings/_rels/drawing" + (sei + 1) + ".xml.rels") {
                                                                 return _builder_$1.n(inflateRawAsync(entryImgTmp.cfile), function (_result_$) {
                                                                     drawingRelBuf = _result_$;
@@ -463,8 +442,8 @@
                                                     }
                                                     itHs = false;
                                                     ref4 = drawingRelObj["Relationships"]["Relationship"];
-                                                    for ((p = 0, len5 = ref4.length); p < len5; p ++) {
-                                                        eny = ref4[p];
+                                                    for ((o = 0, len4 = ref4.length); o < len4; o ++) {
+                                                        eny = ref4[o];
                                                         if (md5Str === eny["Id"]) {
                                                             itHs = true;
                                                             break;
@@ -485,14 +464,14 @@
                                                         ref5 = hzip.entries;
                                                         return _builder_$1.f(
                                                             _builder_$1.e(function() {
-                                                                (q = 0, len6 = ref5.length)
+                                                                (p = 0, len5 = ref5.length)
                                                                 return _builder_$1.a(function() {
-                                                                    return q < len6;
+                                                                    return p < len5;
                                                                 }, function() {
-                                                                    q ++;
+                                                                    p ++;
                                                                 },
                                                                     _builder_$1.e(function() {
-                                                                        entryImgTmp = ref5[q];
+                                                                        entryImgTmp = ref5[p];
                                                                         if (entryImgTmp.fileName === "xl/drawings/drawing" + (sei + 1) + ".xml") {
                                                                             return _builder_$1.n(inflateRawAsync(entryImgTmp.cfile), function (_result_$) {
                                                                                 drawingBuf = _result_$;
@@ -659,11 +638,11 @@
                     shsObj = xml2json.toJson(shsStr);
                     return _builder_$0.f(
                         _builder_$0.e(function() {
-                            (i = n = 0, len3 = sheetEntries.length)
+                            (i = m = 0, len2 = sheetEntries.length)
                             return _builder_$0.a(function() {
-                                return n < len3;
+                                return m < len2;
                             }, function() {
-                                i = ++ n;
+                                i = ++ m;
                             },
                                 _builder_$0.e(function() {
                                     entry = sheetEntries[i];
@@ -728,8 +707,8 @@
                                             }
                                         }
                                         ref2 = sheetObj.worksheet.sheetData.row;
-                                        for ((o = 0, len4 = ref2.length); o < len4; o ++) {
-                                            row = ref2[o];
+                                        for ((n = 0, len3 = ref2.length); n < len3; n ++) {
+                                            row = ref2[n];
                                             if (row.c !== void 0) {
                                                 if (! row.c) {
                                                     row.c = [];
@@ -737,8 +716,8 @@
                                                     row.c = [row.c];
                                                 }
                                                 ref3 = row.c;
-                                                for ((p = 0, len5 = ref3.length); p < len5; p ++) {
-                                                    cItem = ref3[p];
+                                                for ((o = 0, len4 = ref3.length); o < len4; o ++) {
+                                                    cItem = ref3[o];
                                                     if (cItem.t === "s" && cItem.v && ! isNaN(Number(cItem.v["$t"])) && ! cItem.f) {
                                                         if (! shsObj.sst.si) {
                                                             shsObj.sst.si = [];
@@ -759,8 +738,8 @@
                                                                 si.r = [si.r];
                                                             }
                                                             ref4 = si.r;
-                                                            for ((q = 0, len6 = ref4.length); q < len6; q ++) {
-                                                                sirTp = ref4[q];
+                                                            for ((p = 0, len5 = ref4.length); p < len5; p ++) {
+                                                                sirTp = ref4[p];
                                                                 if (sirTp.t) {
                                                                     si2.t["$t"] += sirTp.t["$t"];
                                                                 }
@@ -793,7 +772,7 @@
                                                     if (sheetObj.worksheet.mergeCells !== void 0 && sheetObj.worksheet.mergeCells.mergeCell !== void 0) {
                                                         mciNumArr = [];
                                                         ref5 = sheetObj.worksheet.mergeCells.mergeCell;
-                                                        for ((m_c_i = r = 0, len7 = ref5.length); r < len7; m_c_i = ++ r) {
+                                                        for ((m_c_i = q = 0, len6 = ref5.length); q < len6; m_c_i = ++ q) {
                                                             mergeCell = ref5[m_c_i];
                                                             if (mergeCell.ref !== void 0) {
                                                                 refArr = mergeCell.ref.split(":");
@@ -815,8 +794,8 @@
                                                                 }
                                                             }
                                                         }
-                                                        for ((t = 0, len8 = mciNumArr.length); t < len8; t ++) {
-                                                            mciNum = mciNumArr[t];
+                                                        for ((r = 0, len7 = mciNumArr.length); r < len7; r ++) {
+                                                            mciNum = mciNumArr[r];
                                                             sheetObj.worksheet.mergeCells.mergeCell.splice(mciNum, 1);
                                                         }
                                                     }
@@ -866,14 +845,14 @@
                                         src2 = anonymous.call(this, data);
                                         buffer2 = new Buffer(src2);
                                         return _builder_$0.n(updateEntryAsync.apply(hzip, [entry.fileName, buffer2]), function () {
-                                            (u = 0, len9 = imgTkArr.length)
+                                            (t = 0, len8 = imgTkArr.length)
                                             return _builder_$0.a(function() {
-                                                return u < len9;
+                                                return t < len8;
                                             }, function() {
-                                                u ++;
+                                                t ++;
                                             },
                                                 _builder_$0.e(function() {
-                                                    imgTk = imgTkArr[u];
+                                                    imgTk = imgTkArr[t];
                                                     return _builder_$0.n(imgTk, function () {
                                                         return _builder_$0.h();
                                                     });
@@ -910,7 +889,7 @@
     return _builder_$0.m(this,
         _builder_$0.e(function() {
             this.$caller = _caller_$0;
-            var buffer, config, configPath, exists, exlBuf, extname, filter, ftObj, key, len2, m, obj, val;
+            var buffer, config, configPath, exists, exlBuf, extname, filter, ftObj, key, l, len1, obj, val;
             configPath = ejsDir + "/config.json";
             return _builder_$0.n(existsAsync(configPath), function (_result_$) {
                 exists = _result_$;
@@ -938,14 +917,14 @@
                             filter = [];
                             return _builder_$0.f(
                                 _builder_$0.e(function() {
-                                    (m = 0, len2 = config.length)
+                                    (l = 0, len1 = config.length)
                                     return _builder_$0.a(function() {
-                                        return m < len2;
+                                        return l < len1;
                                     }, function() {
-                                        m ++;
+                                        l ++;
                                     },
                                         _builder_$0.e(function() {
-                                            obj = config[m];
+                                            obj = config[l];
                                             key = obj.key;
                                             val = obj.value;
                                             if (key === void 0 || key === null) {
@@ -1013,21 +992,21 @@
     return _builder_$0.m(this,
         _builder_$0.e(function() {
             this.$caller = _caller_$0;
-            var buf, cEle, crStr, cs, enr, ens, entries, entry, fileName, hzip, i, len2, len3, len4, len5, m, n, numcr, numcrArr, o, p, q, ref, ref2, row, sharedJson, sharedStr, sheet, sheetArr, sheetStr, sheets, sheetsEns, sir, vStr, vStr2;
+            var buf, cEle, crStr, cs, enr, ens, entries, entry, fileName, hzip, i, l, len1, len2, len3, len4, m, n, numcr, numcrArr, o, p, ref, ref2, row, sharedJson, sharedStr, sheet, sheetArr, sheetStr, sheets, sheetsEns, sir, vStr, vStr2;
             sharedStr = null;
             sheets = [];
             hzip = new Hzip(buffer);
             entries = hzip.entries;
             return _builder_$0.f(
                 _builder_$0.e(function() {
-                    (m = 0, len2 = entries.length)
+                    (l = 0, len1 = entries.length)
                     return _builder_$0.a(function() {
-                        return m < len2;
+                        return l < len1;
                     }, function() {
-                        m ++;
+                        l ++;
                     },
                         _builder_$0.e(function() {
-                            entry = entries[m];
+                            entry = entries[l];
                             fileName = entry.fileName;
                             if (fileName === "xl/sharedStrings.xml" || /xl\/worksheets\/sheet\d+\.xml/gm.test(fileName)) {
                                 return _builder_$0.n(inflateRawAsync(entry.cfile), function (_result_$) {
@@ -1049,8 +1028,8 @@
                     sheetsEns = [];
                     sharedJson = xml2json.toJson(sharedStr);
                     sheetArr = [];
-                    for ((n = 0, len3 = sheets.length); n < len3; n ++) {
-                        sheetStr = sheets[n];
+                    for ((m = 0, len2 = sheets.length); m < len2; m ++) {
+                        sheetStr = sheets[m];
                         ens = [];
                         sheet = xml2json.toJson(sheetStr);
                         if (sheet.worksheet.sheetData.row === void 0) {
@@ -1059,7 +1038,7 @@
                         if (! isArray(sheet.worksheet.sheetData.row)) {
                             sheet.worksheet.sheetData.row = [sheet.worksheet.sheetData.row];
                         }
-                        for ((i = o = 0, ref = sheet.worksheet.sheetData.row.length); (0 <= ref) ? (o < ref) : (o > ref); i = (0 <= ref) ? (++ o) : (-- o)) {
+                        for ((i = n = 0, ref = sheet.worksheet.sheetData.row.length); (0 <= ref) ? (n < ref) : (n > ref); i = (0 <= ref) ? (++ n) : (-- n)) {
                             row = sheet.worksheet.sheetData.row[i];
                             if (! row.c) {
                                 continue;
@@ -1071,8 +1050,8 @@
                             enr = [];
                             ens[parseInt(row.r) - 1] = enr;
                             numcrArr = [];
-                            for ((p = 0, len4 = cs.length); p < len4; p ++) {
-                                cEle = cs[p];
+                            for ((o = 0, len3 = cs.length); o < len3; o ++) {
+                                cEle = cs[o];
                                 crStr = cEle.r;
                                 crStr = crStr.replace(row.r, "");
                                 numcr = charToNum(crStr);
@@ -1092,8 +1071,8 @@
                                             sharedJson.sst.si[vStr].r = [sharedJson.sst.si[vStr].r];
                                         }
                                         ref2 = sharedJson.sst.si[vStr].r;
-                                        for ((q = 0, len5 = ref2.length); q < len5; q ++) {
-                                            sir = ref2[q];
+                                        for ((p = 0, len4 = ref2.length); p < len4; p ++) {
+                                            sir = ref2[p];
                                             if (sir.t === void 0 || sir.t["$t"] === void 0) {
                                                 continue;
                                             }
@@ -1115,7 +1094,7 @@
 });
 
   getExcelEns = function(sharedStr, sheets) {
-    var cEle, cont, crStr, cs, enr, ens, headsArr, i, k, len2, len3, len4, len5, m, n, numcr, numcrArr, o, p, q, r, ref, ref2, ref3, ref4, row, sharedJson, sheet, sheetHeadsArr, sheetStr, sheetsEns, sir, vStr, vStr2;
+    var cEle, cont, crStr, cs, enr, ens, headsArr, i, k, l, len1, len2, len3, len4, m, n, numcr, numcrArr, o, p, q, ref, ref2, ref3, ref4, row, sharedJson, sheet, sheetHeadsArr, sheetStr, sheetsEns, sir, vStr, vStr2;
     sheetsEns = [];
 
     /*
@@ -1138,8 +1117,8 @@
       sharedJson = sharedStr;
     }
     sheetHeadsArr = [];
-    for (m = 0, len2 = sheets.length; m < len2; m++) {
-      sheetStr = sheets[m];
+    for (l = 0, len1 = sheets.length; l < len1; l++) {
+      sheetStr = sheets[l];
       ens = [];
       if (isString(sheetStr) || Buffer.isBuffer(sheetStr)) {
         sheet = xml2json.toJson(sheetStr);
@@ -1158,8 +1137,8 @@
         sheet.worksheet.sheetData.row[1].c = [sheet.worksheet.sheetData.row[1].c];
       }
       ref = sheet.worksheet.sheetData.row[1].c;
-      for (n = 0, len3 = ref.length; n < len3; n++) {
-        cEle = ref[n];
+      for (m = 0, len2 = ref.length; m < len2; m++) {
+        cEle = ref[m];
         crStr = cEle.r.toString();
         crStr = crStr.replace("2", "");
         if (cEle.v === void 0) {
@@ -1172,7 +1151,7 @@
         numcr = charToNum(crStr);
         headsArr[numcr] = vStr;
       }
-      for (i = o = 2, ref2 = sheet.worksheet.sheetData.row.length; 2 <= ref2 ? o < ref2 : o > ref2; i = 2 <= ref2 ? ++o : --o) {
+      for (i = n = 2, ref2 = sheet.worksheet.sheetData.row.length; 2 <= ref2 ? n < ref2 : n > ref2; i = 2 <= ref2 ? ++n : --n) {
         row = sheet.worksheet.sheetData.row[i];
         cs = row.c;
         if (cs === void 0 || cs === null) {
@@ -1183,8 +1162,8 @@
         enr = {};
         ens.push(enr);
         numcrArr = [];
-        for (p = 0, len4 = cs.length; p < len4; p++) {
-          cEle = cs[p];
+        for (o = 0, len3 = cs.length; o < len3; o++) {
+          cEle = cs[o];
           crStr = cEle.r;
           crStr = crStr.replace(row.r, "");
           numcr = charToNum(crStr);
@@ -1204,8 +1183,8 @@
                 sharedJson.sst.si[vStr].r = [sharedJson.sst.si[vStr].r];
               }
               ref3 = sharedJson.sst.si[vStr].r;
-              for (q = 0, len5 = ref3.length; q < len5; q++) {
-                sir = ref3[q];
+              for (p = 0, len4 = ref3.length; p < len4; p++) {
+                sir = ref3[p];
                 if (sir.t === void 0 || sir.t["$t"] === void 0) {
                   continue;
                 }
@@ -1222,7 +1201,7 @@
             enr[cont] = vStr;
           }
         }
-        for (k = r = 0, ref4 = headsArr.length; 0 <= ref4 ? r < ref4 : r > ref4; k = 0 <= ref4 ? ++r : --r) {
+        for (k = q = 0, ref4 = headsArr.length; 0 <= ref4 ? q < ref4 : q > ref4; k = 0 <= ref4 ? ++q : --q) {
           if (numcrArr.indexOf(k) !== -1) {
             continue;
           }
@@ -1301,11 +1280,11 @@
   };
 
   charToNum = function(str) {
-    var i, j, len, m, ref, temp, val;
+    var i, j, l, len, ref, temp, val;
     str = new String(str);
     val = 0;
     len = str.length;
-    for (j = m = 0, ref = len; 0 <= ref ? m < ref : m > ref; j = 0 <= ref ? ++m : --m) {
+    for (j = l = 0, ref = len; 0 <= ref ? l < ref : l > ref; j = 0 <= ref ? ++l : --l) {
       i = len - 1 - j;
       temp = str.charCodeAt(i) - 65 + 1;
       val += temp * Math.pow(26, j);

@@ -1217,6 +1217,7 @@
   };
 
   str2Xml = function(str) {
+    var charTmp, i, l, ref, s, str2;
     if (!isString(str)) {
       return str;
     }
@@ -1238,21 +1239,31 @@
      '&apos;':"'",
      '&amp;' :'&'
      */
-    str = str.replace(/[&<>"']/gm, function(s) {
-      if (s === "&") {
-        return "&amp;";
-      } else if (s === "<") {
-        return "&lt;";
-      } else if (s === ">") {
-        return "&gt;";
-      } else if (s === "\"") {
-        return "&quot;";
-      } else if (s === "'") {
-        return "&apos;";
+    str2 = "";
+    for (i = l = 0, ref = str.length; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
+      charTmp = str.charCodeAt(i);
+      s = str.charAt(i);
+      if (charTmp <= 31 && charTmp !== 9 && charTmp !== 10 || charTmp === 127) {
+        s = JSON.stringify(s);
+        s = s.substring(1, s.length - 1);
+        s = s.replace("\\u", "_x") + "_";
+        str2 += s;
+        continue;
       }
-      return s;
-    });
-    return str;
+      if (s === "&") {
+        s = "&amp;";
+      } else if (s === "<") {
+        s = "&lt;";
+      } else if (s === ">") {
+        s = "&gt;";
+      } else if (s === "\"") {
+        s = "&quot;";
+      } else if (s === "'") {
+        s = "&apos;";
+      }
+      str2 += s;
+    }
+    return str2;
   };
 
   charPlus = function(str, num) {

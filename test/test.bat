@@ -1,6 +1,6 @@
 %~d0
 cd %~dp0
 node testExcel.js
-node testExcel2.js
-node order_demo.js
+rem node testExcel2.js
+rem node order_demo.js
 pause

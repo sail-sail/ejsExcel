@@ -36,6 +36,15 @@
 
   crypto = require("crypto");
 
+  if (typeof Wind === "undefined") {
+    try {
+      Wind = require("wind");
+    } catch (_error) {
+      err = _error;
+      Wind = require("./lib/Wind");
+    }
+  }
+
   ejs4xlx = void 0;
 
   try {
@@ -61,15 +70,6 @@
   } catch (_error) {
     err = _error;
     Hzip = require("./lib/hzip");
-  }
-
-  if (typeof Wind === "undefined") {
-    try {
-      Wind = require("wind");
-    } catch (_error) {
-      err = _error;
-      Wind = require("./lib/Wind");
-    }
   }
 
   xml2json = void 0;

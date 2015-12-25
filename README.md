@@ -1,13 +1,12 @@
-ejsExcel  
-BI商业智能报表系统
+###BI商业智能报表系统  ejsExcel
 
 通过Excel模板导出Excel
    
-npm install ejsexcel
+**npm install ejsexcel**
  
 或 
 
-git clone https://git.oschina.net/ccteams/ejsExcel.git 
+**git clone https://git.oschina.net/ccteams/ejsExcel.git** 
 
 安装nodejs之后,执行test目录下面的test.bat
   

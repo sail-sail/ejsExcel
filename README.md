@@ -27,5 +27,6 @@ email: 151263555@qq.com
 
 ![捐赠鼓励支持此项目](http://dn-cnode.qbox.me/FucPKV4XWewhakoqTSngU3AsaP0Z)
 
-捐赠人列表:
-  Hello World~          50元
+**捐赠人列表:**
+
+*   Hello World~&nbsp;&nbsp;&nbsp;&nbsp;50元

@@ -6,6 +6,7 @@ BI商业智能报表系统
 npm install ejsexcel 
 或 
 git clone https://git.oschina.net/ccteams/ejsExcel.git 
+
 安装nodejs之后,执行test目录下面的test.bat
   
 ====  
@@ -15,11 +16,11 @@ email: 151263555@qq.com
   
 模板:
 
-![模板](https://dn-cnode.qbox.me/FnT47R5CWjvFBFjJ5rYITQMzWeFA)
+![模板](http://dn-cnode.qbox.me/Frs_RuLXJxYQgYoIUhGJJ1zspCJE)
 
 加数据渲染之后,导出结果:
-![导出结果](https://dn-cnode.qbox.me/FhJRyWR5KJJ8epvBYZDmjbdrl4jl)
+![导出结果](http://dn-cnode.qbox.me/FnRDa5Zyjg-dI7ykCNR0T8SorWyC)
 
 捐赠鼓励支持此项目:
 
-![捐赠鼓励支持此项目](http://a2.qpic.cn/psb?/730a4bd2-76fb-497d-ae09-25f9b8e0ed42/B7.ST*EXAdd7J9RiXwK42TY4oQ0PidoxIvJOGciAuq0!/b/dAcAAAAAAAAA&bo=AAEAAQAAAAADByI!&rf=viewer_4)
+![捐赠鼓励支持此项目](http://dn-cnode.qbox.me/FucPKV4XWewhakoqTSngU3AsaP0Z)

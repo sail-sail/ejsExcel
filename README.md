@@ -29,4 +29,5 @@ email: 151263555@qq.com
 
 **项目贡献人列表:**
 
-*   Hello World~&nbsp;&nbsp;&nbsp;&nbsp;50元
+*   @Hello World~&nbsp;&nbsp;&nbsp;&nbsp;50元
+*   @德爾文&nbsp;&nbsp;&nbsp;&nbsp;50元

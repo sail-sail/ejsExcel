@@ -1,5 +1,5 @@
 (function() {
-  var Binding, Hzip, Task, Wind, charPlus, charToNum, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelArrCb, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2, sheetEntrieRel2, sheetSufStr, str2Xml, xjOp, xml2json, zlib;
+  var Binding, DOMParser, Hzip, Task, Wind, charPlus, charToNum, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelArrCb, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2, sheetEntrieRel2, sheetSufStr, str2Xml, xjOp, xml2json, xmldom, zlib;
 
   isType = function(type) {
     return function(obj) {
@@ -81,6 +81,17 @@
     xml2json = require("./lib/xml2json");
   }
 
+  xmldom = void 0;
+
+  try {
+    xmldom = require("xmldom");
+  } catch (_error) {
+    err = _error;
+    xmldom = require("./lib/xmldom");
+  }
+
+  DOMParser = xmldom.DOMParser;
+
   Task = Wind.Async.Task;
 
   Binding = Wind.Async.Binding;
@@ -94,10 +105,8 @@
   render = (function (buffer, filter, _data_, hzip, options) {
     var _builder_$0 = Wind.b["async"];
     var _arguments_$ = arguments;
-    var _caller_$0 = this.$caller;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            this.$caller = _caller_$0;
             var anonymous, buffer2, data, entries, flt, l, len1, src, str, updateEntryAsync;
             if (hzip === void 0 || hzip === null) {
                 hzip = new Hzip(buffer);
@@ -169,7 +178,7 @@
 
   sharedStrings2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\"><%\nvar _acVar_ = _args._acVar_;\nvar ssArr = _acVar_.sharedStrings;\nfor(var i=0; i<ssArr.length; i++) {\n$await(Wind.Async.sleep(0));\n%><si><t xml:space=\"preserve\"><%=ssArr[i]%></t><phoneticPr fontId=\"1\" type=\"noConversion\"/></si><%}%></sst>");
 
-  sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\n%>";
+  sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\n%>";
 
   drawingRelBuf2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>");
 
@@ -190,10 +199,8 @@
     tmpFn = (function () {
     var _builder_$0 = Wind.b["async"];
     var _arguments_$ = arguments;
-    var _caller_$0 = this.$caller;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            this.$caller = _caller_$0;
             var buf2;
             return _builder_$0.n(renderExcel(exlBuf, _data_), function (_result_$) {
                 buf2 = _result_$;
@@ -209,11 +216,9 @@
   renderExcel = (function (exlBuf, _data_) {
     var _builder_$0 = Wind.b["async"];
     var _arguments_$ = arguments;
-    var _caller_$0 = this.$caller;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            this.$caller = _caller_$0;
-            var _imgFn_, anonymous, begin, buffer2, cItem, data, end, endElement, entry, hzip, i, imgTk, imgTkArr, l, len1, len2, len3, len4, len5, len6, len7, len8, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, phoneticPr, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, row, sharedStringsTmp2, sheetBuf, sheetBuf2, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, src2, startElement, str2, t, updateEntryAsync, xjOpTmp;
+            var _imgFn_, anonymous, begin, buffer2, cItem, data, doc, documentElement, end, endElement, entry, hzip, i, imgTk, imgTkArr, l, len1, len2, len3, len4, len5, len6, len7, len8, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, phoneticPr, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, row, sharedStringsTmp2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, src2, startElement, str2, t, updateEntryAsync, xjOpTmp;
             data = {
                 "_data_": _data_
             };
@@ -320,10 +325,8 @@
                 data._img_ = (function (imgOpt, fileName, rowNum, cellNum) {
                     var _builder_$1 = Wind.b["async"];
                     var _arguments_$ = arguments;
-                    var _caller_$0 = this.$caller;
                     return _builder_$1.m(this,
                         _builder_$1.e(function() {
-                            this.$caller = _caller_$0;
                             var cfileName, drawingBuf, drawingObj, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, eny, hashMd5, imgBaseName, imgBuf, imgPh, itHs, len2, len3, len4, len5, m, md5Str, n, o, p, ref2, ref3, ref4, ref5, sei, xdr_frt;
                             if (isString(imgOpt) || Buffer.isBuffer(imgOpt)) {
                                 imgOpt = {
@@ -648,6 +651,18 @@
                                     entry = sheetEntries[i];
                                     return _builder_$0.n(inflateRawAsync(entry.cfile), function (_result_$) {
                                         sheetBuf = _result_$;
+                                        doc = (new DOMParser()).parseFromString(sheetBuf.toString(), "text/xml");
+                                        documentElement = doc.documentElement;
+                                        sheetDataDomEl = documentElement.getElementsByTagName("sheetData")[0];
+                                        if (! sheetDataDomEl) {
+                                            return _builder_$0.j();
+                                        }
+                                        mergeCellsDomEl = documentElement.getElementsByTagName("mergeCells")[0];
+                                        if (! mergeCellsDomEl) {
+                                            mergeCellsDomEl = doc.createElement("mergeCells");
+                                            documentElement.insertBefore(mergeCellsDomEl, sheetDataDomEl.nextSibling);
+                                            sheetBuf = doc.toString();
+                                        }
                                         xjOpTmp = {
                                             "object": true,
                                             "reversible": true,
@@ -885,10 +900,8 @@
   renderPath = (function (ejsDir, data) {
     var _builder_$0 = Wind.b["async"];
     var _arguments_$ = arguments;
-    var _caller_$0 = this.$caller;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            this.$caller = _caller_$0;
             var buffer, config, configPath, exists, exlBuf, extname, filter, ftObj, key, l, len1, obj, val;
             configPath = ejsDir + "/config.json";
             return _builder_$0.n(existsAsync(configPath), function (_result_$) {
@@ -967,10 +980,8 @@
     tmpFn = (function (buffer) {
     var _builder_$0 = Wind.b["async"];
     var _arguments_$ = arguments;
-    var _caller_$0 = this.$caller;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            this.$caller = _caller_$0;
             var rvObj;
             return _builder_$0.n(getExcelArr(buffer), function (_result_$) {
                 rvObj = _result_$;
@@ -988,10 +999,8 @@
   getExcelArr = (function (buffer) {
     var _builder_$0 = Wind.b["async"];
     var _arguments_$ = arguments;
-    var _caller_$0 = this.$caller;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            this.$caller = _caller_$0;
             var buf, cEle, crStr, cs, enr, ens, entries, entry, fileName, hzip, i, l, len1, len2, len3, len4, m, n, numcr, numcrArr, o, p, ref, ref2, row, sharedJson, sharedStr, sheet, sheetArr, sheetStr, sheets, sheetsEns, sir, vStr, vStr2;
             sharedStr = null;
             sheets = [];

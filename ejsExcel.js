@@ -819,11 +819,8 @@
                                         }
                                         if (sheetObj.worksheet.mergeCells !== void 0) {
                                             sheetObj.worksheet.mergeCells = {
-                                                "$t": "<% for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
+                                                "$t": "<% if(_mergeCellArr_.length===0){_mergeCellArr_.push('A1:A1')} for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
                                             };
-                                        }
-                                        if (sheetObj.worksheet.mergeCells && sheetObj.worksheet.mergeCells.length === 0) {
-                                            delete sheetObj.worksheet.mergeCells;
                                         }
                                         sheetBuf2 = new Buffer(sheetSufStr + xml2json.toXml(sheetObj, "", {
                                             "reSanitize": false

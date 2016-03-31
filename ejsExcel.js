@@ -822,6 +822,9 @@
                                                 "$t": "<% for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
                                             };
                                         }
+                                        if (sheetObj.worksheet.mergeCells && sheetObj.worksheet.mergeCells.length === 0) {
+                                            delete sheetObj.worksheet.mergeCells;
+                                        }
                                         sheetBuf2 = new Buffer(sheetSufStr + xml2json.toXml(sheetObj, "", {
                                             "reSanitize": false
                                         }));

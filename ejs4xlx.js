@@ -124,7 +124,7 @@ var parse = exports.parse = function(str, options){
     , buf = [];
   buf.push('var buf = [];');
   buf.push(beforeBuf);
-  buf.push('\n buf.push(\'');
+  buf.push(';buf.push(new Buffer(\'');
 
   var lineno = 1;
 
@@ -162,12 +162,12 @@ var parse = exports.parse = function(str, options){
       pixEq = str.substr(i, 1);
       var prefix, postfix, line = lineno;
       if(pixEq === "=" || pixEq === "-" || pixEq === "~" || pixEq === "#") {
-    	  prefix = "');buf.push(";
-          postfix = ");buf.push('";
+    	  prefix = "'));buf.push(new Buffer(";
+          postfix = "));buf.push(new Buffer('";
           ++i;
       } else {
-    	  prefix = "');";
-          postfix = ";buf.push('";
+    	  prefix = "'));";
+          postfix = ";buf.push(new Buffer('";
       }
 
       var end = str.indexOf(close, i)
@@ -182,27 +182,13 @@ var parse = exports.parse = function(str, options){
       }
       
       js = js.trim();
-      if (0 == js.indexOf('include')) {
-        var name = js.slice(7);
-        if (!filename) throw new Error('filename option is required for includes');
-        var path = resolveInclude(name, filename);
-        include = fs.readSync(path, 'utf8');
-        extname = path.extname(path);
-        if(extname === "ejs") {
-        	include = exports.parse(include, { filename: path, open: open, close: close });
-        	buf.push("' + (function(){" + include + "})() + '");
-        } else {
-        	buf.push("'" + include + " '");
-        }
-        js = '';
-      } else if(0 == js.indexOf('forRow')) {
+      if(0 == js.indexOf('forRow')) {
     	  var uid = uniqueID();
     	  var name = js.slice(6);
     	  isForRowBegin = true;
     	  isForRowEnd = false;
     	  var nameArr = [];
     	  nameArr[0] = name.substring(0,name.indexOf(" in "));
-    	  //var nameArr = name.split(" in ");
     	  nameArr[1] = name.substring(name.indexOf(" in ")+4);
     	  var pixJs = "";
     	  if(nameArr[1].indexOf("|||") !== -1) {
@@ -226,7 +212,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_rLen"+uid+"="+arrName+";if(Array.isArray("+arrName+")){I_rLen"+uid+"=("+arrName+").length;};for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push('"+mthLt;
+    			  return "'));var I_rLen"+uid+"="+arrName+";if(Array.isArray("+arrName+")){I_rLen"+uid+"=("+arrName+").length;};for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push(new Buffer('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -246,7 +232,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');if("+jsStr+"){buf.push('"+mthLt;
+    			  return "'));if("+jsStr+"){buf.push(new Buffer('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -265,7 +251,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<\/row>/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "</row>');_r+="+rjsNum+";}_r-="+rjsNum+";buf.push('";
+    			  return "</row>'));_r+="+rjsNum+";}_r-="+rjsNum+";buf.push(new Buffer('";
     		  }
     		  return s;
     	  });
@@ -284,7 +270,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<c r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');if("+jsStr+"){buf.push('"+mthLt;
+    			  return "'));if("+jsStr+"){buf.push(new Buffer('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -303,7 +289,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<\/c>/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "</c>');_c+="+rjsNum+";}_c-="+rjsNum+";buf.push('";
+    			  return "</c>'));_c+="+rjsNum+";}_c-="+rjsNum+";buf.push(new Buffer('";
     		  }
     		  return s;
     	  });
@@ -318,7 +304,6 @@ var parse = exports.parse = function(str, options){
     	  var name = js.slice(9);
     	  var nameArr = [];
     	  nameArr[0] = name.substring(0,name.indexOf(" in "));
-    	  //var nameArr = name.split(" in ");
     	  nameArr[1] = name.substring(name.indexOf(" in ")+4);
     	  var pixJs = "";
     	  if(nameArr[1].indexOf("|||") !== -1) {
@@ -342,7 +327,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<c r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_cLen"+uid+"="+arrName+";if(Array.isArray("+arrName+")){I_cLen"+uid+"=("+arrName+").length;};for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push('"+mthLt;
+    			  return "'));var I_cLen"+uid+"="+arrName+";if(Array.isArray("+arrName+")){I_cLen"+uid+"=("+arrName+").length;};for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push(new Buffer('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -361,7 +346,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<\/c>/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "</c>');_c+="+rjsNum+";}_c-="+rjsNum+";buf.push('";
+    			  return "</c>'));_c+="+rjsNum+";}_c-="+rjsNum+";buf.push(new Buffer('";
     		  }
     		  return s;
     	  });
@@ -378,7 +363,6 @@ var parse = exports.parse = function(str, options){
     	  var name = js.slice(9);
     	  var nameArr = [];
     	  nameArr[0] = name.substring(0,name.indexOf(" in "));
-    	  //var nameArr = name.split(" in ");
     	  nameArr[1] = name.substring(name.indexOf(" in ")+4);
     	  var pixJs = "";
     	  if(nameArr[1].indexOf("|||") !== -1) {
@@ -402,7 +386,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_rLen"+uid+"="+arrName+";if(Array.isArray("+arrName+")){I_rLen"+uid+"=("+arrName+").length;};for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push('"+mthLt;
+    			  return "'));var I_rLen"+uid+"="+arrName+";if(Array.isArray("+arrName+")){I_rLen"+uid+"=("+arrName+").length;};for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push(new Buffer('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -421,7 +405,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<\/row>/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "</row>');_r+="+rjsNum+";}_r-="+rjsNum+";buf.push('";
+    			  return "</row>'));_r+="+rjsNum+";}_r-="+rjsNum+";buf.push(new Buffer('";
     		  }
     		  return s;
     	  });
@@ -436,7 +420,6 @@ var parse = exports.parse = function(str, options){
     	  isForCellEnd = false;
     	  var nameArr = [];
     	  nameArr[0] = name.substring(0,name.indexOf(" in "));
-    	  //var nameArr = name.split(" in ");
     	  nameArr[1] = name.substring(name.indexOf(" in ")+4);
     	  var pixJs = "";
     	  if(nameArr[1].indexOf("|||") !== -1) {
@@ -460,7 +443,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<c r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_cLen"+uid+" = "+arrName+";if(Array.isArray("+arrName+")){I_cLen"+uid+"=("+arrName+").length;};for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push('"+mthLt;
+    			  return "'));var I_cLen"+uid+" = "+arrName+";if(Array.isArray("+arrName+")){I_cLen"+uid+"=("+arrName+").length;};for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push(new Buffer('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -515,7 +498,7 @@ var parse = exports.parse = function(str, options){
   	    strTmp = strTmp.replace(/<row r="\d+"/gm,function(s){
   	  		repNum++;
   	  		if(mthArr.length === repNum) {
-  	  			return "<row r=\"');_c=0;_row="+rowRn+"+_r;buf.push(_row);buf.push('\"";
+  	  			return "<row r=\"'));_c=0;_row="+rowRn+"+_r;buf.push(new Buffer(String(_row)));buf.push(new Buffer('\"";
   	  		}
   	  		return s;
   	    });
@@ -538,7 +521,7 @@ var parse = exports.parse = function(str, options){
   		strTmp = strTmp.replace(/<c r="[A-Z]+[0-9]+"/gm,function(s){
   	  	  repNum++;
   	  	  if(mthArr.length === repNum) {
-  	  		  return "<c r=\"');_col=_charPlus_('"+cellRn+"',_c);_rc=_col+_row;buf.push(_rc);buf.push('\"";
+  	  		  return "<c r=\"'));_col=_charPlus_('"+cellRn+"',_c);_rc=_col+_row;buf.push(new Buffer(_rc));buf.push(new Buffer('\"";
   	  	  }
   	  	  return s;
   	    });
@@ -549,13 +532,13 @@ var parse = exports.parse = function(str, options){
     	isForRowEnd = true;
     	isForRowBegin = false;
     	i += 5;
-    	buf.push("</row>');_r++;}_r--;buf.push('");
+    	buf.push("</row>'));_r++;}_r--;buf.push(new Buffer('");
     }
     else if(isForCellBegin === true && isForCellEnd === false && str.substr(i,4) === "</c>") {
     	isForCellEnd = true;
     	isForCellBegin = false;
     	i += 3;
-    	buf.push("</c>');_c++;}_c--;buf.push('");
+    	buf.push("</c>'));_c++;}_c--;buf.push(new Buffer('");
     }
     else if (str.substr(i, 1) == "\\") {
       buf.push("\\\\");
@@ -576,8 +559,10 @@ var parse = exports.parse = function(str, options){
     }
   }
 
-  buf.push("');\nreturn buf.join('');");
+  buf.push("'));");
+  buf.push("buf = Buffer.concat(buf);return buf;");
   //fs.writeFileSync("C:/abc.js",buf.join(''));
+  //process.exit();
   return buf.join('');
 };
 

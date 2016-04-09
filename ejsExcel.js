@@ -38,56 +38,56 @@
 
   if (typeof Wind === "undefined") {
     try {
-      Wind = require("wind");
+      Wind = require("./lib/Wind");
     } catch (_error) {
       err = _error;
-      Wind = require("./lib/Wind");
+      Wind = require("wind");
     }
   }
 
   ejs4xlx = void 0;
 
   try {
-    ejs4xlx = require("ejs4xlx");
+    ejs4xlx = require("./ejs4xlx");
   } catch (_error) {
     err = _error;
-    ejs4xlx = require("./ejs4xlx");
+    ejs4xlx = require("ejs4xlx");
   }
 
   ejs = void 0;
 
   try {
-    ejs = require("ejs");
+    ejs = require("./lib/ejs");
   } catch (_error) {
     err = _error;
-    ejs = require("./lib/ejs");
+    ejs = require("ejs");
   }
 
   Hzip = void 0;
 
   try {
-    Hzip = require("hzip");
+    Hzip = require("./lib/hzip");
   } catch (_error) {
     err = _error;
-    Hzip = require("./lib/hzip");
+    Hzip = require("hzip");
   }
 
   xml2json = void 0;
 
   try {
-    xml2json = require("xml2json");
+    xml2json = require("./lib/xml2json");
   } catch (_error) {
     err = _error;
-    xml2json = require("./lib/xml2json");
+    xml2json = require("xml2json");
   }
 
   xmldom = void 0;
 
   try {
-    xmldom = require("xmldom");
+    xmldom = require("./lib/xmldom");
   } catch (_error) {
     err = _error;
-    xmldom = require("./lib/xmldom");
+    xmldom = require("xmldom");
   }
 
   DOMParser = xmldom.DOMParser;
@@ -107,7 +107,7 @@
     var _arguments_$ = arguments;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            var anonymous, buffer2, data, entries, flt, l, len1, src, str, updateEntryAsync;
+            var anonymous, buffer2, data, entries, flt, l, len1, str, updateEntryAsync;
             if (hzip === void 0 || hzip === null) {
                 hzip = new Hzip(buffer);
             }
@@ -128,9 +128,9 @@
                 arr = data._acVar_.sharedStrings;
                 index = arr.indexOf(val);
                 if (index === - 1) {
-                    return arr.push(val) - 1;
+                    return String(arr.push(val) - 1);
                 }
-                return index;
+                return String(index);
             };
             return _builder_$0.f(
                 _builder_$0.e(function() {
@@ -149,8 +149,7 @@
                                             str = _result_$;
                                             anonymous = eval(Wind.compile("async", "function anonymous(_args) {\n" + str + "\n}"));
                                             return _builder_$0.n(anonymous.call(this, data), function (_result_$) {
-                                                src = _result_$;
-                                                buffer2 = new Buffer(src);
+                                                buffer2 = _result_$;
                                                 return _builder_$0.h();
                                             });
                                         });
@@ -178,7 +177,7 @@
 
   sharedStrings2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\"><%\nvar _acVar_ = _args._acVar_;\nvar ssArr = _acVar_.sharedStrings;\nfor(var i=0; i<ssArr.length; i++) {\n$await(Wind.Async.sleep(0));\n%><si><t xml:space=\"preserve\"><%=ssArr[i]%></t><phoneticPr fontId=\"1\" type=\"noConversion\"/></si><%}%></sst>");
 
-  sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\n%>";
+  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\n%>");
 
   drawingRelBuf2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>");
 
@@ -218,7 +217,7 @@
     var _arguments_$ = arguments;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            var _imgFn_, anonymous, begin, buffer2, cItem, data, doc, documentElement, end, endElement, entry, hzip, i, imgTk, imgTkArr, l, len1, len2, len3, len4, len5, len6, len7, len8, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, phoneticPr, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, row, sharedStringsTmp2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, src2, startElement, str2, t, updateEntryAsync, xjOpTmp;
+            var _imgFn_, anonymous, begin, buffer2, cItem, data, doc, documentElement, end, endElement, entry, hzip, i, imgTk, imgTkArr, l, len1, len2, len3, len4, len5, len6, len7, len8, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, phoneticPr, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, row, sharedStringsTmp2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str2, t, updateEntryAsync, xjOpTmp;
             data = {
                 "_data_": _data_
             };
@@ -229,23 +228,26 @@
                 "sharedStrings": []
             };
             data._ps_ = function (str, buf) {
-                var arr, i, index, l, ref, val;
+                var arr, i, index, l, ref, tmpStr, val;
+                str = str.toString();
                 if (str === "") {
                     for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {
-                        if (/<v>/gm.test(buf[i])) {
-                            buf[i] = replaceLast(buf[i], /<v>/gm, "");
-                            buf[i] = replaceLast(buf[i], /\s+t="s"/gm, "");
+                        tmpStr = buf[i].toString();
+                        if (/<v>/gm.test(tmpStr)) {
+                            buf[i] = new Buffer(replaceLast(tmpStr, /<v>/gm, ""));
+                            buf[i] = new Buffer(replaceLast(tmpStr, /\s+t="s"/gm, ""));
                             break;
                         }
                     }
                     buf.push = function (puhStr) {
                         var index;
+                        puhStr = puhStr.toString();
                         index = - 1;
                         if (puhStr.indexOf("</v>") !== - 1) {
-                            index = Array.prototype.push.apply(buf, [puhStr.replace("</v>", "")]);
+                            index = Array.prototype.push.apply(buf, [new Buffer(puhStr.replace("</v>", ""))]);
                             buf.push = Array.prototype.push;
                         } else {
-                            index = Array.prototype.push.apply(buf, [puhStr]);
+                            index = Array.prototype.push.apply(buf, [new Buffer(puhStr)]);
                         }
                         return index;
                     };
@@ -255,49 +257,56 @@
                 arr = data._acVar_.sharedStrings;
                 index = arr.indexOf(val);
                 if (index === - 1) {
-                    return arr.push(val) - 1;
+                    return String(arr.push(val) - 1);
                 }
-                return index;
+                return String(index);
             };
             data._pf_ = function (str, buf) {
-                var i, l, m, ref, ref2;
+                var i, l, m, ref, ref2, tmpStr;
+                str = str.toString();
                 str = str2Xml(str);
                 for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {
-                    if (/<v>/gm.test(buf[i]) === true) {
-                        buf[i] = replaceLast(buf[i], /<v>/gm, "<f>");
+                    tmpStr = buf[i].toString();
+                    if (/<v>/gm.test(tmpStr) === true) {
+                        buf[i] = new Buffer(replaceLast(tmpStr, /<v>/gm, "<f>"));
                         break;
                     }
                 }
                 for (i = m = ref2 = buf.length - 1; (ref2 <= - 1) ? (m < - 1) : (m > - 1); i = (ref2 <= - 1) ? (++ m) : (-- m)) {
-                    if (/\s+t="s"/gm.test(buf[i]) === true) {
-                        buf[i] = replaceLast(buf[i], /\s+t="s"/gm, "");
+                    tmpStr = buf[i].toString();
+                    if (/\s+t="s"/gm.test(tmpStr) === true) {
+                        buf[i] = new Buffer(replaceLast(tmpStr, /\s+t="s"/gm, ""));
                         break;
                     }
                 }
                 buf.push = function (puhStr) {
+                    var index;
+                    puhStr = puhStr.toString();
                     if (puhStr.indexOf("</v>") !== - 1) {
-                        Array.prototype.push.apply(buf, [puhStr.replace(/<\/v>/m, "</f>")]);
+                        index = Array.prototype.push.apply(buf, [new Buffer(puhStr.replace(/<\/v>/m, "</f>"))]);
                         buf.push = Array.prototype.push;
                     } else {
-                        Array.prototype.push.apply(buf, [puhStr]);
+                        index = Array.prototype.push.apply(buf, [new Buffer(puhStr)]);
                     }
-                    return this;
+                    return index;
                 };
-                return str;
+                return String(str);
             };
             data._pi_ = function (str, buf) {
-                var i, l, ref;
+                var i, l, ref, tmpStr;
                 if (isNaN(Number(str))) {
                     return data._ps_(str, buf);
                 }
+                str = str.toString();
                 str = str2Xml(str);
                 for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {
-                    if (/\s+t="s"/gm.test(buf[i]) === true) {
-                        buf[i] = replaceLast(buf[i], /\s+t="s"/gm, "");
+                    tmpStr = buf[i].toString();
+                    if (/\s+t="s"/gm.test(tmpStr) === true) {
+                        buf[i] = new Buffer(replaceLast(tmpStr, /\s+t="s"/gm, ""));
                         break;
                     }
                 }
-                return str;
+                return String(str);
             };
             data._acVar_ = {
                 "sharedStrings": []
@@ -822,7 +831,7 @@
                                                 "$t": "<% if(_mergeCellArr_.length===0){_mergeCellArr_.push('A1:A1')} for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
                                             };
                                         }
-                                        sheetBuf2 = new Buffer(sheetSufStr + xml2json.toXml(sheetObj, "", {
+                                        sheetBuf2 = new Buffer(sheetSufStr.toString() + xml2json.toXml(sheetObj, "", {
                                             "reSanitize": false
                                         }));
                                         reXmlEq = {
@@ -857,8 +866,7 @@
                                             console.log(str2);
                                             return _builder_$0.k(err);
                                         }
-                                        src2 = anonymous.call(this, data);
-                                        buffer2 = new Buffer(src2);
+                                        buffer2 = anonymous.call(this, data);
                                         return _builder_$0.n(updateEntryAsync.apply(hzip, [entry.fileName, buffer2]), function () {
                                             (t = 0, len8 = imgTkArr.length)
                                             return _builder_$0.a(function() {
@@ -883,8 +891,7 @@
                             sharedStringsTmp2 = "function anonymous(_args) {\n" + sharedStringsTmp2 + "\n}";
                             anonymous = eval(Wind.compile("async", sharedStringsTmp2));
                             return _builder_$0.n(anonymous.call(this, data), function (_result_$) {
-                                sharedStringsTmp2 = _result_$;
-                                buffer2 = new Buffer(sharedStringsTmp2);
+                                buffer2 = _result_$;
                                 return _builder_$0.n(updateEntryAsync.apply(hzip, ["xl/sharedStrings.xml", buffer2]), function () {
                                     return _builder_$0.g(hzip.buffer);
                                 });

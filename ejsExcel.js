@@ -242,13 +242,17 @@
             sharedStrings2 = [new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">")];
             data._ps_ = function (str, buf) {
                 var _ss_len, arr, i, index, l, ref, tmpStr, val;
+                if (str === void 0) {
+                    str = "";
+                } else if (str === null) {
+                    str = "NULL";
+                }
                 str = str.toString();
                 if (str === "") {
                     for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {
                         tmpStr = buf[i].toString();
                         if (/<v>/gm.test(tmpStr)) {
-                            buf[i] = new Buffer(replaceLast(tmpStr, /<v>/gm, ""));
-                            buf[i] = new Buffer(replaceLast(tmpStr, /\s+t="s"/gm, ""));
+                            buf[i] = new Buffer(replaceLast(replaceLast(tmpStr, /<v>/gm, ""), /\s+t="s"/gm, ""));
                             break;
                         }
                     }
@@ -286,6 +290,9 @@
             };
             data._pf_ = function (str, buf) {
                 var i, l, m, ref, ref2, tmpStr;
+                if (str === void 0 || str === null) {
+                    str = "";
+                }
                 str = str.toString();
                 str = str2Xml(str);
                 for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {

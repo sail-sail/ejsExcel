@@ -1,5 +1,5 @@
 (function() {
-  var Binding, DOMParser, Hzip, Task, Wind, charPlus, charToNum, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelArrCb, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2, sheetEntrieRel2, sheetSufStr, str2Xml, xjOp, xml2json, xmldom, zlib;
+  var Binding, DOMParser, Hzip, Task, Wind, charPlus, charToNum, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelArrCb, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sheetEntrieRel2, sheetSufStr, str2Xml, xjOp, xml2json, xmldom, zlib;
 
   isType = function(type) {
     return function(obj) {
@@ -107,7 +107,7 @@
     var _arguments_$ = arguments;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            var anonymous, buffer2, data, entries, flt, l, len1, str, updateEntryAsync;
+            var anonymous, buffer2, data, entries, flt, l, len1, sharedStrings2, str, updateEntryAsync;
             if (hzip === void 0 || hzip === null) {
                 hzip = new Hzip(buffer);
             }
@@ -120,15 +120,27 @@
             data._charToNum_ = charToNum;
             data._str2Xml_ = str2Xml;
             data._acVar_ = {
-                "sharedStrings": []
+                "sharedStrings": [],
+                "_ss_len": 0
             };
+            sharedStrings2 = [new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">")];
             data._ps_ = function (val) {
-                var arr, index;
+                var _ss_len, arr, index;
                 val = str2Xml(val);
                 arr = data._acVar_.sharedStrings;
-                index = arr.indexOf(val);
+                index = arr.indexOf(val, - 200);
+                _ss_len = data._acVar_._ss_len;
                 if (index === - 1) {
-                    return String(arr.push(val) - 1);
+                    arr.push(val);
+                    if (arr.length > 200) {
+                        arr.shift();
+                    }
+                    sharedStrings2.push(new Buffer("<si><t xml:space=\"preserve\">" + val + "</t></si>"));
+                    _ss_len ++;
+                    data._acVar_._ss_len = _ss_len;
+                    index = _ss_len - 1;
+                } else {
+                    index = _ss_len - (arr.length - index);
                 }
                 return String(index);
             };
@@ -145,13 +157,11 @@
                             return _builder_$0.f(
                                 _builder_$0.e(function() {
                                     if (! flt.notEjs) {
-                                        return _builder_$0.n(ejs.parse(flt.buffer), function (_result_$) {
-                                            str = _result_$;
-                                            anonymous = eval(Wind.compile("async", "function anonymous(_args) {\n" + str + "\n}"));
-                                            return _builder_$0.n(anonymous.call(this, data), function (_result_$) {
-                                                buffer2 = _result_$;
-                                                return _builder_$0.h();
-                                            });
+                                        str = ejs.parse(flt.buffer);
+                                        anonymous = eval(Wind.compile("async", "function anonymous(_args) {\n" + str + "\n}"));
+                                        return _builder_$0.n(anonymous.call(this, data), function (_result_$) {
+                                            buffer2 = _result_$;
+                                            return _builder_$0.h();
                                         });
                                     } else {
                                         buffer2 = flt.buffer;
@@ -168,14 +178,16 @@
                     );
                 }),
                 _builder_$0.e(function() {
-                    return _builder_$0.g(hzip.buffer);
+                    sharedStrings2.push(new Buffer("</sst>"));
+                    buffer2 = Buffer.concat(sharedStrings2);
+                    return _builder_$0.n(updateEntryAsync.apply(hzip, ["xl/sharedStrings.xml", buffer2]), function () {
+                        return _builder_$0.g(hzip.buffer);
+                    });
                 })
             );
         })
     );
 });
-
-  sharedStrings2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\"><%\nvar _acVar_ = _args._acVar_;\nvar ssArr = _acVar_.sharedStrings;\nfor(var i=0; i<ssArr.length; i++) {\n$await(Wind.Async.sleep(0));\n%><si><t xml:space=\"preserve\"><%=ssArr[i]%></t><phoneticPr fontId=\"1\" type=\"noConversion\"/></si><%}%></sst>");
 
   sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\n%>");
 
@@ -217,7 +229,7 @@
     var _arguments_$ = arguments;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            var _imgFn_, anonymous, begin, buffer2, cItem, data, doc, documentElement, end, endElement, entry, hzip, i, imgTk, imgTkArr, l, len1, len2, len3, len4, len5, len6, len7, len8, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, phoneticPr, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, row, sharedStringsTmp2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str2, t, updateEntryAsync, xjOpTmp;
+            var _imgFn_, anonymous, begin, buffer2, cItem, data, doc, documentElement, end, endElement, entry, hzip, i, imgTk, imgTkArr, l, len1, len2, len3, len4, len5, len6, len7, len8, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, phoneticPr, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, row, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str2, t, updateEntryAsync, xjOpTmp;
             data = {
                 "_data_": _data_
             };
@@ -227,8 +239,9 @@
             data._acVar_ = {
                 "sharedStrings": []
             };
+            sharedStrings2 = [new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">")];
             data._ps_ = function (str, buf) {
-                var arr, i, index, l, ref, tmpStr, val;
+                var _ss_len, arr, i, index, l, ref, tmpStr, val;
                 str = str.toString();
                 if (str === "") {
                     for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {
@@ -255,9 +268,19 @@
                 }
                 val = str2Xml(str);
                 arr = data._acVar_.sharedStrings;
-                index = arr.indexOf(val);
+                _ss_len = data._acVar_._ss_len;
+                index = arr.indexOf(val, - 200);
                 if (index === - 1) {
-                    return String(arr.push(val) - 1);
+                    arr.push(val);
+                    if (arr.length > 200) {
+                        arr.shift();
+                    }
+                    sharedStrings2.push(new Buffer("<si><t xml:space=\"preserve\">" + val + "</t></si>"));
+                    _ss_len ++;
+                    data._acVar_._ss_len = _ss_len;
+                    index = _ss_len - 1;
+                } else {
+                    index = _ss_len - (arr.length - index);
                 }
                 return String(index);
             };
@@ -309,7 +332,8 @@
                 return String(str);
             };
             data._acVar_ = {
-                "sharedStrings": []
+                "sharedStrings": [],
+                "_ss_len": 0
             };
             hzip = new Hzip(exlBuf);
             updateEntryAsync = Binding.fromStandard(hzip.updateEntry);
@@ -828,7 +852,7 @@
                                         }
                                         if (sheetObj.worksheet.mergeCells !== void 0) {
                                             sheetObj.worksheet.mergeCells = {
-                                                "$t": "<% if(_mergeCellArr_.length===0){_mergeCellArr_.push('A1:A1')} for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
+                                                "$t": "<% if(_mergeCellArr_.length===0){_mergeCellArr_.push('A1:A1');} for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) {$await(Wind.Async.sleep(0)); %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
                                             };
                                         }
                                         sheetBuf2 = new Buffer(sheetSufStr.toString() + xml2json.toXml(sheetObj, "", {
@@ -857,44 +881,35 @@
                                         };
                                         reXmlEq.fileName = entry.fileName;
                                         str2 = ejs4xlx.parse(sheetBuf2, reXmlEq);
-                                        str2 = "(function (_args) {\n" + str2 + "\n})";
-                                        anonymous = void 0;
-                                        try {
-                                            anonymous = eval(str2);
-                                        } catch (_error) {
-                                            err = _error;
-                                            console.log(str2);
-                                            return _builder_$0.k(err);
-                                        }
-                                        buffer2 = anonymous.call(this, data);
-                                        return _builder_$0.n(updateEntryAsync.apply(hzip, [entry.fileName, buffer2]), function () {
-                                            (t = 0, len8 = imgTkArr.length)
-                                            return _builder_$0.a(function() {
-                                                return t < len8;
-                                            }, function() {
-                                                t ++;
-                                            },
-                                                _builder_$0.e(function() {
-                                                    imgTk = imgTkArr[t];
-                                                    return _builder_$0.n(imgTk, function () {
-                                                        return _builder_$0.h();
-                                                    });
-                                                })
-                                            );
+                                        anonymous = eval(Wind.compile("async", "function anonymous(_args) {" + str2 + "}"));
+                                        return _builder_$0.n(anonymous.call(this, data), function (_result_$) {
+                                            buffer2 = _result_$;
+                                            return _builder_$0.n(updateEntryAsync.apply(hzip, [entry.fileName, buffer2]), function () {
+                                                (t = 0, len8 = imgTkArr.length)
+                                                return _builder_$0.a(function() {
+                                                    return t < len8;
+                                                }, function() {
+                                                    t ++;
+                                                },
+                                                    _builder_$0.e(function() {
+                                                        imgTk = imgTkArr[t];
+                                                        return _builder_$0.n(imgTk, function () {
+                                                            return _builder_$0.h();
+                                                        });
+                                                    })
+                                                );
+                                            });
                                         });
                                     });
                                 })
                             );
                         }),
                         _builder_$0.e(function() {
-                            sharedStringsTmp2 = ejs4xlx.parse(sharedStrings2);
-                            sharedStringsTmp2 = "function anonymous(_args) {\n" + sharedStringsTmp2 + "\n}";
-                            anonymous = eval(Wind.compile("async", sharedStringsTmp2));
-                            return _builder_$0.n(anonymous.call(this, data), function (_result_$) {
-                                buffer2 = _result_$;
-                                return _builder_$0.n(updateEntryAsync.apply(hzip, ["xl/sharedStrings.xml", buffer2]), function () {
-                                    return _builder_$0.g(hzip.buffer);
-                                });
+                            sharedStrings2.push(new Buffer("</sst>"));
+                            buffer2 = Buffer.concat(sharedStrings2);
+                            sharedStrings2 = void 0;
+                            return _builder_$0.n(updateEntryAsync.apply(hzip, ["xl/sharedStrings.xml", buffer2]), function () {
+                                return _builder_$0.g(hzip.buffer);
                             });
                         })
                     );

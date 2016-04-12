@@ -795,7 +795,7 @@
                                                             ref4 = si.r;
                                                             for ((p = 0, len5 = ref4.length); p < len5; p ++) {
                                                                 sirTp = ref4[p];
-                                                                if (sirTp.t) {
+                                                                if (sirTp.t && sirTp.t["$t"]) {
                                                                     si2.t["$t"] += sirTp.t["$t"];
                                                                 }
                                                             }

@@ -859,7 +859,7 @@
                                         }
                                         if (sheetObj.worksheet.mergeCells !== void 0) {
                                             sheetObj.worksheet.mergeCells = {
-                                                "$t": "<% if(_mergeCellArr_.length===0){_mergeCellArr_.push('A1:A1');} for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) {$await(Wind.Async.sleep(0)); %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
+                                                "$t": "<% if(_mergeCellArr_.length===0){_mergeCellArr_.push('A1:A1');} for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
                                             };
                                         }
                                         sheetBuf2 = new Buffer(sheetSufStr.toString() + xml2json.toXml(sheetObj, "", {
@@ -888,24 +888,22 @@
                                         };
                                         reXmlEq.fileName = entry.fileName;
                                         str2 = ejs4xlx.parse(sheetBuf2, reXmlEq);
-                                        anonymous = eval(Wind.compile("async", "function anonymous(_args) {" + str2 + "}"));
-                                        return _builder_$0.n(anonymous.call(this, data), function (_result_$) {
-                                            buffer2 = _result_$;
-                                            return _builder_$0.n(updateEntryAsync.apply(hzip, [entry.fileName, buffer2]), function () {
-                                                (t = 0, len8 = imgTkArr.length)
-                                                return _builder_$0.a(function() {
-                                                    return t < len8;
-                                                }, function() {
-                                                    t ++;
-                                                },
-                                                    _builder_$0.e(function() {
-                                                        imgTk = imgTkArr[t];
-                                                        return _builder_$0.n(imgTk, function () {
-                                                            return _builder_$0.h();
-                                                        });
-                                                    })
-                                                );
-                                            });
+                                        anonymous = eval("(function anonymous(_args) {" + str2 + "})");
+                                        buffer2 = anonymous.call(this, data);
+                                        return _builder_$0.n(updateEntryAsync.apply(hzip, [entry.fileName, buffer2]), function () {
+                                            (t = 0, len8 = imgTkArr.length)
+                                            return _builder_$0.a(function() {
+                                                return t < len8;
+                                            }, function() {
+                                                t ++;
+                                            },
+                                                _builder_$0.e(function() {
+                                                    imgTk = imgTkArr[t];
+                                                    return _builder_$0.n(imgTk, function () {
+                                                        return _builder_$0.h();
+                                                    });
+                                                })
+                                            );
                                         });
                                     });
                                 })

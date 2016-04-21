@@ -838,6 +838,9 @@
                                                                 refArr = mergeCell.ref.split(":");
                                                                 ref0 = refArr[0];
                                                                 ref1 = refArr[1];
+                                                                if (! ref1 || ! ref0) {
+                                                                    continue;
+                                                                }
                                                                 if (charToNum(cItem.r.replace(/\d+/, "")) >= charToNum(ref0.replace(/\d+/, "")) && Number(cItem.r.replace(/\D+/, "")) >= Number(ref0.replace(/\D+/, ""))) {
                                                                     if (cItem.v !== void 0) {
                                                                         if (! cItem.v["$t"]) {

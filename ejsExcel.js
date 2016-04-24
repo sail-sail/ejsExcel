@@ -808,7 +808,7 @@
                                                             si2.t["$t"] = si.t["$t"];
                                                         }
                                                         cItem.v["$t"] = si2.t["$t"];
-                                                        if (cItem.v !== void 0) {
+                                                        if (cItem.v) {
                                                             if (! (cItem.v["$t"] === void 0 || cItem.v["$t"] === "")) {
                                                                 begin = cItem.v["$t"].indexOf("<%");
                                                                 end = cItem.v["$t"].indexOf("%>");
@@ -818,14 +818,19 @@
                                                             }
                                                         }
                                                     } else {
-                                                        if (cItem.f) {
-                                                            if (cItem.f["$t"] !== void 0) {
-                                                                cItem.f["$t"] = str2Xml(cItem.f["$t"]);
-                                                            }
-                                                            delete cItem["v"];
+                                                        if (cItem.f && cItem["v"] && cItem["v"]["$t"] && cItem["v"]["$t"].indexOf("<%") !== - 1 && cItem["v"]["$t"].indexOf("%>") !== - 1) {
+                                                            delete cItem.f;
+                                                            cItem.t = "s";
                                                         } else {
-                                                            if (cItem.v && cItem.v["$t"]) {
-                                                                cItem.v["$t"] = str2Xml(cItem.v["$t"]);
+                                                            if (cItem.f) {
+                                                                if (cItem.f["$t"] !== void 0) {
+                                                                    cItem.f["$t"] = str2Xml(cItem.f["$t"]);
+                                                                }
+                                                                delete cItem["v"];
+                                                            } else {
+                                                                if (cItem.v && cItem.v["$t"]) {
+                                                                    cItem.v["$t"] = str2Xml(cItem.v["$t"]);
+                                                                }
                                                             }
                                                         }
                                                     }

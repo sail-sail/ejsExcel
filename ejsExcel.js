@@ -229,7 +229,7 @@
     var _arguments_$ = arguments;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            var _imgFn_, anonymous, autoFilterDomEl, begin, buffer2, cItem, data, doc, documentElement, end, endElement, entry, hzip, i, imgTk, imgTkArr, l, len1, len2, len3, len4, len5, len6, len7, len8, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, phoneticPr, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, row, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str2, t, updateEntryAsync, xjOpTmp;
+            var _imgFn_, anonymous, begin, buffer2, cItem, data, doc, documentElement, end, endElement, entry, hzip, i, imgTk, imgTkArr, l, len1, len2, len3, len4, len5, len6, len7, len8, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, row, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str2, t, updateEntryAsync, xjOpTmp;
             data = {
                 "_data_": _data_
             };
@@ -700,11 +700,14 @@
                                         mergeCellsDomEl = documentElement.getElementsByTagName("mergeCells")[0];
                                         if (! mergeCellsDomEl) {
                                             mergeCellsDomEl = doc.createElement("mergeCells");
-                                            autoFilterDomEl = documentElement.getElementsByTagName("autoFilter")[0];
-                                            if (! autoFilterDomEl) {
-                                                documentElement.insertBefore(mergeCellsDomEl, sheetDataDomEl.nextSibling);
+                                            phoneticPrDomEl = documentElement.getElementsByTagName("phoneticPr")[0];
+                                            pageMarginsDomEl = documentElement.getElementsByTagName("pageMargins")[0];
+                                            if (phoneticPrDomEl) {
+                                                documentElement.insertBefore(mergeCellsDomEl, phoneticPrDomEl);
+                                            } else if (pageMarginsDomEl) {
+                                                documentElement.insertBefore(mergeCellsDomEl, pageMarginsDomEl);
                                             } else {
-                                                documentElement.insertBefore(mergeCellsDomEl, autoFilterDomEl.nextSibling);
+                                                documentElement.insertBefore(mergeCellsDomEl, sheetDataDomEl.nextSibling);
                                             }
                                             sheetBuf = new Buffer(doc.toString());
                                         }

@@ -327,8 +327,6 @@
                 if (isNaN(Number(str))) {
                     return data._ps_(str, buf);
                 }
-                str = str.toString();
-                str = str2Xml(str);
                 for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {
                     tmpStr = buf[i].toString();
                     if (/\s+t="s"/gm.test(tmpStr) === true) {
@@ -336,6 +334,11 @@
                         break;
                     }
                 }
+                if (str == null) {
+                    return "0";
+                }
+                str = str.toString();
+                str = str2Xml(str);
                 return String(str);
             };
             data._acVar_ = {

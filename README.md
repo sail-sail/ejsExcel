@@ -6,7 +6,7 @@
  
 或 
 
-**git clone https://git.oschina.net/ccteams/ejsExcel.git** 
+**git clone https://github.com/sail-sail/ejsExcel.git** 
 
 安装nodejs之后,执行test目录下面的test.bat
   

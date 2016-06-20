@@ -189,7 +189,7 @@
     );
 });
 
-  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\n%>");
+  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\n%>");
 
   drawingRelBuf2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>");
 
@@ -229,7 +229,7 @@
     var _arguments_$ = arguments;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            var _imgFn_, anonymous, begin, buffer2, cItem, data, doc, documentElement, end, endElement, entry, hzip, i, imgTk, imgTkArr, l, len1, len2, len3, len4, len5, len6, len7, len8, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, refArr, row, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str2, t, updateEntryAsync, xjOpTmp;
+            var _imgFn_, anonymous, begin, buffer2, cItem, data, doc, documentElement, end, endElement, entry, hyperlink, hzip, i, imgTk, imgTkArr, l, len1, len10, len2, len3, len4, len5, len6, len7, len8, len9, location, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, refArr, row, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str2, t, u, updateEntryAsync, v, xjOpTmp;
             data = {
                 "_data_": _data_
             };
@@ -241,7 +241,7 @@
             };
             sharedStrings2 = [new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">")];
             data._ps_ = function (str, buf) {
-                var _ss_len, arr, i, index, l, ref, tmpStr, val;
+                var _ss_len, arr, i, index, l, ref2, tmpStr, val;
                 if (str === void 0) {
                     str = "";
                 } else if (str === null) {
@@ -249,7 +249,7 @@
                 }
                 str = str.toString();
                 if (str === "") {
-                    for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {
+                    for (i = l = ref2 = buf.length - 1; (ref2 <= - 1) ? (l < - 1) : (l > - 1); i = (ref2 <= - 1) ? (++ l) : (-- l)) {
                         tmpStr = buf[i].toString();
                         if (/<v>/gm.test(tmpStr)) {
                             buf[i] = new Buffer(replaceLast(replaceLast(tmpStr, /<v>/gm, ""), /\s+t="s"/gm, ""));
@@ -289,20 +289,20 @@
                 return String(index);
             };
             data._pf_ = function (str, buf) {
-                var i, l, m, ref, ref2, tmpStr;
+                var i, l, m, ref2, ref3, tmpStr;
                 if (str === void 0 || str === null) {
                     str = "";
                 }
                 str = str.toString();
                 str = str2Xml(str);
-                for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {
+                for (i = l = ref2 = buf.length - 1; (ref2 <= - 1) ? (l < - 1) : (l > - 1); i = (ref2 <= - 1) ? (++ l) : (-- l)) {
                     tmpStr = buf[i].toString();
                     if (/<v>/gm.test(tmpStr) === true) {
                         buf[i] = new Buffer(replaceLast(tmpStr, /<v>/gm, "<f>"));
                         break;
                     }
                 }
-                for (i = m = ref2 = buf.length - 1; (ref2 <= - 1) ? (m < - 1) : (m > - 1); i = (ref2 <= - 1) ? (++ m) : (-- m)) {
+                for (i = m = ref3 = buf.length - 1; (ref3 <= - 1) ? (m < - 1) : (m > - 1); i = (ref3 <= - 1) ? (++ m) : (-- m)) {
                     tmpStr = buf[i].toString();
                     if (/\s+t="s"/gm.test(tmpStr) === true) {
                         buf[i] = new Buffer(replaceLast(tmpStr, /\s+t="s"/gm, ""));
@@ -323,11 +323,11 @@
                 return String(str);
             };
             data._pi_ = function (str, buf) {
-                var i, l, ref, tmpStr;
+                var i, l, ref2, tmpStr;
                 if (isNaN(Number(str))) {
                     return data._ps_(str, buf);
                 }
-                for (i = l = ref = buf.length - 1; (ref <= - 1) ? (l < - 1) : (l > - 1); i = (ref <= - 1) ? (++ l) : (-- l)) {
+                for (i = l = ref2 = buf.length - 1; (ref2 <= - 1) ? (l < - 1) : (l > - 1); i = (ref2 <= - 1) ? (++ l) : (-- l)) {
                     tmpStr = buf[i].toString();
                     if (/\s+t="s"/gm.test(tmpStr) === true) {
                         buf[i] = new Buffer(replaceLast(tmpStr, /\s+t="s"/gm, ""));
@@ -350,9 +350,9 @@
             return _builder_$0.n(updateEntryAsync.apply(hzip, ["xl/calcChain.xml"]), function () {
                 sheetEntries = [];
                 sheetEntrieRels = [];
-                ref = hzip.entries;
-                for ((l = 0, len1 = ref.length); l < len1; l ++) {
-                    entry = ref[l];
+                ref2 = hzip.entries;
+                for ((l = 0, len1 = ref2.length); l < len1; l ++) {
+                    entry = ref2[l];
                     if (entry.fileName.indexOf("xl/worksheets/sheet") === 0) {
                         sheetEntries.push(entry);
                     } else if (entry.fileName.indexOf("xl/worksheets/_rels/") === 0) {
@@ -370,7 +370,7 @@
                     var _arguments_$ = arguments;
                     return _builder_$1.m(this,
                         _builder_$1.e(function() {
-                            var cfileName, drawingBuf, drawingObj, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, eny, hashMd5, imgBaseName, imgBuf, imgPh, itHs, len2, len3, len4, len5, m, md5Str, n, o, p, ref2, ref3, ref4, ref5, sei, xdr_frt;
+                            var cfileName, drawingBuf, drawingObj, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, eny, hashMd5, imgBaseName, imgBuf, imgPh, itHs, len2, len3, len4, len5, m, md5Str, n, o, p, ref3, ref4, ref5, ref6, sei, xdr_frt;
                             if (isString(imgOpt) || Buffer.isBuffer(imgOpt)) {
                                 imgOpt = {
                                     "imgPh": imgOpt
@@ -431,9 +431,9 @@
                                     }
                                     cfileName = "xl/media/" + md5Str + ".png";
                                     itHs = false;
-                                    ref2 = hzip.entries;
-                                    for ((m = 0, len2 = ref2.length); m < len2; m ++) {
-                                        entryTmp = ref2[m];
+                                    ref3 = hzip.entries;
+                                    for ((m = 0, len2 = ref3.length); m < len2; m ++) {
+                                        entryTmp = ref3[m];
                                         if (entryTmp.fileName === cfileName) {
                                             itHs = true;
                                             break;
@@ -453,17 +453,17 @@
                                             sei = fileName.substring(fileName.length - 5, fileName.length - 4);
                                             sei = Number(sei) - 1;
                                             drawingRelBuf = void 0;
-                                            ref3 = hzip.entries;
+                                            ref4 = hzip.entries;
                                             return _builder_$1.f(
                                                 _builder_$1.e(function() {
-                                                    (n = 0, len3 = ref3.length)
+                                                    (n = 0, len3 = ref4.length)
                                                     return _builder_$1.a(function() {
                                                         return n < len3;
                                                     }, function() {
                                                         n ++;
                                                     },
                                                         _builder_$1.e(function() {
-                                                            entryImgTmp = ref3[n];
+                                                            entryImgTmp = ref4[n];
                                                             if (entryImgTmp.fileName === "xl/drawings/_rels/drawing" + (sei + 1) + ".xml.rels") {
                                                                 return _builder_$1.n(inflateRawAsync(entryImgTmp.cfile), function (_result_$) {
                                                                     drawingRelBuf = _result_$;
@@ -487,9 +487,9 @@
                                                         drawingRelObj["Relationships"]["Relationship"] = [drawingRelObj["Relationships"]["Relationship"]];
                                                     }
                                                     itHs = false;
-                                                    ref4 = drawingRelObj["Relationships"]["Relationship"];
-                                                    for ((o = 0, len4 = ref4.length); o < len4; o ++) {
-                                                        eny = ref4[o];
+                                                    ref5 = drawingRelObj["Relationships"]["Relationship"];
+                                                    for ((o = 0, len4 = ref5.length); o < len4; o ++) {
+                                                        eny = ref5[o];
                                                         if (md5Str === eny["Id"]) {
                                                             itHs = true;
                                                             break;
@@ -507,17 +507,17 @@
                                                     });
                                                     return _builder_$1.n(updateEntryAsync.apply(hzip, ["xl/drawings/_rels/drawing" + (sei + 1) + ".xml.rels", new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n" + drawingRelStr)]), function () {
                                                         drawingBuf = void 0;
-                                                        ref5 = hzip.entries;
+                                                        ref6 = hzip.entries;
                                                         return _builder_$1.f(
                                                             _builder_$1.e(function() {
-                                                                (p = 0, len5 = ref5.length)
+                                                                (p = 0, len5 = ref6.length)
                                                                 return _builder_$1.a(function() {
                                                                     return p < len5;
                                                                 }, function() {
                                                                     p ++;
                                                                 },
                                                                     _builder_$1.e(function() {
-                                                                        entryImgTmp = ref5[p];
+                                                                        entryImgTmp = ref6[p];
                                                                         if (entryImgTmp.fileName === "xl/drawings/drawing" + (sei + 1) + ".xml") {
                                                                             return _builder_$1.n(inflateRawAsync(entryImgTmp.cfile), function (_result_$) {
                                                                                 drawingBuf = _result_$;
@@ -772,18 +772,18 @@
                                                 sheetObj.worksheet.mergeCells.mergeCell = [sheetObj.worksheet.mergeCells.mergeCell];
                                             }
                                         }
-                                        ref2 = sheetObj.worksheet.sheetData.row;
-                                        for ((n = 0, len3 = ref2.length); n < len3; n ++) {
-                                            row = ref2[n];
+                                        ref3 = sheetObj.worksheet.sheetData.row;
+                                        for ((n = 0, len3 = ref3.length); n < len3; n ++) {
+                                            row = ref3[n];
                                             if (row.c !== void 0) {
                                                 if (! row.c) {
                                                     row.c = [];
                                                 } else if (! isArray(row.c)) {
                                                     row.c = [row.c];
                                                 }
-                                                ref3 = row.c;
-                                                for ((o = 0, len4 = ref3.length); o < len4; o ++) {
-                                                    cItem = ref3[o];
+                                                ref4 = row.c;
+                                                for ((o = 0, len4 = ref4.length); o < len4; o ++) {
+                                                    cItem = ref4[o];
                                                     if (cItem.t === "s" && cItem.v && ! isNaN(Number(cItem.v["$t"])) && ! cItem.f) {
                                                         if (! shsObj.sst.si) {
                                                             shsObj.sst.si = [];
@@ -803,9 +803,9 @@
                                                             } else if (! isArray(si.r)) {
                                                                 si.r = [si.r];
                                                             }
-                                                            ref4 = si.r;
-                                                            for ((p = 0, len5 = ref4.length); p < len5; p ++) {
-                                                                sirTp = ref4[p];
+                                                            ref5 = si.r;
+                                                            for ((p = 0, len5 = ref5.length); p < len5; p ++) {
+                                                                sirTp = ref5[p];
                                                                 if (sirTp.t && sirTp.t["$t"]) {
                                                                     si2.t["$t"] += sirTp.t["$t"];
                                                                 }
@@ -842,9 +842,9 @@
                                                     }
                                                     if (sheetObj.worksheet.mergeCells !== void 0 && sheetObj.worksheet.mergeCells.mergeCell !== void 0) {
                                                         mciNumArr = [];
-                                                        ref5 = sheetObj.worksheet.mergeCells.mergeCell;
-                                                        for ((m_c_i = q = 0, len6 = ref5.length); q < len6; m_c_i = ++ q) {
-                                                            mergeCell = ref5[m_c_i];
+                                                        ref6 = sheetObj.worksheet.mergeCells.mergeCell;
+                                                        for ((m_c_i = q = 0, len6 = ref6.length); q < len6; m_c_i = ++ q) {
+                                                            mergeCell = ref6[m_c_i];
                                                             if (mergeCell.ref !== void 0) {
                                                                 refArr = mergeCell.ref.split(":");
                                                                 ref0 = refArr[0];
@@ -873,12 +873,50 @@
                                                             sheetObj.worksheet.mergeCells.mergeCell.splice(mciNum, 1);
                                                         }
                                                     }
+                                                    if (sheetObj.worksheet.hyperlinks && sheetObj.worksheet.hyperlinks.hyperlink) {
+                                                        mciNumArr = [];
+                                                        if (! isArray(sheetObj.worksheet.hyperlinks.hyperlink)) {
+                                                            sheetObj.worksheet.hyperlinks.hyperlink = [sheetObj.worksheet.hyperlinks.hyperlink];
+                                                        }
+                                                        ref7 = sheetObj.worksheet.hyperlinks.hyperlink;
+                                                        for ((m_c_i = t = 0, len8 = ref7.length); t < len8; m_c_i = ++ t) {
+                                                            hyperlink = ref7[m_c_i];
+                                                            if (! hyperlink.ref) {
+                                                                continue;
+                                                            }
+                                                            ref = hyperlink.ref;
+                                                            location = hyperlink.location;
+                                                            if (charToNum(cItem.r.replace(/\d+/, "")) >= charToNum(ref.replace(/\d+/, "")) && Number(cItem.r.replace(/\D+/, "")) >= Number(ref.replace(/\D+/, ""))) {
+                                                                if (cItem.v != null) {
+                                                                    if (! cItem.v["$t"]) {
+                                                                        cItem.v["$t"] = "";
+                                                                    }
+                                                                    cItem.v["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, "") + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r),location:'" + location + "'}) %>";
+                                                                } else {
+                                                                    if (! cItem["$t"]) {
+                                                                        cItem["$t"] = "";
+                                                                    }
+                                                                    cItem["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, "") + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r),location:'" + location + "'}) %>";
+                                                                }
+                                                                mciNumArr.push(m_c_i);
+                                                            }
+                                                        }
+                                                        for ((u = 0, len9 = mciNumArr.length); u < len9; u ++) {
+                                                            mciNum = mciNumArr[u];
+                                                            sheetObj.worksheet.hyperlinks.hyperlink.splice(mciNum, 1);
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
                                         if (sheetObj.worksheet.mergeCells !== void 0) {
                                             sheetObj.worksheet.mergeCells = {
                                                 "$t": "<% if(_mergeCellArr_.length===0){_mergeCellArr_.push('A1:A1');} for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
+                                            };
+                                        }
+                                        if (sheetObj.worksheet.hyperlinks !== void 0) {
+                                            sheetObj.worksheet.hyperlinks = {
+                                                "$t": "<% for(var m_cl=0; m_cl<_hyperlinkArr_.length; m_cl++) { %><%-'<hyperlink ref=\"'+_hyperlinkArr_[m_cl].ref+'\" location=\"'+_hyperlinkArr_[m_cl].location+'\" display=\"\"/>'%><% } %>"
                                             };
                                         }
                                         sheetBuf2 = new Buffer(sheetSufStr.toString() + xml2json.toXml(sheetObj, "", {
@@ -910,14 +948,14 @@
                                         anonymous = eval("(function anonymous(_args) {" + str2 + "})");
                                         buffer2 = anonymous.call(this, data);
                                         return _builder_$0.n(updateEntryAsync.apply(hzip, [entry.fileName, buffer2]), function () {
-                                            (t = 0, len8 = imgTkArr.length)
+                                            (v = 0, len10 = imgTkArr.length)
                                             return _builder_$0.a(function() {
-                                                return t < len8;
+                                                return v < len10;
                                             }, function() {
-                                                t ++;
+                                                v ++;
                                             },
                                                 _builder_$0.e(function() {
-                                                    imgTk = imgTkArr[t];
+                                                    imgTk = imgTkArr[v];
                                                     return _builder_$0.n(imgTk, function () {
                                                         return _builder_$0.h();
                                                     });
@@ -1047,7 +1085,7 @@
     var _arguments_$ = arguments;
     return _builder_$0.m(this,
         _builder_$0.e(function() {
-            var buf, cEle, crStr, cs, enr, ens, entries, entry, fileName, hzip, i, l, len1, len2, len3, len4, m, n, numcr, numcrArr, o, p, ref, ref2, row, sharedJson, sharedStr, sheet, sheetArr, sheetStr, sheets, sheetsEns, sir, vStr, vStr2;
+            var buf, cEle, crStr, cs, enr, ens, entries, entry, fileName, hzip, i, l, len1, len2, len3, len4, m, n, numcr, numcrArr, o, p, ref2, ref3, row, sharedJson, sharedStr, sheet, sheetArr, sheetStr, sheets, sheetsEns, sir, vStr, vStr2;
             sharedStr = null;
             sheets = [];
             hzip = new Hzip(buffer);
@@ -1093,7 +1131,7 @@
                         if (! isArray(sheet.worksheet.sheetData.row)) {
                             sheet.worksheet.sheetData.row = [sheet.worksheet.sheetData.row];
                         }
-                        for ((i = n = 0, ref = sheet.worksheet.sheetData.row.length); (0 <= ref) ? (n < ref) : (n > ref); i = (0 <= ref) ? (++ n) : (-- n)) {
+                        for ((i = n = 0, ref2 = sheet.worksheet.sheetData.row.length); (0 <= ref2) ? (n < ref2) : (n > ref2); i = (0 <= ref2) ? (++ n) : (-- n)) {
                             row = sheet.worksheet.sheetData.row[i];
                             if (! row.c) {
                                 continue;
@@ -1125,9 +1163,9 @@
                                         } else if (! isArray(sharedJson.sst.si[vStr].r)) {
                                             sharedJson.sst.si[vStr].r = [sharedJson.sst.si[vStr].r];
                                         }
-                                        ref2 = sharedJson.sst.si[vStr].r;
-                                        for ((p = 0, len4 = ref2.length); p < len4; p ++) {
-                                            sir = ref2[p];
+                                        ref3 = sharedJson.sst.si[vStr].r;
+                                        for ((p = 0, len4 = ref3.length); p < len4; p ++) {
+                                            sir = ref3[p];
                                             if (sir.t === void 0 || sir.t["$t"] === void 0) {
                                                 continue;
                                             }
@@ -1149,7 +1187,7 @@
 });
 
   getExcelEns = function(sharedStr, sheets) {
-    var cEle, cont, crStr, cs, enr, ens, headsArr, i, k, l, len1, len2, len3, len4, m, n, numcr, numcrArr, o, p, q, ref, ref2, ref3, ref4, row, sharedJson, sheet, sheetHeadsArr, sheetStr, sheetsEns, sir, vStr, vStr2;
+    var cEle, cont, crStr, cs, enr, ens, headsArr, i, k, l, len1, len2, len3, len4, m, n, numcr, numcrArr, o, p, q, ref2, ref3, ref4, ref5, row, sharedJson, sheet, sheetHeadsArr, sheetStr, sheetsEns, sir, vStr, vStr2;
     sheetsEns = [];
 
     /*
@@ -1191,9 +1229,9 @@
       } else if (!isArray(sheet.worksheet.sheetData.row[1].c)) {
         sheet.worksheet.sheetData.row[1].c = [sheet.worksheet.sheetData.row[1].c];
       }
-      ref = sheet.worksheet.sheetData.row[1].c;
-      for (m = 0, len2 = ref.length; m < len2; m++) {
-        cEle = ref[m];
+      ref2 = sheet.worksheet.sheetData.row[1].c;
+      for (m = 0, len2 = ref2.length; m < len2; m++) {
+        cEle = ref2[m];
         crStr = cEle.r.toString();
         crStr = crStr.replace("2", "");
         if (cEle.v === void 0) {
@@ -1206,7 +1244,7 @@
         numcr = charToNum(crStr);
         headsArr[numcr] = vStr;
       }
-      for (i = n = 2, ref2 = sheet.worksheet.sheetData.row.length; 2 <= ref2 ? n < ref2 : n > ref2; i = 2 <= ref2 ? ++n : --n) {
+      for (i = n = 2, ref3 = sheet.worksheet.sheetData.row.length; 2 <= ref3 ? n < ref3 : n > ref3; i = 2 <= ref3 ? ++n : --n) {
         row = sheet.worksheet.sheetData.row[i];
         cs = row.c;
         if (cs === void 0 || cs === null) {
@@ -1237,9 +1275,9 @@
               } else if (!isArray(sharedJson.sst.si[vStr].r)) {
                 sharedJson.sst.si[vStr].r = [sharedJson.sst.si[vStr].r];
               }
-              ref3 = sharedJson.sst.si[vStr].r;
-              for (p = 0, len4 = ref3.length; p < len4; p++) {
-                sir = ref3[p];
+              ref4 = sharedJson.sst.si[vStr].r;
+              for (p = 0, len4 = ref4.length; p < len4; p++) {
+                sir = ref4[p];
                 if (sir.t === void 0 || sir.t["$t"] === void 0) {
                   continue;
                 }
@@ -1256,7 +1294,7 @@
             enr[cont] = vStr;
           }
         }
-        for (k = q = 0, ref4 = headsArr.length; 0 <= ref4 ? q < ref4 : q > ref4; k = 0 <= ref4 ? ++q : --q) {
+        for (k = q = 0, ref5 = headsArr.length; 0 <= ref5 ? q < ref5 : q > ref5; k = 0 <= ref5 ? ++q : --q) {
           if (numcrArr.indexOf(k) !== -1) {
             continue;
           }
@@ -1272,7 +1310,7 @@
   };
 
   str2Xml = function(str) {
-    var charTmp, i, l, ref, s, str2;
+    var charTmp, i, l, ref2, s, str2;
     if (!isString(str)) {
       return str;
     }
@@ -1295,7 +1333,7 @@
      '&amp;' :'&'
      */
     str2 = "";
-    for (i = l = 0, ref = str.length; 0 <= ref ? l < ref : l > ref; i = 0 <= ref ? ++l : --l) {
+    for (i = l = 0, ref2 = str.length; 0 <= ref2 ? l < ref2 : l > ref2; i = 0 <= ref2 ? ++l : --l) {
       charTmp = str.charCodeAt(i);
       s = str.charAt(i);
       if (charTmp <= 31 && charTmp !== 9 && charTmp !== 10 || charTmp === 127) {
@@ -1346,11 +1384,11 @@
   };
 
   charToNum = function(str) {
-    var i, j, l, len, ref, temp, val;
+    var i, j, l, len, ref2, temp, val;
     str = new String(str);
     val = 0;
     len = str.length;
-    for (j = l = 0, ref = len; 0 <= ref ? l < ref : l > ref; j = 0 <= ref ? ++l : --l) {
+    for (j = l = 0, ref2 = len; 0 <= ref2 ? l < ref2 : l > ref2; j = 0 <= ref2 ? ++l : --l) {
       i = len - 1 - j;
       temp = str.charCodeAt(i) - 65 + 1;
       val += temp * Math.pow(26, j);

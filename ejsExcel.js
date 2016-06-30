@@ -1187,7 +1187,7 @@
 });
 
   getExcelEns = function(sharedStr, sheets) {
-    var cEle, cont, crStr, cs, enr, ens, headsArr, i, k, l, len1, len2, len3, len4, m, n, numcr, numcrArr, o, p, q, ref2, ref3, ref4, ref5, row, sharedJson, sheet, sheetHeadsArr, sheetStr, sheetsEns, sir, vStr, vStr2;
+    var cEle, cont, crStr, cs, enr, ens, headsArr, i, k, l, len1, len2, len3, len4, len5, m, n, numcr, numcrArr, o, p, q, r, ref2, ref3, ref4, ref5, ref6, row, sharedJson, sheet, sheetHeadsArr, sheetStr, sheetsEns, sir, vStr, vStr2;
     sheetsEns = [];
 
     /*
@@ -1238,13 +1238,29 @@
           continue;
         }
         vStr = cEle.v["$t"];
-        if (cEle.t === "s") {
+        if (sharedJson.sst.si[vStr].t !== void 0) {
           vStr = sharedJson.sst.si[vStr].t["$t"];
+        } else {
+          vStr2 = "";
+          if (!sharedJson.sst.si[vStr].r) {
+            sharedJson.sst.si[vStr].r = [];
+          } else if (!isArray(sharedJson.sst.si[vStr].r)) {
+            sharedJson.sst.si[vStr].r = [sharedJson.sst.si[vStr].r];
+          }
+          ref3 = sharedJson.sst.si[vStr].r;
+          for (n = 0, len3 = ref3.length; n < len3; n++) {
+            sir = ref3[n];
+            if (sir.t === void 0 || sir.t["$t"] === void 0) {
+              continue;
+            }
+            vStr2 += sir.t["$t"];
+          }
+          vStr = vStr2;
         }
         numcr = charToNum(crStr);
         headsArr[numcr] = vStr;
       }
-      for (i = n = 2, ref3 = sheet.worksheet.sheetData.row.length; 2 <= ref3 ? n < ref3 : n > ref3; i = 2 <= ref3 ? ++n : --n) {
+      for (i = o = 2, ref4 = sheet.worksheet.sheetData.row.length; 2 <= ref4 ? o < ref4 : o > ref4; i = 2 <= ref4 ? ++o : --o) {
         row = sheet.worksheet.sheetData.row[i];
         cs = row.c;
         if (cs === void 0 || cs === null) {
@@ -1255,8 +1271,8 @@
         enr = {};
         ens.push(enr);
         numcrArr = [];
-        for (o = 0, len3 = cs.length; o < len3; o++) {
-          cEle = cs[o];
+        for (p = 0, len4 = cs.length; p < len4; p++) {
+          cEle = cs[p];
           crStr = cEle.r;
           crStr = crStr.replace(row.r, "");
           numcr = charToNum(crStr);
@@ -1275,9 +1291,9 @@
               } else if (!isArray(sharedJson.sst.si[vStr].r)) {
                 sharedJson.sst.si[vStr].r = [sharedJson.sst.si[vStr].r];
               }
-              ref4 = sharedJson.sst.si[vStr].r;
-              for (p = 0, len4 = ref4.length; p < len4; p++) {
-                sir = ref4[p];
+              ref5 = sharedJson.sst.si[vStr].r;
+              for (q = 0, len5 = ref5.length; q < len5; q++) {
+                sir = ref5[q];
                 if (sir.t === void 0 || sir.t["$t"] === void 0) {
                   continue;
                 }
@@ -1294,7 +1310,7 @@
             enr[cont] = vStr;
           }
         }
-        for (k = q = 0, ref5 = headsArr.length; 0 <= ref5 ? q < ref5 : q > ref5; k = 0 <= ref5 ? ++q : --q) {
+        for (k = r = 0, ref6 = headsArr.length; 0 <= ref6 ? r < ref6 : r > ref6; k = 0 <= ref6 ? ++r : --r) {
           if (numcrArr.indexOf(k) !== -1) {
             continue;
           }

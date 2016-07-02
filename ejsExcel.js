@@ -213,11 +213,26 @@
     return _builder_$0.m(this,
         _builder_$0.e(function() {
             var buf2;
-            return _builder_$0.n(renderExcel(exlBuf, _data_), function (_result_$) {
-                buf2 = _result_$;
-                callback(buf2);
-                return _builder_$0.h();
-            });
+            return _builder_$0.f(
+                _builder_$0.l(
+                    _builder_$0.e(function() {
+                        return _builder_$0.n(renderExcel(exlBuf, _data_), function (_result_$) {
+                            buf2 = _result_$;
+                            return _builder_$0.h();
+                        });
+                    }),
+                    function (_error) {
+                        err = _error;
+                        callback(err);
+                        return _builder_$0.g();
+                    },
+                    null
+                ),
+                _builder_$0.e(function() {
+                    callback(null, buf2);
+                    return _builder_$0.h();
+                })
+            );
         })
     );
 });

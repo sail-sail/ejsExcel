@@ -1,5 +1,5 @@
 {
-    "author": "Sail 黄智勇",
+    "author": "Sail",
     "homepage": "https://github.com/sail-sail/ejsExcel",
     "bugs": {
         "url": "https://github.com/sail-sail/ejsExcel",
@@ -12,14 +12,14 @@
     	"nodejs"
     ],
     "name": "ejsexcel",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "main": "ejsExcel",
     "readme":"README.md",
     "license": "MIT",
-    "description": "nodejs通过Excel模板导出Excel",
+    "description": "Intelligent report system, nodejs node export excel, ejsExcel",
     "repository" : {
         "type": "git",
-        "url": "https://git.oschina.net/ccteams/ejsExcel.git"
+        "url": "https://github.com/sail-sail/ejsExcel.git"
 	},
-	"engines" : {"node": ">=0.10.4 <=6.2"}
+	"engines" : {"node": ">=0.10.4"}
 }

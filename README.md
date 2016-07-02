@@ -1,17 +1,9 @@
-###BI商业智能报表系统  ejsExcel
-
-通过Excel模板导出Excel
+###nodejs excel template engine. node export excel, ejsExcel
    
 **npm install ejsexcel**
- 
-或 
-
-**git clone https://github.com/sail-sail/ejsExcel.git** 
-
-安装nodejs之后,执行test目录下面的test.bat
   
 ====  
-auto: sail 黄智勇  
+auto: Sail
 QQ: 151263555  
 email: 151263555@qq.com  
   

@@ -461,6 +461,11 @@ var parse = exports.parse = function(str, options){
     		  js = js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\",("+rowRn+"+_r),("+cellNum+"+_c))";
     	  }
       }
+      //分组
+      else if(0 === js.indexOf('_outlineLevel_(')) {
+    	  js = js.substring(0,js.length-1);
+    	  js += ",buf)";
+      }
 
       while (~(n = js.indexOf("\n", n))) n++, lineno++;
       if (js.substr(0, 1) == ':') js = filtered(js);

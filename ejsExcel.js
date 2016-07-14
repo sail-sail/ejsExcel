@@ -189,7 +189,7 @@
     );
 });
 
-  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\n%>");
+  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
 
   drawingRelBuf2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>");
 
@@ -344,7 +344,7 @@
                 }
                 for (i = l = ref2 = buf.length - 1; (ref2 <= - 1) ? (l < - 1) : (l > - 1); i = (ref2 <= - 1) ? (++ l) : (-- l)) {
                     tmpStr = buf[i].toString();
-                    if (/\s+t="s"/gm.test(tmpStr) === true) {
+                    if (/\s+t="s"/gm.test(tmpStr)) {
                         buf[i] = new Buffer(replaceLast(tmpStr, /\s+t="s"/gm, ""));
                         break;
                     }
@@ -355,6 +355,20 @@
                 str = str.toString();
                 str = str2Xml(str);
                 return String(str);
+            };
+            data._outlineLevel_ = function (str, buf) {
+                var i, l, ref2, strNum, tmpStr;
+                strNum = Number(str);
+                if (isNaN(strNum) || strNum < 1) {
+                    return;
+                }
+                for (i = l = ref2 = buf.length - 1; (ref2 <= - 1) ? (l < - 1) : (l > - 1); i = (ref2 <= - 1) ? (++ l) : (-- l)) {
+                    tmpStr = buf[i].toString();
+                    if (/<row\s/gm.test(tmpStr)) {
+                        buf[i] = new Buffer(replaceLast(tmpStr, /<row\s/gm, "<row outlineLevel=\"" + str + "\" "));
+                        break;
+                    }
+                }
             };
             data._acVar_ = {
                 "sharedStrings": [],
@@ -948,9 +962,6 @@
                                                 } else if (pixEq === "#") {
                                                     jsStr = jsStr.replace(/\n/gm, "\\n").replace(/\r/gm, "\\r").replace(/\t/gm, "\\t");
                                                     jsStr = "_pf_(" + jsStr + ",buf)";
-                                                } else if (pixEq === "I") {
-                                                    jsStr = jsStr.replace(/\n/gm, "\\n").replace(/\r/gm, "\\r").replace(/\t/gm, "\\t");
-                                                    jsStr = "_img_(" + jsStr + ",buf)";
                                                 }
                                                 return {
                                                     "jsStr": jsStr,

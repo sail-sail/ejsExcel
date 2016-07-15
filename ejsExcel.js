@@ -1179,8 +1179,15 @@
                                     continue;
                                 }
                                 vStr = cEle.v["$t"];
+                                if (vStr === "") {
+                                    enr[numcr] = vStr;
+                                    continue;
+                                }
                                 if (cEle.t === "s") {
-                                    if (sharedJson.sst.si[vStr].t !== void 0) {
+                                    if (! sharedJson.sst.si[vStr]) {
+                                        continue;
+                                    }
+                                    if (sharedJson.sst.si[vStr].t) {
                                         vStr = sharedJson.sst.si[vStr].t["$t"];
                                     } else {
                                         vStr2 = "";
@@ -1264,7 +1271,14 @@
           continue;
         }
         vStr = cEle.v["$t"];
-        if (sharedJson.sst.si[vStr].t !== void 0) {
+        if (vStr === "") {
+          enr[numcr] = vStr;
+          continue;
+        }
+        if (!sharedJson.sst.si[vStr]) {
+          continue;
+        }
+        if (sharedJson.sst.si[vStr].t) {
           vStr = sharedJson.sst.si[vStr].t["$t"];
         } else {
           vStr2 = "";
@@ -1307,8 +1321,15 @@
             continue;
           }
           vStr = cEle.v["$t"];
+          if (vStr === "") {
+            enr[numcr] = vStr;
+            continue;
+          }
           if (cEle.t === "s") {
-            if (sharedJson.sst.si[vStr].t !== void 0) {
+            if (!sharedJson.sst.si[vStr]) {
+              continue;
+            }
+            if (sharedJson.sst.si[vStr].t) {
               vStr = sharedJson.sst.si[vStr].t["$t"];
             } else {
               vStr2 = "";

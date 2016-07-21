@@ -1349,9 +1349,6 @@
               vStr = vStr2;
             }
           }
-          if (vStr === "null" || vStr === "NULL") {
-            vStr = null;
-          }
           cont = headsArr[numcr];
           if (cont !== void 0) {
             enr[cont] = vStr;

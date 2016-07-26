@@ -920,12 +920,12 @@
                                                                     if (! cItem.v["$t"]) {
                                                                         cItem.v["$t"] = "";
                                                                     }
-                                                                    cItem.v["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, "") + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r),location:'" + location + "'}) %>";
+                                                                    cItem.v["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, "") + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r),location:'" + location.replace(/'/gm, "\\'").replace(/\n/gm, "\\n") + "'}) %>";
                                                                 } else {
                                                                     if (! cItem["$t"]) {
                                                                         cItem["$t"] = "";
                                                                     }
-                                                                    cItem["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, "") + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r),location:'" + location + "'}) %>";
+                                                                    cItem["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, "") + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r),location:'" + location.replace(/'/gm, "\\'").replace(/\n/gm, "\\n") + "'}) %>";
                                                                 }
                                                                 mciNumArr.push(m_c_i);
                                                             }

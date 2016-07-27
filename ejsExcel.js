@@ -920,12 +920,12 @@
                                                                     if (! cItem.v["$t"]) {
                                                                         cItem.v["$t"] = "";
                                                                     }
-                                                                    cItem.v["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, "") + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r),location:'" + location.replace(/'/gm, "\\'").replace(/\n/gm, "\\n") + "'}) %>";
+                                                                    cItem.v["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, "") + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r),location:'" + location + "'}) %>";
                                                                 } else {
                                                                     if (! cItem["$t"]) {
                                                                         cItem["$t"] = "";
                                                                     }
-                                                                    cItem["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, "") + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r),location:'" + location.replace(/'/gm, "\\'").replace(/\n/gm, "\\n") + "'}) %>";
+                                                                    cItem["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, "") + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r),location:'" + location + "'}) %>";
                                                                 }
                                                                 mciNumArr.push(m_c_i);
                                                             }
@@ -1347,6 +1347,10 @@
                 vStr2 += sir.t["$t"];
               }
               vStr = vStr2;
+            }
+          } else {
+            if (!cEle.hasOwnProperty("f") && !isNaN(Number(vStr))) {
+              vStr = Number(vStr);
             }
           }
           cont = headsArr[numcr];

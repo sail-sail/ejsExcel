@@ -1,0 +1,61 @@
+{
+  "name": "co",
+  "version": "4.0.0",
+  "description": "generator async control flow goodness",
+  "keywords": [
+    "async",
+    "flow",
+    "generator",
+    "coro",
+    "coroutine"
+  ],
+  "devDependencies": {
+    "bluebird": "^2.0.0",
+    "istanbul-harmony": "0",
+    "mocha": "^2.0.0",
+    "mz": "^1.0.2",
+    "request": "^2.36.0"
+  },
+  "scripts": {
+    "test": "mocha --harmony-generators --reporter spec",
+    "test-cov": "node --harmony-generators node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --reporter dot",
+    "test-travis": "node --harmony-generators node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- --reporter dot"
+  },
+  "files": [
+    "index.js"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tj/co"
+  },
+  "gitHead": "b7edf32688f3e2493a24c34c9db289449d51a6fb",
+  "bugs": {
+    "url": "https://github.com/tj/co/issues"
+  },
+  "homepage": "https://github.com/tj/co",
+  "_id": "co@4.0.0",
+  "_shasum": "ff2dd4c24893cbd96978dae957e12edf68c9b5eb",
+  "_from": "co@",
+  "_npmVersion": "1.4.28",
+  "_npmUser": {
+    "name": "jonathanong",
+    "email": "jonathanrichardong@gmail.com"
+  },
+  "maintainers": [
+    {
+      "name": "tjholowaychuk",
+      "email": "tj@vision-media.ca"
+    },
+    {
+      "name": "jonathanong",
+      "email": "jonathanrichardong@gmail.com"
+    }
+  ],
+  "dist": {
+    "shasum": "ff2dd4c24893cbd96978dae957e12edf68c9b5eb",
+    "tarball": "http://registry.npmjs.org/co/-/co-4.0.0.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/co/-/co-4.0.0.tgz"
+}

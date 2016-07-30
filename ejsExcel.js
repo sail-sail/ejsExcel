@@ -209,7 +209,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         flt = filter[l];
         if (!flt.notEjs) {
           str = ejs.parse(flt.buffer);
-          anonymous = "function* anonymous(_args) {\n" + str + "\n}";
+          anonymous = eval("(wrap(function* anonymous(_args) {\n" + str + "\n}))");
           buffer2 = yield anonymous.call(this, data);
         } else {
           buffer2 = flt.buffer;

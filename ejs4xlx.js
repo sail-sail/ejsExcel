@@ -212,7 +212,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "'));var I_rLen"+uid+"="+arrName+";if(Array.isArray(I_rLen"+uid+")){I_rLen"+uid+"=I_rLen"+uid+".length;} for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){yield Promise.sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push(new Buffer('"+mthLt;
+    			  return "'));var I_rLen"+uid+"="+arrName+";if(Array.isArray(I_rLen"+uid+")){I_rLen"+uid+"=I_rLen"+uid+".length;} for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){yield Promise_sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push(new Buffer('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -327,7 +327,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<c r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "'));var I_cLen"+uid+"="+arrName+";if(Array.isArray(I_cLen"+uid+")){I_cLen"+uid+"=I_cLen"+uid+".length;} for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){yield Promise.sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push(new Buffer('"+mthLt;
+    			  return "'));var I_cLen"+uid+"="+arrName+";if(Array.isArray(I_cLen"+uid+")){I_cLen"+uid+"=I_cLen"+uid+".length;} for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){yield Promise_sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push(new Buffer('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -386,7 +386,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "'));var I_rLen"+uid+"="+arrName+";if(Array.isArray(I_rLen"+uid+")){I_rLen"+uid+"=I_rLen"+uid+".length;} for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){yield Promise.sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push(new Buffer('"+mthLt;
+    			  return "'));var I_rLen"+uid+"="+arrName+";if(Array.isArray(I_rLen"+uid+")){I_rLen"+uid+"=I_rLen"+uid+".length;} for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){yield Promise_sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push(new Buffer('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -443,7 +443,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<c r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "'));var I_cLen"+uid+" = "+arrName+";if(Array.isArray(I_cLen"+uid+")){I_cLen"+uid+"=I_cLen"+uid+".length;} for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){yield Promise.sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push(new Buffer('"+mthLt;
+    			  return "'));var I_cLen"+uid+" = "+arrName+";if(Array.isArray(I_cLen"+uid+")){I_cLen"+uid+"=I_cLen"+uid+".length;} for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){yield Promise_sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push(new Buffer('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -458,7 +458,7 @@ var parse = exports.parse = function(str, options){
     		  for(var sei=0; sei<cellRn.length; sei++) {
     			  cellNum += cellRn.charCodeAt(sei)-65+(cellRn.length-1-sei)*26;
     		  }
-    		  js = js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\",("+rowRn+"+_r),("+cellNum+"+_c))";
+    		  js = "yield "+js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\",("+rowRn+"+_r),("+cellNum+"+_c))";
     	  }
       }
       //分组

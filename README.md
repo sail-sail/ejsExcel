@@ -7,6 +7,7 @@ test/test.bat
 ====  
 auto: Sail  
 QQ: 151263555  
+QQ群: 470988427  
 email: 151263555@qq.com  
   
 **模板:**

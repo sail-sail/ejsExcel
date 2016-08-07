@@ -348,7 +348,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       };
       data._pi_ = function (str, buf) {
         var i, l, ref2, tmpStr;
-        if (isNaN(Number(str))) {
+        if (str === true || str === false || isNaN(Number(str))) {
           return data._ps_(str, buf);
         }
         for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {

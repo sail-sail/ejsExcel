@@ -1,7 +1,7 @@
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
 
 (function () {
-  var DOMParser, Hzip, Promise_fromCallback, Promise_fromStandard, Promise_sleep, charPlus, charToNum, co, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sheetEntrieRel2, sheetSufStr, str2Xml, wrap, xjOp, xml2json, xmldom, zlib;
+  var DOMParser, Hzip, Promise_fromCallback, Promise_fromStandard, Promise_sleep, charPlus, charToNum, co, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, qr, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sheetEntrieRel2, sheetSufStr, str2Xml, wrap, xjOp, xml2json, xmldom, zlib;
 
   isType = function (type) {
     return function (obj) {
@@ -37,6 +37,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
   zlib = require("zlib");
 
   crypto = require("crypto");
+
+  qr = require("qr-image");
 
   if (typeof co === "undefined") {
     try {
@@ -227,7 +229,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     };
   }();
 
-  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _imgAsync_ = _args._imgAsync_;\nvar _img_ = _args._img_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
+  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
 
   drawingRelBuf2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>");
 
@@ -415,13 +417,13 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           imgPh = imgOpt.imgPh;
           xdr_frt = imgOpt.xdr_frt;
           if (!imgOpt.cellNumAdd) {
-            imgOpt.cellNumAdd = 0;
+            imgOpt.cellNumAdd = 1;
           }
           if (!imgOpt.rowNumAdd) {
-            imgOpt.rowNumAdd = 0;
+            imgOpt.rowNumAdd = 1;
           }
-          imgOpt.cellNumAdd = Number(imgOpt.cellNumAdd);
-          imgOpt.rowNumAdd = Number(imgOpt.rowNumAdd);
+          imgOpt.cellNumAdd = Number(imgOpt.cellNumAdd) - 1;
+          imgOpt.rowNumAdd = Number(imgOpt.rowNumAdd) - 1;
           imgBaseName = void 0;
           imgBuf = void 0;
           if (!imgPh) {
@@ -638,6 +640,37 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
         return function (_x8, _x9, _x10, _x11) {
           return _ref3.apply(this, arguments);
+        };
+      }();
+      data._qrcode_ = function () {
+        var _ref4 = _asyncToGenerator(function* (imgOpt, fileName, rowNum, cellNum) {
+          var imgSt, qrBufArr, rvObj;
+          if (!imgOpt || !imgOpt.text) {
+            return "";
+          }
+          if (!imgOpt.margin) {
+            imgOpt.margin = 0;
+          }
+          qrBufArr = [];
+          imgSt = qr.image(imgOpt.text, imgOpt.ec_level, imgOpt);
+          imgSt.on("data", function (dt) {
+            qrBufArr.push(dt);
+          });
+          yield new Promise(function (resolve, reject) {
+            imgSt.on("error", function (err) {
+              return reject(err);
+            });
+            imgSt.on("end", function () {
+              return resolve();
+            });
+          });
+          imgOpt.imgPh = Buffer.concat(qrBufArr);
+          rvObj = yield data._img_(imgOpt, fileName, rowNum, cellNum);
+          return rvObj;
+        });
+
+        return function (_x12, _x13, _x14, _x15) {
+          return _ref4.apply(this, arguments);
         };
       }();
       shsEntry = hzip.getEntry("xl/sharedStrings.xml");
@@ -914,7 +947,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
   }();
 
   renderPath = function () {
-    var _ref4 = _asyncToGenerator(function* (ejsDir, data) {
+    var _ref5 = _asyncToGenerator(function* (ejsDir, data) {
       var buffer, config, configPath, exists, exlBuf, extname, filter, ftObj, key, l, len1, obj, val;
       configPath = ejsDir + "/config.json";
       exists = yield existsAsync(configPath);
@@ -950,13 +983,13 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       return yield render(buffer, filter, data);
     });
 
-    return function renderPath(_x12, _x13) {
-      return _ref4.apply(this, arguments);
+    return function renderPath(_x16, _x17) {
+      return _ref5.apply(this, arguments);
     };
   }();
 
   getExcelArr = function () {
-    var _ref5 = _asyncToGenerator(function* (buffer) {
+    var _ref6 = _asyncToGenerator(function* (buffer) {
       var buf, cEle, crStr, cs, enr, ens, entries, entry, fileName, hzip, i, l, len1, len2, len3, len4, m, n, numcr, numcrArr, o, p, ref2, ref3, row, sharedJson, sharedStr, sheet, sheetArr, sheetStr, sheets, sheetsEns, sir, vStr, vStr2;
       sharedStr = null;
       sheets = [];
@@ -1045,8 +1078,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       return sheetArr;
     });
 
-    return function getExcelArr(_x14) {
-      return _ref5.apply(this, arguments);
+    return function getExcelArr(_x18) {
+      return _ref6.apply(this, arguments);
     };
   }();
 

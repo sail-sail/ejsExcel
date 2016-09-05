@@ -461,6 +461,17 @@ var parse = exports.parse = function(str, options){
     		  js = "yield "+js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\",("+rowRn+"+_r),("+cellNum+"+_c))";
     	  }
       }
+      //二维码图片
+      else if(0 == js.indexOf('_qrcode_(')) {
+    	  if(options !== undefined && options.fileName !== undefined) {
+    		  js = js.substring(0,js.length-1);
+    		  var cellNum = 1;
+    		  for(var sei=0; sei<cellRn.length; sei++) {
+    			  cellNum += cellRn.charCodeAt(sei)-65+(cellRn.length-1-sei)*26;
+    		  }
+    		  js = "yield "+js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\",("+rowRn+"+_r),("+cellNum+"+_c))";
+    	  }
+      }
       //分组
       else if(0 === js.indexOf('_outlineLevel_(')) {
     	  js = js.substring(0,js.length-1);

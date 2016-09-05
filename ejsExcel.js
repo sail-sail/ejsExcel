@@ -38,7 +38,14 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
   crypto = require("crypto");
 
-  qr = require("qr-image");
+  qr = void 0;
+
+  try {
+    qr = require("qr-image");
+  } catch (error) {
+    err = error;
+    qr = require("./lib/qr-image");
+  }
 
   if (typeof co === "undefined") {
     try {

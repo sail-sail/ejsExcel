@@ -1,7 +1,7 @@
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
 
 (function () {
-  var DOMParser, Hzip, Promise_fromCallback, Promise_fromStandard, Promise_sleep, charPlus, charToNum, co, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, qr, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sheetEntrieRel2, sheetSufStr, str2Xml, wrap, xjOp, xml2json, xmldom, zlib;
+  var DOMParser, Hzip, Promise_fromCallback, Promise_fromStandard, Promise_sleep, charPlus, charToNum, co, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, qr, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2Prx, sheetEntrieRel2, sheetSufStr, str2Xml, wrap, xjOp, xml2json, xmldom, zlib;
 
   isType = function (type) {
     return function (obj) {
@@ -236,13 +236,15 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     };
   }();
 
-  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
+  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideWorkbook_ = _args._hideWorkbook_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
 
   drawingRelBuf2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>");
 
   sheetEntrieRel2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>");
 
   drawingBuf2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"></xdr:wsDr>");
+
+  sharedStrings2Prx = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">");
 
   xjOp = {
     object: true,
@@ -262,7 +264,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
   renderExcel = function () {
     var _ref2 = _asyncToGenerator(function* (exlBuf, _data_) {
-      var anonymous, begin, buffer2, cItem, data, doc, documentElement, end, endElement, entry, hyperlink, hzip, i, l, len1, len2, len3, len4, len5, len6, len7, len8, len9, location, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, refArr, row, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str2, u, updateEntryAsync, v, xjOpTmp;
+      var anonymous, begin, buffer2, cItem, data, doc, documentElement, end, endElement, entry, hyperlink, hzip, i, l, len1, len2, len3, len4, len5, len6, len7, len8, len9, location, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, refArr, row, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str2, u, updateEntryAsync, v, workbookBuf, workbookEntry, xjOpTmp;
       data = {
         _data_: _data_
       };
@@ -272,7 +274,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       data._acVar_ = {
         sharedStrings: []
       };
-      sharedStrings2 = [new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">")];
+      sharedStrings2 = [sharedStrings2Prx];
       data._ps_ = function (str, buf) {
         var _ss_len, arr, i, index, l, ref2, tmpStr, val;
         if (str === void 0) {
@@ -680,6 +682,29 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           return _ref4.apply(this, arguments);
         };
       }();
+      workbookEntry = hzip.getEntry("xl/workbook.xml");
+      workbookBuf = yield inflateRawAsync(workbookEntry.cfile);
+      data._hideWorkbook_ = function (strArr) {
+        var doc, documentElement, len2, m, sheetEl, sheetElArr, sheetsEl;
+        if (!workbookEntry) {
+          return;
+        }
+        if (!isArray(strArr)) {
+          strArr = [strArr];
+        }
+        doc = new DOMParser().parseFromString(workbookBuf.toString(), 'text/xml');
+        documentElement = doc.documentElement;
+        sheetsEl = documentElement.getElementsByTagName("sheets")[0];
+        sheetElArr = sheetsEl.getElementsByTagName("sheet");
+        for (m = 0, len2 = sheetElArr.length; m < len2; m++) {
+          sheetEl = sheetElArr[m];
+          if (strArr.indexOf(sheetEl.getAttribute("name")) === -1) {
+            continue;
+          }
+          sheetEl.setAttribute("state", "hidden");
+        }
+        workbookBuf = new Buffer(doc.toString());
+      };
       shsEntry = hzip.getEntry("xl/sharedStrings.xml");
       if (shsEntry === void 0) {
         return exlBuf;
@@ -937,7 +962,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         };
         reXmlEq.fileName = entry.fileName;
         str2 = ejs4xlx.parse(sheetBuf2, reXmlEq);
-        anonymous = eval("(wrap(function* anonymous(_args) {" + str2 + "}))");
+        str2 = "(wrap(function* anonymous(_args) {" + str2 + "}))";
+        anonymous = eval(str2);
         buffer2 = yield anonymous.call(this, data);
         yield updateEntryAsync.apply(hzip, [entry.fileName, buffer2]);
       }
@@ -945,6 +971,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       buffer2 = Buffer.concat(sharedStrings2);
       sharedStrings2 = void 0;
       yield updateEntryAsync.apply(hzip, ["xl/sharedStrings.xml", buffer2]);
+      yield updateEntryAsync.apply(hzip, ["xl/workbook.xml", workbookBuf]);
       return hzip.buffer;
     });
 

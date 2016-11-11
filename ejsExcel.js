@@ -264,7 +264,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
   renderExcel = function () {
     var _ref2 = _asyncToGenerator(function* (exlBuf, _data_) {
-      var anonymous, begin, buffer2, cItem, data, doc, documentElement, end, endElement, entry, hyperlink, hzip, i, l, len1, len2, len3, len4, len5, len6, len7, len8, len9, location, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, refArr, row, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str2, u, updateEntryAsync, v, workbookBuf, workbookEntry, xjOpTmp;
+      var anonymous, attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem, data, doc, documentElement, end, endElement, entry, hyperlink, hzip, i, idx, l, len1, len10, len11, len12, len13, len2, len3, len4, len5, len6, len7, len8, len9, location, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str2, u, updateEntryAsync, v, w, workbookBuf, workbookEntry, x, xjOpTmp, y, z;
       data = {
         _data_: _data_
       };
@@ -732,8 +732,56 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           } else {
             documentElement.insertBefore(mergeCellsDomEl, sheetDataDomEl.nextSibling);
           }
-          sheetBuf = new Buffer(doc.toString());
         }
+        rowElArr = sheetDataDomEl.getElementsByTagName("row");
+        for (n = 0, len3 = rowElArr.length; n < len3; n++) {
+          rowEl = rowElArr[n];
+          if (rowEl.attributes[0] && rowEl.attributes[0].nodeName === "r") {
+            continue;
+          }
+          attr_r = void 0;
+          idx = void 0;
+          ref3 = rowEl.attributes;
+          for (i = o = 0, len4 = ref3.length; o < len4; i = ++o) {
+            attr = ref3[i];
+            if (attr.nodeName === "r") {
+              attr_r = attr;
+              idx = i;
+              break;
+            }
+          }
+          if (!attr_r) {
+            continue;
+          }
+          attr0 = rowEl.attributes[0];
+          rowEl.attributes[0] = attr_r;
+          rowEl.attributes[idx] = attr0;
+        }
+        cElArr = sheetDataDomEl.getElementsByTagName("c");
+        for (p = 0, len5 = cElArr.length; p < len5; p++) {
+          cEl = cElArr[p];
+          if (cEl.attributes[0] && cEl.attributes[0].nodeName === "r") {
+            continue;
+          }
+          attr_r = void 0;
+          idx = void 0;
+          ref4 = cEl.attributes;
+          for (i = q = 0, len6 = ref4.length; q < len6; i = ++q) {
+            attr = ref4[i];
+            if (attr.nodeName === "r") {
+              attr_r = attr;
+              idx = i;
+              break;
+            }
+          }
+          if (!attr_r) {
+            continue;
+          }
+          attr0 = cEl.attributes[0];
+          cEl.attributes[0] = attr_r;
+          cEl.attributes[idx] = attr0;
+        }
+        sheetBuf = new Buffer(doc.toString());
         xjOpTmp = {
           object: true,
           reversible: true,
@@ -792,18 +840,18 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
             sheetObj.worksheet.mergeCells.mergeCell = [sheetObj.worksheet.mergeCells.mergeCell];
           }
         }
-        ref3 = sheetObj.worksheet.sheetData.row;
-        for (n = 0, len3 = ref3.length; n < len3; n++) {
-          row = ref3[n];
+        ref5 = sheetObj.worksheet.sheetData.row;
+        for (r = 0, len7 = ref5.length; r < len7; r++) {
+          row = ref5[r];
           if (row.c !== void 0) {
             if (!row.c) {
               row.c = [];
             } else if (!isArray(row.c)) {
               row.c = [row.c];
             }
-            ref4 = row.c;
-            for (o = 0, len4 = ref4.length; o < len4; o++) {
-              cItem = ref4[o];
+            ref6 = row.c;
+            for (u = 0, len8 = ref6.length; u < len8; u++) {
+              cItem = ref6[u];
               if (cItem.t === "s" && cItem.v && !isNaN(Number(cItem.v["$t"])) && !cItem.f) {
                 if (!shsObj.sst.si) {
                   shsObj.sst.si = [];
@@ -823,9 +871,9 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                   } else if (!isArray(si.r)) {
                     si.r = [si.r];
                   }
-                  ref5 = si.r;
-                  for (p = 0, len5 = ref5.length; p < len5; p++) {
-                    sirTp = ref5[p];
+                  ref7 = si.r;
+                  for (v = 0, len9 = ref7.length; v < len9; v++) {
+                    sirTp = ref7[v];
                     if (sirTp.t && sirTp.t["$t"]) {
                       si2.t["$t"] += sirTp.t["$t"];
                     }
@@ -862,9 +910,9 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
               }
               if (sheetObj.worksheet.mergeCells !== void 0 && sheetObj.worksheet.mergeCells.mergeCell !== void 0) {
                 mciNumArr = [];
-                ref6 = sheetObj.worksheet.mergeCells.mergeCell;
-                for (m_c_i = q = 0, len6 = ref6.length; q < len6; m_c_i = ++q) {
-                  mergeCell = ref6[m_c_i];
+                ref8 = sheetObj.worksheet.mergeCells.mergeCell;
+                for (m_c_i = w = 0, len10 = ref8.length; w < len10; m_c_i = ++w) {
+                  mergeCell = ref8[m_c_i];
                   if (mergeCell.ref !== void 0) {
                     refArr = mergeCell.ref.split(":");
                     ref0 = refArr[0];
@@ -888,8 +936,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                     }
                   }
                 }
-                for (r = 0, len7 = mciNumArr.length; r < len7; r++) {
-                  mciNum = mciNumArr[r];
+                for (x = 0, len11 = mciNumArr.length; x < len11; x++) {
+                  mciNum = mciNumArr[x];
                   sheetObj.worksheet.mergeCells.mergeCell.splice(mciNum, 1);
                 }
               }
@@ -898,9 +946,9 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                 if (!isArray(sheetObj.worksheet.hyperlinks.hyperlink)) {
                   sheetObj.worksheet.hyperlinks.hyperlink = [sheetObj.worksheet.hyperlinks.hyperlink];
                 }
-                ref7 = sheetObj.worksheet.hyperlinks.hyperlink;
-                for (m_c_i = u = 0, len8 = ref7.length; u < len8; m_c_i = ++u) {
-                  hyperlink = ref7[m_c_i];
+                ref9 = sheetObj.worksheet.hyperlinks.hyperlink;
+                for (m_c_i = y = 0, len12 = ref9.length; y < len12; m_c_i = ++y) {
+                  hyperlink = ref9[m_c_i];
                   if (!hyperlink.ref) {
                     continue;
                   }
@@ -921,8 +969,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                     mciNumArr.push(m_c_i);
                   }
                 }
-                for (v = 0, len9 = mciNumArr.length; v < len9; v++) {
-                  mciNum = mciNumArr[v];
+                for (z = 0, len13 = mciNumArr.length; z < len13; z++) {
+                  mciNum = mciNumArr[z];
                   sheetObj.worksheet.hyperlinks.hyperlink.splice(mciNum, 1);
                 }
               }

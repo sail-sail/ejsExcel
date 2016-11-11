@@ -1,7 +1,7 @@
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
 
 (function () {
-  var DOMParser, Hzip, Promise_fromCallback, Promise_fromStandard, Promise_sleep, charPlus, charToNum, co, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, err, existsAsync, fs, getExcelArr, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, qr, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2Prx, sheetEntrieRel2, sheetSufStr, str2Xml, wrap, xjOp, xml2json, xmldom, zlib;
+  var DOMParser, Hzip, Promise_fromCallback, Promise_fromStandard, Promise_sleep, charPlus, charToNum, co, crypto, drawingBuf2, drawingRelBuf2, ejs, existsAsync, fs, getExcelArr, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, qr, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2Prx, sheetEntrieRel2, sheetSufStr, str2Xml, wrap, xjOp, xml2json, xmldom, zlib;
 
   isType = function (type) {
     return function (obj) {
@@ -38,68 +38,30 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
   crypto = require("crypto");
 
-  qr = void 0;
-
-  try {
-    qr = require("qr-image");
-  } catch (error) {
-    err = error;
-    qr = require("./lib/qr-image");
-  }
+  qr = require("./lib/qr-image");
 
   if (typeof co === "undefined") {
-    try {
-      co = require("./lib/co");
-    } catch (error) {
-      err = error;
-      co = require("co");
-    }
+    co = require("./lib/co");
   }
 
-  ejs4xlx = void 0;
+  ejs = require("./lib/ejs");
 
-  try {
-    ejs4xlx = require("./ejs4xlx");
-  } catch (error) {
-    err = error;
-    ejs4xlx = require("ejs4xlx");
-  }
+  Hzip = require("./lib/hzip");
 
-  ejs = void 0;
+  Hzip = require("./lib/hzip");
 
-  try {
-    ejs = require("./lib/ejs");
-  } catch (error) {
-    err = error;
-    ejs = require("ejs");
-  }
+  xml2json = require("./lib/xml2json");
 
-  Hzip = void 0;
+  xmldom = require("./lib/xmldom");
 
-  try {
-    Hzip = require("./lib/hzip");
-  } catch (error) {
-    err = error;
-    Hzip = require("hzip");
-  }
-
-  xml2json = void 0;
-
-  try {
-    xml2json = require("./lib/xml2json");
-  } catch (error) {
-    err = error;
-    xml2json = require("xml2json");
-  }
-
-  xmldom = void 0;
-
-  try {
-    xmldom = require("./lib/xmldom");
-  } catch (error) {
-    err = error;
-    xmldom = require("xmldom");
-  }
+  /*in
+  qr = require "qr-image"
+  co = require "co" if typeof co is "undefined"
+  ejs = require "ejs"
+  Hzip = require "hzip"
+  xml2json = require "xml2json"
+  xmldom = require "xmldom"
+   */
 
   DOMParser = xmldom.DOMParser;
 
@@ -416,7 +378,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       });
       data._img_ = function () {
         var _ref3 = _asyncToGenerator(function* (imgOpt, fileName, rowNum, cellNum) {
-          var cfileName, drawingBuf, drawingObj, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, eny, hashMd5, imgBaseName, imgBuf, imgPh, itHs, len2, len3, len4, len5, m, md5Str, n, o, p, ref3, ref4, ref5, ref6, sei, xdr_frt;
+          var cfileName, drawingBuf, drawingObj, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, eny, err, hashMd5, imgBaseName, imgBuf, imgPh, itHs, len2, len3, len4, len5, m, md5Str, n, o, p, ref3, ref4, ref5, ref6, sei, xdr_frt;
           if (isString(imgOpt) || Buffer.isBuffer(imgOpt)) {
             imgOpt = {
               imgPh: imgOpt
@@ -661,7 +623,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
             imgOpt.margin = 0;
           }
           qrBufArr = [];
-          imgSt = qr.image(imgOpt.text, imgOpt.ec_level, imgOpt);
+          imgSt = qr.image(imgOpt.text, imgOpt);
           imgSt.on("data", function (dt) {
             qrBufArr.push(dt);
           });

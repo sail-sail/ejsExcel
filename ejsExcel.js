@@ -48,8 +48,6 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
   Hzip = require("./lib/hzip");
 
-  Hzip = require("./lib/hzip");
-
   xml2json = require("./lib/xml2json");
 
   xmldom = require("./lib/xmldom");
@@ -228,7 +226,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
   renderExcel = function () {
     var _ref2 = _asyncToGenerator(function* (exlBuf, _data_) {
-      var anonymous, attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem, data, doc, documentElement, end, endElement, entry, hyperlink, hzip, i, idx, l, len1, len10, len11, len12, len13, len2, len3, len4, len5, len6, len7, len8, len9, location, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str2, u, updateEntryAsync, v, w, workbookBuf, workbookEntry, x, xjOpTmp, y, z;
+      var anonymous, attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem, data, doc, documentElement, end, endElement, entry, hyperlink, hyperlinksDomEl, hzip, i, i1, idx, j1, key, keyArr, l, len1, len10, len11, len12, len13, len14, len15, len2, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str, str2, u, updateEntryAsync, v, w, workbookBuf, workbookEntry, x, xjOpTmp, y, z;
       data = {
         _data_: _data_
       };
@@ -687,9 +685,12 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         mergeCellsDomEl = documentElement.getElementsByTagName("mergeCells")[0];
         if (!mergeCellsDomEl) {
           mergeCellsDomEl = doc.createElement("mergeCells");
+          hyperlinksDomEl = documentElement.getElementsByTagName("hyperlinks")[0];
           phoneticPrDomEl = documentElement.getElementsByTagName("phoneticPr")[0];
           pageMarginsDomEl = documentElement.getElementsByTagName("pageMargins")[0];
-          if (phoneticPrDomEl) {
+          if (hyperlinksDomEl) {
+            documentElement.insertBefore(mergeCellsDomEl, hyperlinksDomEl);
+          } else if (phoneticPrDomEl) {
             documentElement.insertBefore(mergeCellsDomEl, phoneticPrDomEl);
           } else if (pageMarginsDomEl) {
             documentElement.insertBefore(mergeCellsDomEl, pageMarginsDomEl);
@@ -917,38 +918,58 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                     continue;
                   }
                   ref = hyperlink.ref;
-                  location = hyperlink.location;
                   if (charToNum(cItem.r.replace(/\d+/, "")) >= charToNum(ref.replace(/\d+/, "")) && Number(cItem.r.replace(/\D+/, "")) >= Number(ref.replace(/\D+/, ""))) {
                     if (cItem.v != null) {
                       if (!cItem.v["$t"]) {
                         cItem.v["$t"] = "";
                       }
-                      cItem.v["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, '') + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r),location:'" + location.replace(/'/gm, "\\'").replace(/\n/gm, "\\n") + "'}) %>";
+                      cItem.v["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, '') + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r)";
+                      keyArr = Object.keys(hyperlink);
+                      for (z = 0, len13 = keyArr.length; z < len13; z++) {
+                        key = keyArr[z];
+                        if (key === "ref") {
+                          continue;
+                        }
+                        cItem.v["$t"] += ",'" + key + "':'" + hyperlink[key].replace(/'/gm, "\\'").replace(/\n/gm, "\\n") + "'";
+                      }
+                      cItem.v["$t"] += "})%>";
                     } else {
                       if (!cItem["$t"]) {
                         cItem["$t"] = "";
                       }
-                      cItem["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, '') + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r),location:'" + location.replace(/'/gm, "\\'").replace(/\n/gm, "\\n") + "'}) %>";
+                      cItem["$t"] += "<% _hyperlinkArr_.push({ref:_charPlus_('" + ref.replace(/\d+/, '') + "',_c)+(" + Number(ref.replace(/\D+/, "")) + "+_r)";
+                      keyArr = Object.keys(hyperlink);
+                      for (i1 = 0, len14 = keyArr.length; i1 < len14; i1++) {
+                        key = keyArr[i1];
+                        if (key === "ref") {
+                          continue;
+                        }
+                        cItem["$t"] += ",'" + key + "':'" + hyperlink[key].replace(/'/gm, "\\'").replace(/\n/gm, "\\n") + "'";
+                      }
+                      cItem["$t"] += "})%>";
                     }
                     mciNumArr.push(m_c_i);
                   }
                 }
-                for (z = 0, len13 = mciNumArr.length; z < len13; z++) {
-                  mciNum = mciNumArr[z];
+                for (j1 = 0, len15 = mciNumArr.length; j1 < len15; j1++) {
+                  mciNum = mciNumArr[j1];
                   sheetObj.worksheet.hyperlinks.hyperlink.splice(mciNum, 1);
                 }
               }
             }
           }
         }
-        if (sheetObj.worksheet.mergeCells !== void 0) {
+        if (sheetObj.worksheet.mergeCells) {
           sheetObj.worksheet.mergeCells = {
             "$t": "<% if(_mergeCellArr_.length===0){_mergeCellArr_.push('A1:A1');} for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
           };
         }
-        if (sheetObj.worksheet.hyperlinks !== void 0) {
+        if (sheetObj.worksheet.hyperlinks) {
+          str = "<%for(var m_cl=0; m_cl<_hyperlinkArr_.length; m_cl++) { %><%-'<hyperlink ref=\"'+_hyperlinkArr_[m_cl].ref+'\"'%>";
+          str += '<%var eny=_hyperlinkArr_[m_cl];var keyArr=Object.keys(eny);for(var tmp=0;tmp<keyArr.length;tmp++){var key=keyArr[tmp];if(key==="ref")continue;%><%-" "+key+"=\\""+eny[key]+"\\""%><%}%>';
+          str += " /><%}%>";
           sheetObj.worksheet.hyperlinks = {
-            "$t": "<% for(var m_cl=0; m_cl<_hyperlinkArr_.length; m_cl++) { %><%-'<hyperlink ref=\"'+_hyperlinkArr_[m_cl].ref+'\" location=\"'+_hyperlinkArr_[m_cl].location+'\" display=\"\"/>'%><% } %>"
+            "$t": str
           };
         }
         sheetBuf2 = new Buffer(sheetSufStr.toString() + xml2json.toXml(sheetObj, "", {

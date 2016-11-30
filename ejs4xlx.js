@@ -481,7 +481,7 @@ var parse = exports.parse = function(str, options){
       while (~(n = js.indexOf("\n", n))) n++, lineno++;
       if (js.substr(0, 1) == ':') js = filtered(js);
       if (js) {
-        if (js.lastIndexOf('//') > js.lastIndexOf('\n')) js += '\n';
+        //if (js.lastIndexOf('//') > js.lastIndexOf('\n')) js += '\n';
         //sail 2012-04-21
         //=,- 符号时生成的字符串针对xml转义符进行转义,在ejsExcel中会使用到
         if(reXmlEq !== undefined && (pixEq === "=" || pixEq === "~" || pixEq === "#")) {
@@ -577,7 +577,7 @@ var parse = exports.parse = function(str, options){
 
   buf.push("'));");
   buf.push("buf = Buffer.concat(buf);return buf;");
-  //fs.writeFileSync("C:/abc.js",buf.join(''));
+  //fs.writeFileSync("D:/abc.js",buf.join(''));
   //process.exit();
   return buf.join('');
 };

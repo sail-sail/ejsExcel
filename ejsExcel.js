@@ -688,10 +688,10 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           hyperlinksDomEl = documentElement.getElementsByTagName("hyperlinks")[0];
           phoneticPrDomEl = documentElement.getElementsByTagName("phoneticPr")[0];
           pageMarginsDomEl = documentElement.getElementsByTagName("pageMargins")[0];
-          if (hyperlinksDomEl) {
-            documentElement.insertBefore(mergeCellsDomEl, hyperlinksDomEl);
-          } else if (phoneticPrDomEl) {
+          if (phoneticPrDomEl) {
             documentElement.insertBefore(mergeCellsDomEl, phoneticPrDomEl);
+          } else if (hyperlinksDomEl) {
+            documentElement.insertBefore(mergeCellsDomEl, hyperlinksDomEl);
           } else if (pageMarginsDomEl) {
             documentElement.insertBefore(mergeCellsDomEl, pageMarginsDomEl);
           } else {
@@ -927,7 +927,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                       keyArr = Object.keys(hyperlink);
                       for (z = 0, len13 = keyArr.length; z < len13; z++) {
                         key = keyArr[z];
-                        if (key === "ref") {
+                        if (key === "ref" || key === "display") {
                           continue;
                         }
                         cItem.v["$t"] += ",'" + key + "':'" + hyperlink[key].replace(/'/gm, "\\'").replace(/\n/gm, "\\n") + "'";
@@ -941,7 +941,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                       keyArr = Object.keys(hyperlink);
                       for (i1 = 0, len14 = keyArr.length; i1 < len14; i1++) {
                         key = keyArr[i1];
-                        if (key === "ref") {
+                        if (key === "ref" || key === "display") {
                           continue;
                         }
                         cItem["$t"] += ",'" + key + "':'" + hyperlink[key].replace(/'/gm, "\\'").replace(/\n/gm, "\\n") + "'";

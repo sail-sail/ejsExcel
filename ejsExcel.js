@@ -1,7 +1,7 @@
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
 
 (function () {
-  var DOMParser, Hzip, Promise_fromCallback, Promise_fromStandard, Promise_sleep, charPlus, charToNum, co, crypto, drawingBuf2, drawingRelBuf2, ejs, ejs4xlx, existsAsync, fs, getExcelArr, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, qr, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2Prx, sheetEntrieRel2, sheetSufStr, str2Xml, wrap, xjOp, xml2json, xmldom, zlib;
+  var DOMParser, Hzip, Promise_fromCallback, Promise_fromStandard, Promise_sleep, charPlus, charToNum, co, crypto, ejs, ejs4xlx, existsAsync, fs, getExcelArr, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, qr, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2Prx, sheetSufStr, str2Xml, wrap, xjOp, xml2json, xmldom, zlib;
 
   isType = function (type) {
     return function (obj) {
@@ -198,13 +198,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     };
   }();
 
-  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideWorkbook_ = _args._hideWorkbook_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
-
-  drawingRelBuf2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>");
-
-  sheetEntrieRel2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>");
-
-  drawingBuf2 = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<xdr:wsDr xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\" xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"></xdr:wsDr>");
+  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideWorkbook_ = _args._hideWorkbook_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
 
   sharedStrings2Prx = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">");
 
@@ -961,7 +955,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         }
         if (sheetObj.worksheet.mergeCells) {
           sheetObj.worksheet.mergeCells = {
-            "$t": "<% if(_mergeCellArr_.length===0){_mergeCellArr_.push('A1:A1');} for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
+            "$t": "<% for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
           };
         }
         if (sheetObj.worksheet.hyperlinks) {
@@ -998,6 +992,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         str2 = "(wrap(function* anonymous(_args) {" + str2 + "}))";
         anonymous = eval(str2);
         buffer2 = yield anonymous.call(this, data);
+        buffer2 = new Buffer(buffer2.toString().replace("<hyperlinks></hyperlinks>", "").replace("<mergeCells></mergeCells>", ""));
         yield updateEntryAsync.apply(hzip, [entry.fileName, buffer2]);
       }
       sharedStrings2.push(new Buffer("</sst>"));

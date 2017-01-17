@@ -198,7 +198,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     };
   }();
 
-  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideWorkbook_ = _args._hideWorkbook_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
+  sheetSufStr = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideSheet_ = _args._hideSheet_;\nvar _deleteSheet_ = _args._deleteSheet_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
 
   sharedStrings2Prx = new Buffer("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">");
 
@@ -220,7 +220,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
   renderExcel = function () {
     var _ref2 = _asyncToGenerator(function* (exlBuf, _data_) {
-      var anonymous, attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem, data, doc, documentElement, end, endElement, entry, hyperlink, hyperlinksDomEl, hzip, i, i1, idx, j1, key, keyArr, l, len1, len10, len11, len12, len13, len14, len15, len2, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str, str2, u, updateEntryAsync, v, w, workbookBuf, workbookEntry, x, xjOpTmp, y, z;
+      var anonymous, attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem, data, doc, documentElement, end, endElement, entry, hyperlink, hyperlinksDomEl, hzip, i, i1, idx, j1, key, keyArr, l, len1, len10, len11, len12, len13, len14, len15, len2, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str, str2, u, updateEntryAsync, v, w, workbookBuf, workbookEntry, workbookRelsBuf, workbookRelsEntry, x, xjOpTmp, y, z;
       data = {
         _data_: _data_
       };
@@ -352,7 +352,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       };
       hzip = new Hzip(exlBuf);
       updateEntryAsync = Promise_fromStandard(hzip.updateEntry, hzip);
-      yield updateEntryAsync.apply(hzip, ["xl/calcChain.xml"]);
+      yield updateEntryAsync("xl/calcChain.xml");
       sheetEntries = [];
       sheetEntrieRels = [];
       ref2 = hzip.entries;
@@ -640,26 +640,84 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       }();
       workbookEntry = hzip.getEntry("xl/workbook.xml");
       workbookBuf = yield inflateRawAsync(workbookEntry.cfile);
-      data._hideWorkbook_ = function (strArr) {
-        var doc, documentElement, len2, m, sheetEl, sheetElArr, sheetsEl;
-        if (!workbookEntry) {
+      workbookRelsEntry = hzip.getEntry("xl/_rels/workbook.xml.rels");
+      workbookRelsBuf = yield inflateRawAsync(workbookRelsEntry.cfile);
+      data._hideSheet_ = function (fileName) {
+        var doc, documentElement, len2, len3, m, n, rId, relationshipEl, relationshipElArr, sheetEl, sheetElArr, sheetsEl;
+        if (!workbookEntry || !workbookRelsEntry || !fileName) {
           return;
         }
-        if (!isArray(strArr)) {
-          strArr = [strArr];
+        rId = void 0;
+        doc = new DOMParser().parseFromString(workbookRelsBuf.toString(), 'text/xml');
+        documentElement = doc.documentElement;
+        relationshipElArr = documentElement.getElementsByTagName("Relationship");
+        for (m = 0, len2 = relationshipElArr.length; m < len2; m++) {
+          relationshipEl = relationshipElArr[m];
+          if ("xl/" + relationshipEl.getAttribute("Target") === fileName) {
+            rId = relationshipEl.getAttribute("Id");
+            break;
+          }
         }
+        if (rId) {
+          doc = new DOMParser().parseFromString(workbookBuf.toString(), 'text/xml');
+          documentElement = doc.documentElement;
+          sheetsEl = documentElement.getElementsByTagName("sheets")[0];
+          sheetElArr = sheetsEl.getElementsByTagName("sheet");
+          for (n = 0, len3 = sheetElArr.length; n < len3; n++) {
+            sheetEl = sheetElArr[n];
+            if (sheetEl.getAttribute("r:id") === rId) {
+              sheetEl.setAttribute("state", "hidden");
+              break;
+            }
+          }
+          workbookBuf = new Buffer(doc.toString());
+        }
+      };
+      data._deleteSheet_ = function (fileName) {
+        var delRelationshipEl, delSheet, doc, documentElement, len2, len3, len4, m, n, o, rId, relationshipEl, relationshipElArr, sheetEl, sheetElArr, sheetEntry, sheetsEl;
+        if (!workbookEntry || !workbookRelsEntry || !fileName) {
+          return;
+        }
+        rId = void 0;
+        delRelationshipEl = void 0;
+        doc = new DOMParser().parseFromString(workbookRelsBuf.toString(), 'text/xml');
+        documentElement = doc.documentElement;
+        relationshipElArr = documentElement.getElementsByTagName("Relationship");
+        for (m = 0, len2 = relationshipElArr.length; m < len2; m++) {
+          relationshipEl = relationshipElArr[m];
+          if ("xl/" + relationshipEl.getAttribute("Target") === fileName) {
+            delRelationshipEl = relationshipEl;
+            rId = relationshipEl.getAttribute("Id");
+            break;
+          }
+        }
+        if (delRelationshipEl) {
+          documentElement.removeChild(delRelationshipEl);
+        }
+        workbookRelsEntry = new Buffer(doc.toString());
         doc = new DOMParser().parseFromString(workbookBuf.toString(), 'text/xml');
         documentElement = doc.documentElement;
         sheetsEl = documentElement.getElementsByTagName("sheets")[0];
         sheetElArr = sheetsEl.getElementsByTagName("sheet");
-        for (m = 0, len2 = sheetElArr.length; m < len2; m++) {
-          sheetEl = sheetElArr[m];
-          if (strArr.indexOf(sheetEl.getAttribute("name")) === -1) {
-            continue;
+        delSheet = [];
+        for (n = 0, len3 = sheetElArr.length; n < len3; n++) {
+          sheetEl = sheetElArr[n];
+          if (sheetEl.getAttribute("r:id") === rId) {
+            delSheet = sheetEl;
+            break;
           }
-          sheetEl.setAttribute("state", "hidden");
+        }
+        if (delSheet) {
+          sheetsEl.removeChild(delSheet);
         }
         workbookBuf = new Buffer(doc.toString());
+        for (o = 0, len4 = sheetEntries.length; o < len4; o++) {
+          sheetEntry = sheetEntries[o];
+          if (sheetEntry.fileName === fileName) {
+            sheetEntry.__remove_sheet = true;
+            break;
+          }
+        }
       };
       shsEntry = hzip.getEntry("xl/sharedStrings.xml");
       if (shsEntry === void 0) {
@@ -992,14 +1050,19 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         str2 = "(wrap(function* anonymous(_args) {" + str2 + "}))";
         anonymous = eval(str2);
         buffer2 = yield anonymous.call(this, data);
-        buffer2 = new Buffer(buffer2.toString().replace("<hyperlinks></hyperlinks>", "").replace("<mergeCells></mergeCells>", ""));
-        yield updateEntryAsync.apply(hzip, [entry.fileName, buffer2]);
+        if (entry.__remove_sheet) {
+          yield updateEntryAsync(entry.fileName);
+        } else {
+          buffer2 = new Buffer(buffer2.toString().replace("<hyperlinks></hyperlinks>", "").replace("<mergeCells></mergeCells>", ""));
+          yield updateEntryAsync(entry.fileName, buffer2);
+        }
       }
       sharedStrings2.push(new Buffer("</sst>"));
       buffer2 = Buffer.concat(sharedStrings2);
       sharedStrings2 = void 0;
       yield updateEntryAsync.apply(hzip, ["xl/sharedStrings.xml", buffer2]);
       yield updateEntryAsync.apply(hzip, ["xl/workbook.xml", workbookBuf]);
+      yield updateEntryAsync.apply(hzip, ["xl/_rels/workbook.xml.rels", workbookRelsBuf]);
       return hzip.buffer;
     });
 

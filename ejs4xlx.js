@@ -477,6 +477,20 @@ var parse = exports.parse = function(str, options){
     	  js = js.substring(0,js.length-1);
     	  js += ",buf)";
       }
+      //隐藏当前工作表 2017-01-18
+      else if(0 == js.indexOf('_hideSheet_(')) {
+    	  if(options && options.fileName) {
+    		  js = js.substring(0,js.length-1);
+    		  js += "\""+options.fileName.replace(/\"/gm,"\\\"")+"\")";
+    	  }
+      }
+      //删除当前工作表 2017-01-18
+      else if(0 == js.indexOf('_deleteSheet_(')) {
+    	  if(options && options.fileName) {
+    		  js = js.substring(0,js.length-1);
+    		  js += "\""+options.fileName.replace(/\"/gm,"\\\"")+"\")";
+    	  }
+      }
 
       while (~(n = js.indexOf("\n", n))) n++, lineno++;
       if (js.substr(0, 1) == ':') js = filtered(js);

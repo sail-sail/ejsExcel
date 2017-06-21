@@ -372,7 +372,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       });
       data._img_ = function () {
         var _ref3 = _asyncToGenerator(function* (imgOpt, fileName, rowNum, cellNum) {
-          var cfileName, drawingBuf, drawingObj, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, eny, err, hashMd5, imgBaseName, imgBuf, imgPh, itHs, len2, len3, len4, len5, m, md5Str, n, o, p, ref3, ref4, ref5, ref6, sei, xdr_frt;
+          var cfileName, doc, documentElement, drawingBuf, drawingEl, drawingObj, drawingRId, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, eny, err, hashMd5, imgBaseName, imgBuf, imgPh, itHs, len2, len3, len4, len5, len6, len7, len8, m, md5Str, n, o, p, q, r, ref3, ref4, ref5, ref6, relationshipEl, relationshipElArr, sei, sheetEntrieRel, sheetEntry, sheetRelPth, shipEl, u, xdr_frt;
           if (isString(imgOpt) || Buffer.isBuffer(imgOpt)) {
             imgOpt = {
               imgPh: imgOpt
@@ -427,12 +427,57 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           if (!itHs) {
             yield updateEntryAsync.apply(hzip, [cfileName, imgBuf, false]);
           }
-          sei = fileName.substring(fileName.length - 5, fileName.length - 4);
+          entryTmp = void 0;
+          for (n = 0, len3 = sheetEntries.length; n < len3; n++) {
+            sheetEntry = sheetEntries[n];
+            if (fileName !== sheetEntry.fileName) {
+              continue;
+            }
+            entryTmp = sheetEntry;
+            break;
+          }
+          if (!entry) {
+            throw new Error(fileName + " dose not found!");
+          }
+          doc = new DOMParser().parseFromString((yield inflateRawAsync(entryTmp.cfile)).toString(), 'text/xml');
+          documentElement = doc.documentElement;
+          drawingEl = documentElement.getElementsByTagName("drawing")[0];
+          if (!drawingEl) {
+            throw "Excel模板显示动态图片之前,至少需要插入一张1像素的透明的图片,以初始化";
+          }
+          drawingRId = drawingEl.getAttribute("r:id");
+          sheetEntrieRel = void 0;
+          sheetRelPth = path.dirname(fileName) + "/_rels/" + path.basename(fileName) + ".rels";
+          for (o = 0, len4 = sheetEntrieRels.length; o < len4; o++) {
+            entryTmp = sheetEntrieRels[o];
+            if (entryTmp.fileName === sheetRelPth) {
+              sheetEntrieRel = entryTmp;
+              break;
+            }
+          }
+          if (!sheetEntrieRel) {
+            throw new Error(sheetRelPth + " dose not found!");
+          }
+          doc = new DOMParser().parseFromString((yield inflateRawAsync(sheetEntrieRel.cfile)).toString(), 'text/xml');
+          documentElement = doc.documentElement;
+          relationshipElArr = documentElement.getElementsByTagName("Relationship");
+          relationshipEl = void 0;
+          for (p = 0, len5 = relationshipElArr.length; p < len5; p++) {
+            shipEl = relationshipElArr[p];
+            if (drawingRId === shipEl.getAttribute("Id")) {
+              relationshipEl = shipEl;
+              break;
+            }
+          }
+          if (!relationshipEl) {
+            throw new Error(sheetRelPth + (" Relationship.Id " + drawingRId + " dose not found!"));
+          }
+          sei = path.basename(relationshipEl.getAttribute("Target")).replace("drawing", "").replace(".xml", "");
           sei = Number(sei) - 1;
           drawingRelBuf = void 0;
           ref4 = hzip.entries;
-          for (n = 0, len3 = ref4.length; n < len3; n++) {
-            entryImgTmp = ref4[n];
+          for (q = 0, len6 = ref4.length; q < len6; q++) {
+            entryImgTmp = ref4[q];
             if (entryImgTmp.fileName === "xl/drawings/_rels/drawing" + (sei + 1) + ".xml.rels") {
               drawingRelBuf = yield inflateRawAsync(entryImgTmp.cfile);
               break;
@@ -450,8 +495,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           }
           itHs = false;
           ref5 = drawingRelObj["Relationships"]["Relationship"];
-          for (o = 0, len4 = ref5.length; o < len4; o++) {
-            eny = ref5[o];
+          for (r = 0, len7 = ref5.length; r < len7; r++) {
+            eny = ref5[r];
             if (md5Str === eny["Id"]) {
               itHs = true;
               break;
@@ -470,8 +515,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           yield updateEntryAsync.apply(hzip, ["xl/drawings/_rels/drawing" + (sei + 1) + ".xml.rels", new Buffer('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n' + drawingRelStr)]);
           drawingBuf = void 0;
           ref6 = hzip.entries;
-          for (p = 0, len5 = ref6.length; p < len5; p++) {
-            entryImgTmp = ref6[p];
+          for (u = 0, len8 = ref6.length; u < len8; u++) {
+            entryImgTmp = ref6[u];
             if (entryImgTmp.fileName === "xl/drawings/drawing" + (sei + 1) + ".xml") {
               drawingBuf = yield inflateRawAsync(entryImgTmp.cfile);
               break;

@@ -372,7 +372,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       });
       data._img_ = function () {
         var _ref3 = _asyncToGenerator(function* (imgOpt, fileName, rowNum, cellNum) {
-          var cfileName, doc, documentElement, drawingBuf, drawingEl, drawingObj, drawingRId, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, eny, err, hashMd5, imgBaseName, imgBuf, imgPh, itHs, len2, len3, len4, len5, len6, len7, len8, m, md5Str, n, o, p, q, r, ref3, ref4, ref5, ref6, relationshipEl, relationshipElArr, sei, sheetEntrieRel, sheetEntry, sheetRelPth, shipEl, u, xdr_frt;
+          var cNvPrDescr, cNvPrName, cfileName, doc, documentElement, drawingBuf, drawingEl, drawingObj, drawingRId, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, eny, err, hashMd5, imgBaseName, imgBuf, imgPh, itHs, len2, len3, len4, len5, len6, len7, len8, m, md5Str, n, o, p, q, r, ref3, ref4, ref5, ref6, relationshipEl, relationshipElArr, sei, sheetEntrieRel, sheetEntry, sheetRelPth, shipEl, u, xdr_frt;
           if (isString(imgOpt) || Buffer.isBuffer(imgOpt)) {
             imgOpt = {
               imgPh: imgOpt
@@ -414,6 +414,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           if (!imgBaseName) {
             imgBaseName = md5Str + ".png";
           }
+          cNvPrName = imgOpt.cNvPrName || imgBaseName;
+          cNvPrDescr = imgOpt.cNvPrDescr || imgBaseName;
           cfileName = "xl/media/" + md5Str + ".png";
           itHs = false;
           ref3 = hzip.entries;
@@ -598,8 +600,8 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
               "xdr:nvPicPr": {
                 "xdr:cNvPr": {
                   "id": "2",
-                  "name": imgBaseName,
-                  "descr": imgBaseName
+                  "name": cNvPrName,
+                  "descr": cNvPrDescr
                 },
                 "xdr:cNvPicPr": {
                   "a:picLocks": {

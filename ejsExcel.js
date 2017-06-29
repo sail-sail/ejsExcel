@@ -1410,39 +1410,13 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
   };
 
   str2Xml = function (str) {
-    var charTmp, i, l, ref2, s, str2;
+    var i, l, ref2, s, str2;
     if (!isString(str)) {
       return str;
     }
-
-    /*
-    arr2 = []
-    buf = new Buffer str
-    for i in [0...buf.length]
-      code = buf.readInt8 i
-      continue if code is 0
-      arr2.push code
-    str = new Buffer(arr2).toString()
-    '&lt;'  :'<',
-     '&gt;'  :'>',
-     '&\#40;' :'(',
-     '&\#41;' :')',
-     '&\#35;' :'#',
-     '&quot;':'"',
-     '&apos;':"'",
-     '&amp;' :'&'
-     */
     str2 = "";
     for (i = l = 0, ref2 = str.length; 0 <= ref2 ? l < ref2 : l > ref2; i = 0 <= ref2 ? ++l : --l) {
-      charTmp = str.charCodeAt(i);
       s = str.charAt(i);
-      if (charTmp <= 31 && charTmp !== 9 && charTmp !== 10 || charTmp === 127) {
-        s = JSON.stringify(s);
-        s = s.substring(1, s.length - 1);
-        s = s.replace("\\u", "_x") + "_";
-        str2 += s;
-        continue;
-      }
       if (s === "&") {
         s = "&amp;";
       } else if (s === "<") {

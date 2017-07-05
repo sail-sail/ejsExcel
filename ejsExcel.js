@@ -1208,7 +1208,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
             cEle = cs[o];
             crStr = cEle.r;
             crStr = crStr.replace(row.r, "");
-            numcr = charToNum(crStr);
+            numcr = charToNum(crStr) - 1;
             numcrArr.push(numcr);
             if (cEle.v === void 0) {
               continue;

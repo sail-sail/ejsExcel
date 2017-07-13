@@ -23,8 +23,7 @@ test/test.xlsx 为完整示例 demo
 可以用 <%console.log(_data_)%> 打印临时变量到控制台,进行调试
 
 _data_ 为内置对象, 数据源
-```
-====  
+```  
 ```
 auto: Sail  
 QQ: 151263555  

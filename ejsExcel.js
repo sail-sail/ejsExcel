@@ -1115,6 +1115,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         if (entry.__remove_sheet) {
           yield updateEntryAsync(entry.fileName);
         } else {
+          buffer2 = Buffer.from(buffer2.toString().replace("<hyperlinks></hyperlinks>", "").replace("<mergeCells></mergeCells>", ""));
           yield updateEntryAsync(entry.fileName, buffer2);
         }
       }

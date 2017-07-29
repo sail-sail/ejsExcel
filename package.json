@@ -21,5 +21,5 @@
         "type": "git",
         "url": "https://github.com/sail-sail/ejsExcel.git"
 	},
-	"engines" : {"node": ">=4.5.0"}
+	"engines" : {"node": ">=4.5.1"}
 }

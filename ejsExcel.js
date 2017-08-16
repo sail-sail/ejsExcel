@@ -200,7 +200,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     };
   }();
 
-  sheetSufStr = Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideSheet_ = _args._hideSheet_;\nvar _deleteSheet_ = _args._deleteSheet_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
+  sheetSufStr = Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideSheet_ = _args._hideSheet_;\nvar _showSheet_ = _args._showSheet_;\nvar _deleteSheet_ = _args._deleteSheet_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
 
   sharedStrings2Prx = Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">");
 
@@ -735,8 +735,39 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           workbookBuf = Buffer.from(doc.toString());
         }
       };
+      data._showSheet_ = function (fileName) {
+        var doc, documentElement, len2, len3, m, n, rId, relationshipEl, relationshipElArr, sheetEl, sheetElArr, sheetsEl;
+        if (!workbookEntry || !workbookRelsEntry || !fileName) {
+          return;
+        }
+        rId = void 0;
+        doc = new DOMParser().parseFromString(workbookRelsBuf.toString(), 'text/xml');
+        documentElement = doc.documentElement;
+        relationshipElArr = documentElement.getElementsByTagName("Relationship");
+        for (m = 0, len2 = relationshipElArr.length; m < len2; m++) {
+          relationshipEl = relationshipElArr[m];
+          if ("xl/" + relationshipEl.getAttribute("Target") === fileName) {
+            rId = relationshipEl.getAttribute("Id");
+            break;
+          }
+        }
+        if (rId) {
+          doc = new DOMParser().parseFromString(workbookBuf.toString(), 'text/xml');
+          documentElement = doc.documentElement;
+          sheetsEl = documentElement.getElementsByTagName("sheets")[0];
+          sheetElArr = sheetsEl.getElementsByTagName("sheet");
+          for (n = 0, len3 = sheetElArr.length; n < len3; n++) {
+            sheetEl = sheetElArr[n];
+            if (sheetEl.getAttribute("r:id") === rId) {
+              sheetEl.removeAttribute("state");
+              break;
+            }
+          }
+          workbookBuf = Buffer.from(doc.toString());
+        }
+      };
       data._deleteSheet_ = function (fileName) {
-        var delRelationshipEl, delSheet, doc, documentElement, len2, len3, len4, m, n, o, rId, relationshipEl, relationshipElArr, sheetEl, sheetElArr, sheetEntry, sheetsEl;
+        var activeTab, bookViewsEl, delRelationshipEl, delSheet, doc, documentElement, len2, len3, len4, m, n, o, rId, relationshipEl, relationshipElArr, sheetEl, sheetElArr, sheetEntry, sheetsEl, workbookViewEl;
         if (!workbookEntry || !workbookRelsEntry || !fileName) {
           return;
         }
@@ -761,7 +792,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         documentElement = doc.documentElement;
         sheetsEl = documentElement.getElementsByTagName("sheets")[0];
         sheetElArr = sheetsEl.getElementsByTagName("sheet");
-        delSheet = [];
+        delSheet = void 0;
         for (n = 0, len3 = sheetElArr.length; n < len3; n++) {
           sheetEl = sheetElArr[n];
           if (sheetEl.getAttribute("r:id") === rId) {
@@ -771,6 +802,20 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         }
         if (delSheet) {
           sheetsEl.removeChild(delSheet);
+          sheetElArr = sheetsEl.getElementsByTagName("sheet");
+          bookViewsEl = documentElement.getElementsByTagName("bookViews")[0];
+          if (bookViewsEl) {
+            workbookViewEl = bookViewsEl.getElementsByTagName("workbookView")[0];
+            if (workbookViewEl) {
+              activeTab = workbookViewEl.getAttribute("activeTab");
+              if (activeTab) {
+                activeTab = Number(activeTab);
+                if (activeTab > sheetElArr.length) {
+                  workbookViewEl.setAttribute("activeTab", sheetElArr.length);
+                }
+              }
+            }
+          }
         }
         workbookBuf = Buffer.from(doc.toString());
         for (o = 0, len4 = sheetEntries.length; o < len4; o++) {

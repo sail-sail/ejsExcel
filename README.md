@@ -16,6 +16,7 @@ test/test.xlsx 为完整示例 demo
 <%forRBegin		循环多行
 <%forCBegin		循环多个单元格
 <%_hideSheet_()%>	隐藏所在工作表
+<%_showSheet_()%>	显示所在工作表
 <%_deleteSheet_()%>	删除所在工作表
 
 <% %>内部可执行 任意 javascript, 注意是 **任意**

@@ -484,6 +484,13 @@ var parse = exports.parse = function(str, options){
     		  js += "\""+options.fileName.replace(/\"/gm,"\\\"")+"\")";
     	  }
       }
+      //显示当前工作表 2017-01-18
+      else if(0 == js.indexOf('_showSheet_(')) {
+    	  if(options && options.fileName) {
+    		  js = js.substring(0,js.length-1);
+    		  js += "\""+options.fileName.replace(/\"/gm,"\\\"")+"\")";
+    	  }
+      }
       //删除当前工作表 2017-01-18
       else if(0 == js.indexOf('_deleteSheet_(')) {
     	  if(options && options.fileName) {

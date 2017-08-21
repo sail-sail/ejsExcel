@@ -154,28 +154,15 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       data._charToNum_ = charToNum;
       data._str2Xml_ = str2Xml;
       data._acVar_ = {
-        sharedStrings: [],
         _ss_len: 0
       };
       sharedStrings2 = [Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">")];
       data._ps_ = function (val) {
-        var _ss_len, arr, index;
+        var index;
         val = str2Xml(val);
-        arr = data._acVar_.sharedStrings;
-        index = arr.indexOf(val, -200);
-        _ss_len = data._acVar_._ss_len;
-        if (index === -1) {
-          arr.push(val);
-          if (arr.length > 200) {
-            arr.shift();
-          }
-          sharedStrings2.push(Buffer.from("<si><t xml:space=\"preserve\">" + val + "</t></si>"));
-          _ss_len++;
-          data._acVar_._ss_len = _ss_len;
-          index = _ss_len - 1;
-        } else {
-          index = _ss_len - (arr.length - index);
-        }
+        sharedStrings2.push(Buffer.from("<si><t xml:space=\"preserve\">" + val + "</t></si>"));
+        index = data._acVar_._ss_len;
+        data._acVar_._ss_len++;
         return String(index);
       };
       for (l = 0, len1 = filter.length; l < len1; l++) {
@@ -230,11 +217,11 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       data._charToNum_ = charToNum;
       data._str2Xml_ = str2Xml;
       data._acVar_ = {
-        sharedStrings: []
+        _ss_len: 0
       };
       sharedStrings2 = [sharedStrings2Prx];
       data._ps_ = function (str, buf) {
-        var _ss_len, arr, i, index, l, ref2, tmpStr, val;
+        var i, index, l, ref2, tmpStr, val;
         if (str === void 0) {
           str = "";
         } else if (str === null) {
@@ -264,21 +251,9 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           return "";
         }
         val = str2Xml(str);
-        arr = data._acVar_.sharedStrings;
-        _ss_len = data._acVar_._ss_len;
-        index = arr.indexOf(val, -200);
-        if (index === -1) {
-          arr.push(val);
-          if (arr.length > 200) {
-            arr.shift();
-          }
-          sharedStrings2.push(Buffer.from("<si><t xml:space=\"preserve\">" + val + "</t></si>"));
-          _ss_len++;
-          data._acVar_._ss_len = _ss_len;
-          index = _ss_len - 1;
-        } else {
-          index = _ss_len - (arr.length - index);
-        }
+        sharedStrings2.push(Buffer.from("<si><t xml:space=\"preserve\">" + val + "</t></si>"));
+        index = data._acVar_._ss_len;
+        data._acVar_._ss_len++;
         return String(index);
       };
       data._pf_ = function (str, buf) {

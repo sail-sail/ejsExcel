@@ -1,3 +1,4 @@
+require('babel-polyfill'); // polyfill for generator functions , etc 
 const fs = require("fs");
 const path = require("path");
 const Stream = require("stream");

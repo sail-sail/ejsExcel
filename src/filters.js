@@ -9,7 +9,7 @@
  * First element of the target `obj`.
  */
 
-exports.first = function(obj) {
+module.exports.first = function(obj) {
   return obj[0];
 };
 
@@ -17,7 +17,7 @@ exports.first = function(obj) {
  * Last element of the target `obj`.
  */
 
-exports.last = function(obj) {
+module.exports.last = function(obj) {
   return obj[obj.length - 1];
 };
 
@@ -25,7 +25,7 @@ exports.last = function(obj) {
  * Capitalize the first letter of the target `str`.
  */
 
-exports.capitalize = function(str){
+module.exports.capitalize = function(str){
   str = String(str);
   return str[0].toUpperCase() + str.substr(1, str.length);
 };
@@ -34,7 +34,7 @@ exports.capitalize = function(str){
  * Downcase the target `str`.
  */
 
-exports.downcase = function(str){
+module.exports.downcase = function(str){
   return String(str).toLowerCase();
 };
 
@@ -42,7 +42,7 @@ exports.downcase = function(str){
  * Uppercase the target `str`.
  */
 
-exports.upcase = function(str){
+module.exports.upcase = function(str){
   return String(str).toUpperCase();
 };
 
@@ -50,7 +50,7 @@ exports.upcase = function(str){
  * Sort the target `obj`.
  */
 
-exports.sort = function(obj){
+module.exports.sort = function(obj){
   return Object.create(obj).sort();
 };
 
@@ -58,7 +58,7 @@ exports.sort = function(obj){
  * Sort the target `obj` by the given `prop` ascending.
  */
 
-exports.sort_by = function(obj, prop){
+module.exports.sort_by = function(obj, prop){
   return Object.create(obj).sort(function(a, b){
     a = a[prop], b = b[prop];
     if (a > b) return 1;
@@ -71,7 +71,7 @@ exports.sort_by = function(obj, prop){
  * Size or length of the target `obj`.
  */
 
-exports.size = exports.length = function(obj) {
+module.exports.size = module.exports.length = function(obj) {
   return obj.length;
 };
 
@@ -79,7 +79,7 @@ exports.size = exports.length = function(obj) {
  * Add `a` and `b`.
  */
 
-exports.plus = function(a, b){
+module.exports.plus = function(a, b){
   return Number(a) + Number(b);
 };
 
@@ -87,7 +87,7 @@ exports.plus = function(a, b){
  * Subtract `b` from `a`.
  */
 
-exports.minus = function(a, b){
+module.exports.minus = function(a, b){
   return Number(a) - Number(b);
 };
 
@@ -95,7 +95,7 @@ exports.minus = function(a, b){
  * Multiply `a` by `b`.
  */
 
-exports.times = function(a, b){
+module.exports.times = function(a, b){
   return Number(a) * Number(b);
 };
 
@@ -103,7 +103,7 @@ exports.times = function(a, b){
  * Divide `a` by `b`.
  */
 
-exports.divided_by = function(a, b){
+module.exports.divided_by = function(a, b){
   return Number(a) / Number(b);
 };
 
@@ -111,7 +111,7 @@ exports.divided_by = function(a, b){
  * Join `obj` with the given `str`.
  */
 
-exports.join = function(obj, str){
+module.exports.join = function(obj, str){
   return obj.join(str || ', ');
 };
 
@@ -119,7 +119,7 @@ exports.join = function(obj, str){
  * Truncate `str` to `len`.
  */
 
-exports.truncate = function(str, len){
+module.exports.truncate = function(str, len){
   str = String(str);
   return str.substr(0, len);
 };
@@ -128,7 +128,7 @@ exports.truncate = function(str, len){
  * Truncate `str` to `n` words.
  */
 
-exports.truncate_words = function(str, n){
+module.exports.truncate_words = function(str, n){
   var str = String(str)
     , words = str.split(/ +/);
   return words.slice(0, n).join(' ');
@@ -138,7 +138,7 @@ exports.truncate_words = function(str, n){
  * Replace `pattern` with `substitution` in `str`.
  */
 
-exports.replace = function(str, pattern, substitution){
+module.exports.replace = function(str, pattern, substitution){
   return String(str).replace(pattern, substitution || '');
 };
 
@@ -146,7 +146,7 @@ exports.replace = function(str, pattern, substitution){
  * Prepend `val` to `obj`.
  */
 
-exports.prepend = function(obj, val){
+module.exports.prepend = function(obj, val){
   return Array.isArray(obj)
     ? [val].concat(obj)
     : val + obj;
@@ -156,7 +156,7 @@ exports.prepend = function(obj, val){
  * Append `val` to `obj`.
  */
 
-exports.append = function(obj, val){
+module.exports.append = function(obj, val){
   return Array.isArray(obj)
     ? obj.concat(val)
     : obj + val;
@@ -166,7 +166,7 @@ exports.append = function(obj, val){
  * Map the given `prop`.
  */
 
-exports.map = function(arr, prop){
+module.exports.map = function(arr, prop){
   return arr.map(function(obj){
     return obj[prop];
   });
@@ -176,7 +176,7 @@ exports.map = function(arr, prop){
  * Reverse the given `obj`.
  */
 
-exports.reverse = function(obj){
+module.exports.reverse = function(obj){
   return Array.isArray(obj)
     ? obj.reverse()
     : String(obj).split('').reverse().join('');
@@ -186,13 +186,13 @@ exports.reverse = function(obj){
  * Get `prop` of the given `obj`.
  */
 
-exports.get = function(obj, prop){
+module.exports.get = function(obj, prop){
   return obj[prop];
 };
 
 /**
  * Packs the given `obj` into json string
  */
-exports.json = function(obj){
+module.exports.json = function(obj){
   return JSON.stringify(obj);
 };

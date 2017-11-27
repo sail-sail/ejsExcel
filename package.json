@@ -13,11 +13,13 @@
   ],
   "name": "ejsexcel",
   "version": "3.4.9",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "readme": "README.md",
   "license": "MIT",
   "scripts": {
-    "test": "mocha test --recursive"
+    "test": "mocha test --recursive",
+    "build": "babel src --out-dir dist",
+    "prepublish": "npm run build"
   },
   "description": "Intelligent report system, nodejs node export excel, ejsExcel",
   "repository": {
@@ -28,6 +30,9 @@
     "node": ">=4.5.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "mocha": "^4.0.1"
   }
 }

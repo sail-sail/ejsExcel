@@ -1,1 +1,4 @@
 /.project
+node_modules/
+test/report2.xlsx
+test/test2.xlsx

@@ -1,4 +1,7 @@
-
+/**
+ * Convert str to number 
+ * @param {String} str 
+ */
 function charToNum (str) {
     var i, j, len, m, ref, temp, val;
     str = new String(str);
@@ -13,6 +16,38 @@ function charToNum (str) {
 };
 
 
+/**
+ * add delta to char
+ * @param {String} str 
+ * @param {Number} num 
+ */
+function charPlus(str, num) {
+    var ch, i, strNum, temp;
+    strNum = charToNum(str);
+    strNum += num;
+    if (strNum <= 0) {
+        return "A";
+    }
+    temp = "";
+    ch = "";
+    while (strNum >= 1) {
+        i = strNum % 26;
+        if (i !== 0) {
+            ch = String.fromCharCode(65 + i - 1);
+            temp = ch + temp;
+        } else {
+            ch = "Z";
+            temp = ch + temp;
+            strNum--;
+        }
+        strNum = Math.floor(strNum / 26);
+    }
+    return temp;
+};
+
+
+
 module.exports={
     charToNum,
+    charPlus,
 };

@@ -17,6 +17,7 @@ if (typeof co === "undefined") {
 // subpackage dependencies
 const ejs4xlx = require("./ejs4xlx");
 const {isType,isObject,isArray,isFunction,isString}=require('./is-type');
+const {charToNum}=require('./utils');
 
 
 
@@ -1485,18 +1486,6 @@ function charPlus(str, num) {
   return temp;
 };
 
-function charToNum(str) {
-  var i, j, l, len, ref2, temp, val;
-  str = new String(str);
-  val = 0;
-  len = str.length;
-  for (j = l = 0, ref2 = len; 0 <= ref2 ? l < ref2 : l > ref2; j = 0 <= ref2 ? ++l : --l) {
-    i = len - 1 - j;
-    temp = str.charCodeAt(i) - 65 + 1;
-    val += temp * Math.pow(26, j);
-  }
-  return val;
-};
 
 module.exports={
   charPlus ,

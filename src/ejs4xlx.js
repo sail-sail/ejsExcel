@@ -11,7 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const {isType,isArray,isFunction,isObject,isString}=require('./is-type');
-
+const {charToNum}=require('./utils');
 
 
 const {basename,dirname,extname,join} = path
@@ -20,18 +20,7 @@ var UID = Date.now()
 var uniqueID = function() {
 	return (UID++).toString(36);
 }
-var charToNum = function(str) {
-  var i, j, len, m, ref, temp, val;
-  str = new String(str);
-  val = 0;
-  len = str.length;
-  for (j = m = 0, ref = len; 0 <= ref ? m < ref : m > ref; j = 0 <= ref ? ++m : --m) {
-    i = len - 1 - j;
-    temp = str.charCodeAt(i) - 65 + 1;
-    val += temp * Math.pow(26, j);
-  }
-  return val;
-};
+
 
 /**
  * Filters.

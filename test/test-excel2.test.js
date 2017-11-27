@@ -1,6 +1,8 @@
 var fs = require("fs");
 var path=require('path');
+var assert=require('assert');
 var ejsExcel = require("../ejsExcel");
+
 
 const TEMPLATE_PATH=path.join(__dirname,'./template/report.xlsx');
 const OUT_PATH=path.join(__dirname,"./generated/report2.xlsx");
@@ -26,6 +28,7 @@ describe('test excel 2',function(){
                 console.log("生成report2.xlsx");
             }).catch(function(err) {
                 console.error(err);
+                assert.fail(err);
             });
     });
 });

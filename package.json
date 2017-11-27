@@ -13,7 +13,7 @@
   ],
   "name": "ejsexcel",
   "version": "3.4.9",
-  "main": "ejsExcel",
+  "main": "src/index.js",
   "readme": "README.md",
   "license": "MIT",
   "scripts": {

@@ -1,7 +1,7 @@
 var fs = require("fs");
 var path=require('path');
 var assert=require('assert');
-var ejsExcel = require("../ejsExcel");
+var ejsExcel = require("../src");
 
 
 const TEMPLATE_PATH=path.join(__dirname,'./template/report.xlsx');

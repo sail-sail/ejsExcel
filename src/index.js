@@ -1,17 +1,22 @@
-var fs = require("fs");
-var path = require("path");
-var Stream = require("stream");
-var zlib = require("zlib");
-var crypto = require("crypto");
-var ejs = require("../lib/ejs");
-var Hzip = require("../lib/hzip");
-var xml2json = require("../lib/xml2json");
-var xmldom = require("../lib/xmldom");
-var qr = require("../lib/qr-image");
+const fs = require("fs");
+const path = require("path");
+const Stream = require("stream");
+const zlib = require("zlib");
+const crypto = require("crypto");
+
+// third-pard dependcies
+const ejs = require("../lib/ejs");
+const Hzip = require("../lib/hzip");
+const xml2json = require("../lib/xml2json");
+const xmldom = require("../lib/xmldom");
+const qr = require("../lib/qr-image");
 if (typeof co === "undefined") {
-  var co = require("../lib/co");
+   var co = require("../lib/co");
 }
-var ejs4xlx = require("./ejs4xlx");
+
+// subpackage dependencies
+const ejs4xlx = require("./ejs4xlx");
+const {isType,isObject,isArray,isFunction,isString}=require('./is-type');
 
 
 
@@ -38,28 +43,8 @@ function _asyncToGenerator(fn) {
   };
 }
 
-var DOMParser, Promise_fromCallback, Promise_fromStandard, Promise_sleep, charPlus, charToNum,  
-existsAsync,  getExcelArr, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, 
-readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2Prx, sheetSufStr, str2Xml, 
-wrap, xjOp;
 
-
-isType = function (type) {
-  return function (obj) {
-    return Object.prototype.toString.call(obj) === "[object " + type + "]";
-  };
-};
-
-
-isObject = isType("Object");
-
-isString = isType("String");
-
-isArray = Array.isArray || isType("Array");
-
-isFunction = isType("Function");
-
-replaceLast = function (tt, what, replacement) {
+function replaceLast(tt, what, replacement) {
   var mthArr, num;
   mthArr = tt.match(what);
   num = 0;
@@ -73,9 +58,9 @@ replaceLast = function (tt, what, replacement) {
 };
 
 
-DOMParser = xmldom.DOMParser;
+var DOMParser = xmldom.DOMParser;
 
-wrap = function (func) {
+function wrap (func) {
   return function () {
     var rvObj;
     rvObj = func.apply(this, arguments);
@@ -83,7 +68,7 @@ wrap = function (func) {
   };
 };
 
-Promise_fromCallback = function (cb, t) {
+function Promise_fromCallback(cb, t) {
   return function () {
     var args;
     args = Array.from(arguments);
@@ -103,7 +88,7 @@ Promise_fromCallback = function (cb, t) {
   };
 };
 
-Promise_fromStandard = function (cb, t) {
+function Promise_fromStandard(cb, t) {
   return function () {
     var args;
     args = Array.from(arguments);
@@ -127,7 +112,7 @@ Promise_fromStandard = function (cb, t) {
   };
 };
 
-Promise_sleep = function (time) {
+function Promise_sleep(time) {
   return new Promise(function (resolve, reject) {
     if (time > 0) {
       setTimeout(function () {
@@ -141,13 +126,13 @@ Promise_sleep = function (time) {
   });
 };
 
-existsAsync = Promise_fromCallback(fs.exists, fs);
+var existsAsync = Promise_fromCallback(fs.exists, fs);
 
-readFileAsync = Promise_fromStandard(fs.readFile, fs);
+var readFileAsync = Promise_fromStandard(fs.readFile, fs);
 
-inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
+var inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
 
-render = function () {
+var render = function () {
   var _ref = _asyncToGenerator(function* (buffer, filter, _data_, hzip, options) {
     var anonymous, buffer2, data, entries, flt, l, len1, sharedStrings2, str, updateEntryAsync;
     if (hzip === void 0 || hzip === null) {
@@ -195,11 +180,11 @@ render = function () {
   };
 }();
 
-sheetSufStr = Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideSheet_ = _args._hideSheet_;\nvar _showSheet_ = _args._showSheet_;\nvar _deleteSheet_ = _args._deleteSheet_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
+const sheetSufStr = Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideSheet_ = _args._hideSheet_;\nvar _showSheet_ = _args._showSheet_;\nvar _deleteSheet_ = _args._deleteSheet_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
 
-sharedStrings2Prx = Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">");
+const sharedStrings2Prx = Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">");
 
-xjOp = {
+var xjOp = {
   object: true,
   reversible: true,
   coerce: false,
@@ -207,7 +192,7 @@ xjOp = {
   sanitize: false
 };
 
-renderExcelCb = function (exlBuf, _data_, callback) {
+function renderExcelCb(exlBuf, _data_, callback) {
   renderExcel(exlBuf, _data_).then(function (buf2) {
     callback(null, buf2);
   })["catch"](function (err) {
@@ -215,7 +200,7 @@ renderExcelCb = function (exlBuf, _data_, callback) {
   });
 };
 
-renderExcel = function () {
+var renderExcel = function () {
   var _ref2 = _asyncToGenerator(function* (exlBuf, _data_) {
     var anonymous, attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem, data, doc, documentElement, end, endElement, entry, hyperlink, hyperlinksDomEl, hzip, i, i1, idx, j1, key, keyArr, l, len1, len10, len11, len12, len13, len14, len15, len2, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str, str2, u, updateEntryAsync, v, w, workbookBuf, workbookEntry, workbookRelsBuf, workbookRelsEntry, x, xjOpTmp, y, z;
     data = {
@@ -1161,7 +1146,7 @@ renderExcel = function () {
   };
 }();
 
-renderPath = function () {
+var renderPath = function () {
   var _ref5 = _asyncToGenerator(function* (ejsDir, data) {
     var buffer, config, configPath, exists, exlBuf, extname, filter, ftObj, key, l, len1, obj, val;
     configPath = ejsDir + "/config.json";
@@ -1203,7 +1188,7 @@ renderPath = function () {
   };
 }();
 
-getExcelArr = function () {
+var getExcelArr = function () {
   var _ref6 = _asyncToGenerator(function* (buffer) {
     var buf, cEle, crStr, cs, enr, ens, entries, entry, fileName, hzip, i, l, len1, len2, len3, len4, m, n, numcr, numcrArr, o, p, ref2, ref3, row, sharedJson, sharedStr, sheet, sheetArr, sheetStr, sheets, sheetsEns, sir, vStr, vStr2;
     sharedStr = null;
@@ -1298,7 +1283,7 @@ getExcelArr = function () {
   };
 }();
 
-getExcelEns = function (sharedStr, sheets) {
+function getExcelEns(sharedStr, sheets) {
   var cEle, cont, crStr, cs, enr, ens, headsArr, i, k, l, len1, len2, len3, len4, len5, m, n, numcr, numcrArr, o, p, q, r, ref2, ref3, ref4, ref5, ref6, row, sharedJson, sheet, sheetHeadsArr, sheetStr, sheetsEns, sir, vStr, vStr2;
   sheetsEns = [];
 
@@ -1452,7 +1437,7 @@ getExcelEns = function (sharedStr, sheets) {
   };
 };
 
-str2Xml = function (str) {
+function str2Xml(str) {
   var i, l, ref2, s, str2;
   if (!isString(str)) {
     return str;
@@ -1476,7 +1461,7 @@ str2Xml = function (str) {
   return str2;
 };
 
-charPlus = function (str, num) {
+function charPlus(str, num) {
   var ch, i, strNum, temp;
   strNum = charToNum(str);
   strNum += num;
@@ -1500,7 +1485,7 @@ charPlus = function (str, num) {
   return temp;
 };
 
-charToNum = function (str) {
+function charToNum(str) {
   var i, j, l, len, ref2, temp, val;
   str = new String(str);
   val = 0;

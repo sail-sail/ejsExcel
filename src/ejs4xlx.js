@@ -8,23 +8,14 @@
 /**
  * Module dependencies.
  */
+const fs = require('fs');
+const path = require('path');
+const {isType,isArray,isFunction,isObject,isString}=require('./is-type');
 
-var fs = require('fs');
-var path = require('path');
-var basename = path.basename;
-var dirname = path.dirname;
-var extname = path.extname;
-var join = path.join;
 
-var isType = function(type) {
-	return function(obj) {
-		return Object.prototype.toString.call(obj) === "[object " + type + "]";
-	};
-};
-var isObject = isType("Object");
-var isString = isType("String");
-var isArray = Array.isArray || isType("Array");
-var isFunction = isType("Function");
+
+const {basename,dirname,extname,join} = path
+
 var UID = Date.now()
 var uniqueID = function() {
 	return (UID++).toString(36);

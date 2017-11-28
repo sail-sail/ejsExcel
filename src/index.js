@@ -19,6 +19,7 @@ if (typeof co === "undefined") {
 const ejs4xlx = require("./ejs4xlx");
 const {isType,isObject,isArray,isFunction,isString}=require('./is-type');
 const {charToNum,charPlus}=require('./utils');
+const {Promise_fromCallback,Promise_fromStandard,Promise_sleep}=requrie('./async.js');
 
 
 
@@ -26,11 +27,20 @@ function _asyncToGenerator(fn) {
   return function () {
     var gen = fn.apply(this, arguments);
     return new Promise(function (resolve, reject) {
+
+      /**
+       * @param {String} key "next"||"throw"
+       * @param {Object} arg value || err
+       */
       function step(key, arg) {
         try {
           var info = gen[key](arg);
           var value = info.value;
-        } catch (error) { reject(error); return; }
+        } 
+        catch (error) { 
+          reject(error); return; 
+        }
+
         if (info.done) { resolve(value); }
         else {
           return Promise.resolve(value)
@@ -68,64 +78,6 @@ function wrap (func) {
     rvObj = func.apply(this, arguments);
     return co(rvObj);
   };
-};
-
-function Promise_fromCallback(cb, t) {
-  return function () {
-    var args;
-    args = Array.from(arguments);
-    if (!t) {
-      t = this;
-    }
-    return new Promise(function (resolve, reject) {
-      args.push(function (data) {
-        resolve(data);
-      });
-      if (cb) {
-        cb.apply(t, args);
-      } else {
-        resolve();
-      }
-    });
-  };
-};
-
-function Promise_fromStandard(cb, t) {
-  return function () {
-    var args;
-    args = Array.from(arguments);
-    if (!t) {
-      t = this;
-    }
-    return new Promise(function (resolve, reject) {
-      args.push(function (err, data) {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(data);
-      });
-      if (cb) {
-        cb.apply(t, args);
-      } else {
-        resolve();
-      }
-    });
-  };
-};
-
-function Promise_sleep(time) {
-  return new Promise(function (resolve, reject) {
-    if (time > 0) {
-      setTimeout(function () {
-        resolve();
-      }, time);
-    } else {
-      setImmediate(function () {
-        resolve();
-      });
-    }
-  });
 };
 
 var existsAsync = Promise_fromCallback(fs.exists, fs);
@@ -204,8 +156,8 @@ function renderExcelCb(exlBuf, _data_, callback) {
 
 var renderExcel = function () {
   var _ref2 = _asyncToGenerator(function* (exlBuf, _data_) {
-    var anonymous, attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem, data, doc, documentElement, end, endElement, entry, hyperlink, hyperlinksDomEl, hzip, i, i1, idx, j1, key, keyArr, l, len1, len10, len11, len12, len13, len14, len15, len2, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str, str2, u, updateEntryAsync, v, w, workbookBuf, workbookEntry, workbookRelsBuf, workbookRelsEntry, x, xjOpTmp, y, z;
-    data = {
+    var anonymous, attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem,  doc, documentElement, end, endElement, entry, hyperlink, hyperlinksDomEl,  i, i1, idx, j1, key, keyArr, l, len1, len10, len11, len12, len13, len14, len15, len2, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str, str2, u, updateEntryAsync, v, w, workbookBuf, workbookEntry, workbookRelsBuf, workbookRelsEntry, x, xjOpTmp, y, z;
+    var data = {
       _data_: _data_
     };
     data._charPlus_ = charPlus;
@@ -322,7 +274,7 @@ var renderExcel = function () {
       sharedStrings: [],
       _ss_len: 0
     };
-    hzip = new Hzip(exlBuf);
+    var hzip = new Hzip(exlBuf);
     updateEntryAsync = Promise_fromStandard(hzip.updateEntry, hzip);
     yield updateEntryAsync("xl/calcChain.xml");
     sheetEntries = [];
@@ -1192,10 +1144,10 @@ var renderPath = function () {
 
 var getExcelArr = function () {
   var _ref6 = _asyncToGenerator(function* (buffer) {
-    var buf, cEle, crStr, cs, enr, ens, entries, entry, fileName, hzip, i, l, len1, len2, len3, len4, m, n, numcr, numcrArr, o, p, ref2, ref3, row, sharedJson, sharedStr, sheet, sheetArr, sheetStr, sheets, sheetsEns, sir, vStr, vStr2;
+    var buf, cEle, crStr, cs, enr, ens, entries, entry, fileName,  i, l, len1, len2, len3, len4, m, n, numcr, numcrArr, o, p, ref2, ref3, row, sharedJson, sharedStr, sheet, sheetArr, sheetStr, sheets, sheetsEns, sir, vStr, vStr2;
     sharedStr = null;
     sheets = [];
-    hzip = new Hzip(buffer);
+    var hzip = new Hzip(buffer);
     entries = hzip.entries;
     for (l = 0, len1 = entries.length; l < len1; l++) {
       entry = entries[l];

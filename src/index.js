@@ -19,7 +19,7 @@ if (typeof co === "undefined") {
 const ejs4xlx = require("./ejs4xlx");
 const {isType,isObject,isArray,isFunction,isString}=require('./is-type');
 const {charToNum,charPlus}=require('./utils');
-const {_asyncToGenerator,Promise_fromCallback,Promise_fromStandard,Promise_sleep}=requrie('./async.js');
+const {_asyncToGenerator,Promise_fromCallback,Promise_fromStandard,Promise_sleep}=require('./async.js');
 
 
 function replaceLast(tt, what, replacement) {
@@ -1068,20 +1068,20 @@ var renderExcel = function () {
 
 var renderPath = function () {
   var _ref5 = _asyncToGenerator(function* (ejsDir, data) {
-    var buffer, config, configPath, exists, exlBuf, extname, filter, ftObj, key, l, len1, obj, val;
-    configPath = ejsDir + "/config.json";
-    exists = yield existsAsync(configPath);
+    var buffer,  extname,  ftObj, key, l, len1, obj, val;
+    var configPath = ejsDir + "/config.json";
+    var exists = yield existsAsync(configPath);
     if (exists === false) {
       extname = path.extname(ejsDir);
       if (extname === "") {
         ejsDir = ejsDir + ".xlsx";
       }
-      exlBuf = yield readFileAsync(ejsDir);
+      var exlBuf = yield readFileAsync(ejsDir);
       return yield renderExcel(exlBuf, data);
     }
-    config = yield readFileAsync(configPath, "utf8");
+    var config = yield readFileAsync(configPath, "utf8");
     config = JSON.decode(config);
-    filter = [];
+    var filter = [];
     for (l = 0, len1 = config.length; l < len1; l++) {
       obj = config[l];
       key = obj.key;

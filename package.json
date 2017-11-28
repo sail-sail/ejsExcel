@@ -1,25 +1,38 @@
 {
-    "author": "Sail",
-    "homepage": "https://github.com/sail-sail/ejsExcel",
-    "bugs": {
-        "url": "https://github.com/sail-sail/ejsExcel",
-        "email": "151263555@qq.com"
-    },
-    "keywords":[
-    	"ejsexcel",
-    	"ejs",
-    	"excel",
-    	"nodejs"
-    ],
-    "name": "ejsexcel",
-    "version": "3.4.9",
-    "main": "ejsExcel",
-    "readme":"README.md",
-    "license": "MIT",
-    "description": "Intelligent report system, nodejs node export excel, ejsExcel",
-    "repository" : {
-        "type": "git",
-        "url": "https://github.com/sail-sail/ejsExcel.git"
-	},
-	"engines" : {"node": ">=4.5.0"}
+  "author": "Sail",
+  "homepage": "https://github.com/sail-sail/ejsExcel",
+  "bugs": {
+    "url": "https://github.com/sail-sail/ejsExcel",
+    "email": "151263555@qq.com"
+  },
+  "keywords": [
+    "ejsexcel",
+    "ejs",
+    "excel",
+    "nodejs"
+  ],
+  "name": "ejsexcel",
+  "version": "3.4.9",
+  "main": "dist/index.js",
+  "readme": "README.md",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha test --recursive",
+    "build": "babel src --out-dir dist",
+    "prepublish": "npm run build"
+  },
+  "description": "Intelligent report system, nodejs node export excel, ejsExcel",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sail-sail/ejsExcel.git"
+  },
+  "engines": {
+    "node": ">=4.5.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "mocha": "^4.0.1"
+  }
 }

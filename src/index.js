@@ -19,41 +19,7 @@ if (typeof co === "undefined") {
 const ejs4xlx = require("./ejs4xlx");
 const {isType,isObject,isArray,isFunction,isString}=require('./is-type');
 const {charToNum,charPlus}=require('./utils');
-const {Promise_fromCallback,Promise_fromStandard,Promise_sleep}=requrie('./async.js');
-
-
-
-function _asyncToGenerator(fn) {
-  return function () {
-    var gen = fn.apply(this, arguments);
-    return new Promise(function (resolve, reject) {
-
-      /**
-       * @param {String} key "next"||"throw"
-       * @param {Object} arg value || err
-       */
-      function step(key, arg) {
-        try {
-          var info = gen[key](arg);
-          var value = info.value;
-        } 
-        catch (error) { 
-          reject(error); return; 
-        }
-
-        if (info.done) { resolve(value); }
-        else {
-          return Promise.resolve(value)
-            .then(
-              function (value) { return step("next", value); },
-              function (err) { return step("throw", err); }
-            );
-        }
-      } 
-      return step("next");
-    });
-  };
-}
+const {_asyncToGenerator,Promise_fromCallback,Promise_fromStandard,Promise_sleep}=requrie('./async.js');
 
 
 function replaceLast(tt, what, replacement) {

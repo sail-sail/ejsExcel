@@ -42,7 +42,7 @@ var readFileAsync = Promise_fromStandard(fs.readFile, fs);
 
 var inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
 
-render = async function(buffer, filter, _data_, hzip, options) {
+const render = async function(buffer, filter, _data_, hzip, options) {
   var anonymous, buffer2, data, entries, flt, l, len1, sharedStrings2, str, updateEntryAsync;
   if (hzip === void 0 || hzip === null) {
     hzip = new Hzip(buffer);
@@ -96,13 +96,25 @@ var xjOp = {
   sanitize: false
 };
 
+
+
+/**
+ * render excel with a callback style
+ * @param {Buffer} exlBuf 
+ * @param {*} _data_ 
+ * @param {Function} callback 
+ */
 function renderExcelCb(exlBuf, _data_, callback) {
-  renderExcel(exlBuf, _data_).then(function (buf2) {
-    callback(null, buf2);
-  })["catch"](function (err) {
-    callback(err);
-  });
+  return renderExcel(exlBuf, _data_)
+    .then(function (buf2) {
+      return callback(null, buf2);
+    })
+    .catch(function (err) {
+      return callback(err);
+    });
 };
+
+
 
 const renderExcel = async function(exlBuf, _data_) {
   var anonymous, attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem, data, doc, documentElement, end, endElement, entry, hyperlink, hyperlinksDomEl, hzip, i, i1, idx, j1, key, keyArr, l, len1, len10, len11, len12, len13, len14, len15, len2, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, mergeCellsDomEl, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sharedStrings2, sheetBuf, sheetBuf2, sheetDataDomEl, sheetDataElementState, sheetEntrieRels, sheetEntries, sheetObj, shsEntry, shsObj, shsStr, si, si2, sirTp, startElement, str, str2, u, updateEntryAsync, v, w, workbookBuf, workbookEntry, workbookRelsBuf, workbookRelsEntry, x, xjOpTmp, y, z;

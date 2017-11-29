@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path=require('path');
 const assert=require('assert');
-const {_asyncToGenerator,Promise_fromCallback,Promise_fromStandard}=require('../src/async');
+const {Promise_fromCallback,Promise_fromStandard}=require('../src/async');
 
 
 describe('test async.js',function(){
@@ -66,20 +66,5 @@ describe('test async.js',function(){
         });
     });
 
-    describe('test #_asyncToGenerator',function(){
-        
-        it('simple test',function(){
-            let i=0;
-            function* fn(){
-                yield ++i;
-                yield ++i;
-                yield ++i;
-                yield ++i;
-            }
-            const f=_asyncToGenerator(fn);
-            return f().then(final=>{
-                assert.equal(i,4,"i should equals 4 when final yield executed");
-            });
-        });
-    });
+
 });

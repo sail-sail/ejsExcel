@@ -1,39 +1,3 @@
-
-/**
- * convert a generator function `fn` to another function which will call generator.next() in sequence (via promise)
- * @param {Generator} fn 
- */
-function _asyncToGenerator(fn) {
-    return function () {
-
-        var gen = fn.apply(this, arguments);
-        return new Promise(function (resolve, reject) {
-
-            /**
-             * @param {String} key "next"||"throw"
-             * @param {Object} arg value || err
-             */
-            function step(key, arg) {
-                try {
-                    // info=gen.next(arg) or info=gen.throw(arg)
-                    var info = gen[key](arg);
-                    var value = info.value;
-                }
-                catch (error) {
-                    reject(error); return;
-                }
-                if (info.done) { return resolve(value); }
-                return Promise.resolve(value)
-                    .then(
-                        function (value) { return step("next", value); },
-                        function (err) { return step("throw", err); } // the value is thenable ? 
-                    );
-            }
-            return step("next");
-        });
-    };
-}
-
 /**
  * promisify function . The function receives a callback parameter like `(data)=>{}` 
  * @param {Function} fn 
@@ -93,7 +57,6 @@ function Promise_sleep(time) {
 
 
 module.exports={
-    _asyncToGenerator,
     Promise_fromCallback,
     Promise_fromStandard,
     Promise_sleep,

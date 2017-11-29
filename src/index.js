@@ -15,7 +15,7 @@ const qr = require("../lib/qr-image");
 // subpackage dependencies
 const ejs4xlx = require("./ejs4xlx");
 const {isType,isObject,isArray,isFunction,isString}=require('./is-type');
-const {charToNum,charPlus}=require('./utils');
+const {charToNum,charPlus,str2Xml}=require('./utils');
 const {Promise_fromCallback,Promise_fromStandard,Promise_sleep}=require('./async.js');
 
 
@@ -1311,30 +1311,6 @@ function getExcelEns(sharedStr, sheets) {
     sheetsEns: sheetsEns,
     sheetHeadsArr: sheetHeadsArr
   };
-};
-
-function str2Xml(str) {
-  var i, l, ref2, s, str2;
-  if (!isString(str)) {
-    return str;
-  }
-  str2 = "";
-  for (i = l = 0, ref2 = str.length; 0 <= ref2 ? l < ref2 : l > ref2; i = 0 <= ref2 ? ++l : --l) {
-    s = str.charAt(i);
-    if (s === "&") {
-      s = "&amp;";
-    } else if (s === "<") {
-      s = "&lt;";
-    } else if (s === ">") {
-      s = "&gt;";
-    } else if (s === "\"") {
-      s = "&quot;";
-    } else if (s === "'") {
-      s = "&apos;";
-    }
-    str2 += s;
-  }
-  return str2;
 };
 
 

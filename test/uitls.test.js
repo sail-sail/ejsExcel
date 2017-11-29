@@ -48,4 +48,41 @@ describe('test uitls',function(){
         });
 
     });
+
+    describe('test #str2Xml()',function(){
+        it('simple test',function(){
+            const tests=[
+                {
+                    s:'001 / 1',
+                    r:'001 / 1',
+                    note:"测试 空白符 及 /",
+                },
+                {
+                    s:'<%',
+                    r:'&lt;%',
+                    note:"测试 < ",
+                },
+                {
+                    s:'%>',
+                    r:'%&gt;',
+                    note:"测试 > ",
+                },
+                {
+                    s:'"',
+                    r:'&quot;',
+                    note:'测试 " ',
+                },
+                {
+                    s:"'",
+                    r:'&apos;',
+                    note:"测试 ' ",
+                },
+            ];
+
+            tests.forEach(t=>{
+                const actual=utils.str2Xml(t.s);
+                assert.equal(actual,t.r,`${t.note}`);
+            });
+        });
+    });
 });

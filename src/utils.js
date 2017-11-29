@@ -1,3 +1,5 @@
+const {isString}=require('./is-type');
+
 /**
  * Convert str to number 
  * @param {String} str 
@@ -46,8 +48,32 @@ function charPlus(str, num) {
 };
 
 
+/**
+ * escape string to xml
+ * @param {String} str 
+ */
+function str2Xml(str) {
+    if (!isString(str)) {
+        return str;
+    }
+    return Array.from(str,(s,k)=>{
+        if (s === "&") {
+            s = "&amp;";
+        } else if (s === "<") {
+            s = "&lt;";
+        } else if (s === ">") {
+            s = "&gt;";
+        } else if (s === "\"") {
+            s = "&quot;";
+        } else if (s === "'") {
+            s = "&apos;";
+        }
+        return s;
+    }).join('');
+};
 
 module.exports={
     charToNum,
     charPlus,
+    str2Xml,
 };

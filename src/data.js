@@ -94,6 +94,21 @@ function normalizeRAttributePosition(elementArray){
 }
 
 
+/**
+ * 检查元素是否是Array，如果不是，转换为Array
+ * @param {Array} arrayLike 
+ */
+function normalizeArray(arrayLike){
+    if (!arrayLike) {
+        arrayLike = [];
+    } 
+    else if (!isArray(arrayLike)) {
+        arrayLike = [arrayLike];
+    }
+    return arrayLike;
+}
+
+
 const renderExcel = async function (exlBuf, _data_) {
     var  attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem,  end, entry, hyperlink, hyperlinksDomEl, i, i1, idx, j1, key, keyArr,  len10, len11, len12, len13, len14, len15, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r,  ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sheetBuf, sheetBuf2,  si, si2, sirTp,  str, str2, u,  v, w,  x, xjOpTmp, y, z;
     let data = DataFactory(exlBuf,_data_);
@@ -384,6 +399,7 @@ const renderExcel = async function (exlBuf, _data_) {
             return "";
         }
         drawingObj = xml2json.toJson(drawingBuf, xjOp);
+        let TWO_CELL_ANCHOR=drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"];
         if (!drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"]) {
             drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"] = [];
         } else if (!isArray(drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"])) {
@@ -658,12 +674,7 @@ const renderExcel = async function (exlBuf, _data_) {
 
     let shsStr = (await inflateRawAsync(shsEntry.cfile));
     let shsObj = xml2json.toJson(shsStr);
-    if (!shsObj.sst.si) {
-        shsObj.sst.si = [];
-    } 
-    else if (!isArray(shsObj.sst.si)) {
-        shsObj.sst.si = [shsObj.sst.si];
-    }
+    normalizeArray(shsObj.sst.si);
     // 迭代所有sheets
     for (i = m = 0 ; m < sheetEntries.length; i = ++m) {
         entry = sheetEntries[i];
@@ -738,20 +749,12 @@ const renderExcel = async function (exlBuf, _data_) {
         }
         let MERGE_CELLS=sheetObj.worksheet.mergeCells;
         if (MERGE_CELLS !== void 0 && MERGE_CELLS.mergeCell !== void 0) {
-            if (!MERGE_CELLS.mergeCell) {
-                MERGE_CELLS.mergeCell = [];
-            } else if (!isArray(MERGE_CELLS.mergeCell)) {
-                MERGE_CELLS.mergeCell = [MERGE_CELLS.mergeCell];
-            }
+            MERGE_CELLS.mergeCell= normalizeArray(MERGE_CELLS.mergeCell);
         }
         for (r = 0; r < SHEETDATA_ROW.length; r++) {
             let row = SHEETDATA_ROW[r];
             if (row.c !== void 0) {
-                if (!row.c) {
-                    row.c = [];
-                } else if (!isArray(row.c)) {
-                    row.c = [row.c];
-                }
+                row.c=normalizeArray(row.c);
                 ref6 = row.c;
                 for (u = 0; u < ref6.length ; u++) {
                     cItem = ref6[u];
@@ -765,11 +768,7 @@ const renderExcel = async function (exlBuf, _data_) {
                             }
                         };
                         if (si.r !== void 0) {
-                            if (!si.r) {
-                                si.r = [];
-                            } else if (!isArray(si.r)) {
-                                si.r = [si.r];
-                            }
+                            si.r=normalizeArray(si.r);
                             ref7 = si.r;
                             for (v = 0, len9 = ref7.length; v < len9; v++) {
                                 sirTp = ref7[v];

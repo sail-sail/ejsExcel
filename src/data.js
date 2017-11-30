@@ -14,7 +14,7 @@ const qr = require("../lib/qr-image");
 // subpackage dependencies
 const ejs4xlx = require("./ejs4xlx");
 const {isType,isObject,isArray,isFunction,isString}=require('./is-type');
-const {charToNum,charPlus,str2Xml,replaceLast}=require('./utils');
+const {charToNum,charPlus,str2Xml,replaceLast,stripWhitespace}=require('./utils');
 const {Promise_fromCallback,Promise_fromStandard,Promise_sleep}=require('./async.js');
 
 
@@ -923,15 +923,20 @@ const renderExcel = async function (exlBuf, _data_) {
         }));
         reXmlEq = {
             reXmlEq: function (pixEq, jsStr, str) {
+                // string
                 if (pixEq === "=") {
-                    jsStr = jsStr.replace(/\n/gm, "\\n").replace(/\r/gm, "\\r").replace(/\t/gm, "\\t");
-                    jsStr = "_ps_(" + jsStr + ",buf)";
-                } else if (pixEq === "~") {
-                    jsStr = jsStr.replace(/\n/gm, "\\n").replace(/\r/gm, "\\r").replace(/\t/gm, "\\t");
-                    jsStr = "_pi_(" + jsStr + ",buf)";
-                } else if (pixEq === "#") {
-                    jsStr = jsStr.replace(/\n/gm, "\\n").replace(/\r/gm, "\\r").replace(/\t/gm, "\\t");
-                    jsStr = "_pf_(" + jsStr + ",buf)";
+                    jsStr =stripWhitespace(jsStr);
+                    jsStr = `_ps_(${jsStr} ,buf)`;
+                }
+                // integer
+                else if (pixEq === "~") {
+                    jsStr =stripWhitespace(jsStr);
+                    jsStr = `_pi_(${jsStr} ,buf)`;
+                }
+                // formula
+                else if (pixEq === "#") {
+                    jsStr =stripWhitespace(jsStr);
+                    jsStr = `_pf_(${jsStr} ,buf)`;
                 }
                 return {
                     jsStr: jsStr,

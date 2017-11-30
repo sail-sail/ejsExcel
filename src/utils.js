@@ -93,9 +93,21 @@ function replaceLast(tt, what, replacement) {
     return result;
 };
 
+
+/**
+ * strip white space 
+ * @param {String} str 
+ */
+function stripWhitespace(str){
+    return str.replace(/\n/gm, "\\n").replace(/\r/gm, "\\r").replace(/\t/gm, "\\t");
+}
+
+
+
 module.exports={
     charToNum,
     charPlus,
     str2Xml,
     replaceLast,
+    stripWhitespace,
 };

@@ -72,8 +72,31 @@ function str2Xml(str) {
     }).join('');
 };
 
+
+/**
+ * 
+ * @param {String} tt main string 
+ * @param {*} what substring (pattern) to be replaced
+ * @param {*} replacement  replaced with
+ */
+function replaceLast(tt, what, replacement) {
+    if(!tt) return;
+    let mthArr = tt.match(what);
+    let num = 0;
+    const result= tt.replace(what, function (s) {
+        num++;
+        if (num === mthArr.length) {
+            return replacement;
+        }
+        return s;
+    });
+    console.log(tt,'----',what,'----',replacement,'----',result);
+    return result;
+};
+
 module.exports={
     charToNum,
     charPlus,
     str2Xml,
+    replaceLast,
 };

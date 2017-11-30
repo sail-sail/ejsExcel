@@ -85,4 +85,22 @@ describe('test uitls',function(){
             });
         });
     });
+
+    describe('test #replaceLast()',function(){
+        it('simple test',function(){
+            const tests=[
+                {
+                    tt:'" s="19" t="s"><v>',
+                    what:/\s+t="s"/gm,
+                    replacement:'',
+                    note:`remove the last \s+t="s" substr`,
+                },
+            ];
+            tests.forEach(t=>{
+                const {tt,what,replacement,note}=t;
+                const actual=utils.replaceLast(t.s);
+                assert.equal(actual,t.r,`${t.note}`);
+            });
+        });
+    });
 });

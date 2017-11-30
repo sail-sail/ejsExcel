@@ -15,32 +15,14 @@ const qr = require("../lib/qr-image");
 // subpackage dependencies
 const ejs4xlx = require("./ejs4xlx");
 const {isType,isObject,isArray,isFunction,isString}=require('./is-type');
-const {charToNum,charPlus,str2Xml}=require('./utils');
+const {charToNum,charPlus,str2Xml,replaceLast}=require('./utils');
 const {Promise_fromCallback,Promise_fromStandard,Promise_sleep}=require('./async.js');
 
 
-function replaceLast(tt, what, replacement) {
-  var mthArr, num;
-  mthArr = tt.match(what);
-  num = 0;
-  return tt.replace(what, function (s) {
-    num++;
-    if (num === mthArr.length) {
-      return replacement;
-    }
-    return s;
-  });
-};
-
-
-var DOMParser = xmldom.DOMParser;
-
-
-var existsAsync = Promise_fromCallback(fs.exists, fs);
-
-var readFileAsync = Promise_fromStandard(fs.readFile, fs);
-
-var inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
+const DOMParser = xmldom.DOMParser;
+const existsAsync = Promise_fromCallback(fs.exists, fs);
+const readFileAsync = Promise_fromStandard(fs.readFile, fs);
+const inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
 
 const render = async function(buffer, filter, _data_, hzip, options) {
   var anonymous, buffer2, data, entries, flt, l, len1, sharedStrings2, str, updateEntryAsync;

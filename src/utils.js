@@ -90,7 +90,6 @@ function replaceLast(tt, what, replacement) {
         }
         return s;
     });
-    console.log(tt,'----',what,'----',replacement,'----',result);
     return result;
 };
 

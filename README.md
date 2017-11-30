@@ -34,7 +34,7 @@ npm install ejsexcel
 | <%   %>               | 内部可执行 任意 javascript,可以用 <%console.log(_data_)%> 打印临时变量到控制台,进行调试 |
 
 ## Author
-+ Author: Sail  
++ Author: Sail, 辐毂  
     - QQ: 151263555  
     - QQ群: 470988427  
     - email: 151263555@qq.com 
@@ -52,5 +52,7 @@ npm install ejsexcel
 ![捐赠鼓励支持此项目](http://dn-cnode.qbox.me/FucPKV4XWewhakoqTSngU3AsaP0Z)
 
 ## 项目贡献人列表
-- @Hello World  50元
-- @德爾文  50元
+- @Hello World  ¥50
+- @德爾文  ¥50
+- @Explore®  ¥50
+- @向左转  ¥50

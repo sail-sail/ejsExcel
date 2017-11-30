@@ -38,7 +38,10 @@ var readFileAsync = Promise_fromStandard(fs.readFile, fs);
 
 var inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
 
+
 function DataFactory(exlBuf,_data_){
+
+    const sharedStrings2 = [sharedStrings2Prx];
 
     const d= {
         _data_,
@@ -92,9 +95,9 @@ function normalizeRAttributePosition(elementArray){
 
 
 const renderExcel = async function (exlBuf, _data_) {
-    var anonymous, attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem,  end, endElement, entry, hyperlink, hyperlinksDomEl, i, i1, idx, j1, key, keyArr,  len10, len11, len12, len13, len14, len15, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r, reXmlEq, ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sheetBuf, sheetBuf2, sheetDataElementState,  sheetObj,  si, si2, sirTp, startElement, str, str2, u,  v, w,  x, xjOpTmp, y, z;
+    var  attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem,  end, entry, hyperlink, hyperlinksDomEl, i, i1, idx, j1, key, keyArr,  len10, len11, len12, len13, len14, len15, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r,  ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sheetBuf, sheetBuf2,  si, si2, sirTp,  str, str2, u,  v, w,  x, xjOpTmp, y, z;
     let data = DataFactory(exlBuf,_data_);
-    let sharedStrings2 = [sharedStrings2Prx];
+    let sharedStrings2 = data.sharedStrings2;
     let hzip =data.hzip;
     let updateEntryAsync = Promise_fromStandard(hzip.updateEntry, hzip);
     await updateEntryAsync("xl/calcChain.xml");
@@ -139,7 +142,7 @@ const renderExcel = async function (exlBuf, _data_) {
             return "";
         }
         val = str2Xml(str);
-        sharedStrings2.push(Buffer.from("<si><t xml:space=\"preserve\">" + val + "</t></si>"));
+        sharedStrings2.push(Buffer.from(`<si><t xml:space="preserve"> ${val} </t></si>`));
         index = data._acVar_._ss_len;
         data._acVar_._ss_len++;
         return String(index);
@@ -655,6 +658,12 @@ const renderExcel = async function (exlBuf, _data_) {
 
     let shsStr = (await inflateRawAsync(shsEntry.cfile));
     let shsObj = xml2json.toJson(shsStr);
+    if (!shsObj.sst.si) {
+        shsObj.sst.si = [];
+    } 
+    else if (!isArray(shsObj.sst.si)) {
+        shsObj.sst.si = [shsObj.sst.si];
+    }
     // 迭代所有sheets
     for (i = m = 0 ; m < sheetEntries.length; i = ++m) {
         entry = sheetEntries[i];
@@ -700,9 +709,9 @@ const renderExcel = async function (exlBuf, _data_) {
             trim: false,
             sanitize: true
         };
-        sheetDataElementState = "";
-        startElement = xml2json.toJson.startElement;
-        endElement = xml2json.toJson.endElement;
+        const startElement = xml2json.toJson.startElement;
+        const endElement = xml2json.toJson.endElement;
+        let sheetDataElementState = "";
         xjOpTmp.startElement = function (elementName, attrs) {
             if (elementName === "sheetData") {
                 sheetDataElementState = "start";
@@ -716,44 +725,27 @@ const renderExcel = async function (exlBuf, _data_) {
             endElement.apply(this, arguments);
         };
         xjOpTmp.sanitizeFn = function (value) {
-            if (!isString(value)) {
-                return value;
-            }
             if (sheetDataElementState === "start") {
                 return value;
             }
-            value = value.replace(/[&<>"']/gm, function (g1, g2) {
-                if (g1 === "&") {
-                    return "&amp;";
-                } else if (g1 === "<") {
-                    return "&lt;";
-                } else if (g1 === ">") {
-                    return "&gt;";
-                } else if (g1 === "\"") {
-                    return "&quot;";
-                } else if (g1 === "'") {
-                    return "&apos;";
-                }
-                return g1;
-            });
-            return value;
+            return str2Xml(value) ;
         };
-        sheetObj = xml2json.toJson(sheetBuf, xjOpTmp);
-        if (sheetObj.worksheet.sheetData.row === void 0) {
-            continue;
-        } else if (!isArray(sheetObj.worksheet.sheetData.row)) {
-            sheetObj.worksheet.sheetData.row = [sheetObj.worksheet.sheetData.row];
+        let sheetObj = xml2json.toJson(sheetBuf, xjOpTmp);
+        let SHEETDATA_ROW=sheetObj.worksheet.sheetData.row;
+        if (SHEETDATA_ROW === void 0) { continue; } 
+        else if (!isArray(SHEETDATA_ROW)) {
+            sheetObj.worksheet.sheetData.row = [SHEETDATA_ROW];
         }
-        if (sheetObj.worksheet.mergeCells !== void 0 && sheetObj.worksheet.mergeCells.mergeCell !== void 0) {
-            if (!sheetObj.worksheet.mergeCells.mergeCell) {
-                sheetObj.worksheet.mergeCells.mergeCell = [];
-            } else if (!isArray(sheetObj.worksheet.mergeCells.mergeCell)) {
-                sheetObj.worksheet.mergeCells.mergeCell = [sheetObj.worksheet.mergeCells.mergeCell];
+        let MERGE_CELLS=sheetObj.worksheet.mergeCells;
+        if (MERGE_CELLS !== void 0 && MERGE_CELLS.mergeCell !== void 0) {
+            if (!MERGE_CELLS.mergeCell) {
+                MERGE_CELLS.mergeCell = [];
+            } else if (!isArray(MERGE_CELLS.mergeCell)) {
+                MERGE_CELLS.mergeCell = [MERGE_CELLS.mergeCell];
             }
         }
-        ref5 = sheetObj.worksheet.sheetData.row;
-        for (r = 0, len7 = ref5.length; r < len7; r++) {
-            row = ref5[r];
+        for (r = 0; r < SHEETDATA_ROW.length; r++) {
+            let row = SHEETDATA_ROW[r];
             if (row.c !== void 0) {
                 if (!row.c) {
                     row.c = [];
@@ -761,14 +753,10 @@ const renderExcel = async function (exlBuf, _data_) {
                     row.c = [row.c];
                 }
                 ref6 = row.c;
-                for (u = 0, len8 = ref6.length; u < len8; u++) {
+                for (u = 0; u < ref6.length ; u++) {
                     cItem = ref6[u];
+                    // 共享字符串
                     if (cItem.t === "s" && cItem.v && !isNaN(Number(cItem.v["$t"])) && !cItem.f) {
-                        if (!shsObj.sst.si) {
-                            shsObj.sst.si = [];
-                        } else if (!isArray(shsObj.sst.si)) {
-                            shsObj.sst.si = [shsObj.sst.si];
-                        }
                         si = shsObj.sst.si[cItem.v["$t"]];
                         phoneticPr = si.phoneticPr;
                         si2 = {
@@ -802,7 +790,8 @@ const renderExcel = async function (exlBuf, _data_) {
                                 }
                             }
                         }
-                    } else {
+                    } 
+                    else {
                         if (cItem.f && cItem["v"] && cItem["v"]["$t"] && cItem["v"]["$t"].indexOf("<%") !== -1 && cItem["v"]["$t"].indexOf("%>") !== -1) {
                             delete cItem.f;
                             cItem.t = "s";
@@ -819,9 +808,9 @@ const renderExcel = async function (exlBuf, _data_) {
                             }
                         }
                     }
-                    if (sheetObj.worksheet.mergeCells !== void 0 && sheetObj.worksheet.mergeCells.mergeCell !== void 0) {
+                    if (MERGE_CELLS !== void 0 && MERGE_CELLS.mergeCell !== void 0) {
                         mciNumArr = [];
-                        ref8 = sheetObj.worksheet.mergeCells.mergeCell;
+                        ref8 = MERGE_CELLS.mergeCell;
                         for (m_c_i = w = 0, len10 = ref8.length; w < len10; m_c_i = ++w) {
                             mergeCell = ref8[m_c_i];
                             if (mergeCell.ref !== void 0) {
@@ -905,7 +894,7 @@ const renderExcel = async function (exlBuf, _data_) {
                 }
             }
         }
-        if (sheetObj.worksheet.mergeCells) {
+        if (MERGE_CELLS) {
             sheetObj.worksheet.mergeCells = {
                 "$t": "<% for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
             };
@@ -921,21 +910,22 @@ const renderExcel = async function (exlBuf, _data_) {
         sheetBuf2 = Buffer.from(sheetSufStr.toString() + xml2json.toXml(sheetObj, "", {
             reSanitize: false
         }));
-        reXmlEq = {
+
+        let reXmlEq = {
             reXmlEq: function (pixEq, jsStr, str) {
-                // string
+                // echo string
                 if (pixEq === "=") {
-                    jsStr =stripWhitespace(jsStr);
+                    jsStr = stripWhitespace(jsStr);
                     jsStr = `_ps_(${jsStr} ,buf)`;
-                }
-                // integer
+                } 
+                // 数字类型
                 else if (pixEq === "~") {
-                    jsStr =stripWhitespace(jsStr);
+                    jsStr = stripWhitespace(jsStr);
                     jsStr = `_pi_(${jsStr} ,buf)`;
-                }
-                // formula
+                } 
+                // 动态公式
                 else if (pixEq === "#") {
-                    jsStr =stripWhitespace(jsStr);
+                    jsStr = stripWhitespace(jsStr);
                     jsStr = `_pf_(${jsStr} ,buf)`;
                 }
                 return {
@@ -946,8 +936,8 @@ const renderExcel = async function (exlBuf, _data_) {
         };
         reXmlEq.fileName = entry.fileName;
         str2 = ejs4xlx.parse(sheetBuf2, reXmlEq);
-        str2 = "(async function anonymous(_args) {" + str2 + "})";
-        anonymous = eval(str2);
+        str2 = `(async function anonymous(_args) { ${str2} })`;
+        let anonymous = eval(str2);
         buffer2 = (await anonymous.call(this, data));
         if (entry.__remove_sheet) {
             await updateEntryAsync(entry.fileName);

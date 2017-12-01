@@ -41,8 +41,6 @@ var inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
 
 function DataFactory(exlBuf,_data_){
 
-    const sharedStrings2 = [sharedStrings2Prx];
-
     const d= {
         _data_,
         _acVar_ : {
@@ -110,7 +108,7 @@ function normalizeArray(arrayLike){
 
 
 const renderExcel = async function (exlBuf, _data_) {
-    var  attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem,  end, entry, hyperlink, hyperlinksDomEl, i, i1, idx, j1, key, keyArr,  len10, len11, len12, len13, len14, len15, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r,  ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, refArr, row, rowEl, rowElArr, sheetBuf, sheetBuf2,  si, si2, sirTp,  str, str2, u,  v, w,  x, xjOpTmp, y, z;
+    var  attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem,  end, entry, hyperlink, hyperlinksDomEl, i, i1, idx, j1, key, keyArr,  len10, len11, len13, len14, len15, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r,  ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, refArr, row, rowEl, rowElArr, sheetBuf, sheetBuf2,  si, si2, sirTp,  str, str2, u,  v, w,  x, xjOpTmp, y, z;
     let data = DataFactory(exlBuf,_data_);
     let sharedStrings2 = data.sharedStrings2;
     let hzip =data.hzip;
@@ -127,14 +125,11 @@ const renderExcel = async function (exlBuf, _data_) {
     let workbookRelsBuf = (await inflateRawAsync(workbookRelsEntry.cfile));
 
     data._ps_ = function (str, buf) {
-        var i, index, l, ref2, tmpStr, val;
-        if (str === void 0) {
-            str = "";
-        } else if (str === null) {
-            str = "NULL";
-        }
+        if (str === void 0) { str = ""; }     // undefined
+        else if (str === null) { str = "NULL"; } // null
         str = str.toString();
         if (str === "") {
+            var i,  l, ref2, tmpStr;
             for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
                 tmpStr = buf[i].toString();
                 if (/<v>/gm.test(tmpStr)) {
@@ -156,19 +151,17 @@ const renderExcel = async function (exlBuf, _data_) {
             };
             return "";
         }
-        val = str2Xml(str);
+        let val = str2Xml(str);
         sharedStrings2.push(Buffer.from(`<si><t xml:space="preserve"> ${val} </t></si>`));
-        index = data._acVar_._ss_len;
+        let index = data._acVar_._ss_len;
         data._acVar_._ss_len++;
         return String(index);
     };
     data._pf_ = function (str, buf) {
-        var i, l, m, ref2, ref3, tmpStr;
-        if (str === void 0 || str === null) {
-            str = "";
-        }
+        if (str === void 0 || str === null) { str = ""; }
         str = str.toString();
         str = str2Xml(str);
+        var i, l, m, ref2, ref3, tmpStr;
         for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
             tmpStr = buf[i].toString();
             if (/<v>/gm.test(tmpStr) === true) {
@@ -184,8 +177,8 @@ const renderExcel = async function (exlBuf, _data_) {
             }
         }
         buf.push = function (puhStr) {
-            var index;
             puhStr = puhStr.toString();
+            var index;
             if (puhStr.indexOf("</v>") !== -1) {
                 index = Array.prototype.push.apply(buf, [Buffer.from(puhStr.replace(/<\/v>/m, "</f>"))]);
                 buf.push = Array.prototype.push;
@@ -751,6 +744,10 @@ const renderExcel = async function (exlBuf, _data_) {
         if (MERGE_CELLS !== void 0 && MERGE_CELLS.mergeCell !== void 0) {
             MERGE_CELLS.mergeCell= normalizeArray(MERGE_CELLS.mergeCell);
         }
+        let HYPER_LINKS=sheetObj.worksheet.hyperlinks;
+        if(HYPER_LINKS && HYPER_LINKS.hyperlink){
+            HYPER_LINKS.hyperlink = normalizeArray(HYPER_LINKS.hyperlink);
+        }
         for (r = 0; r < SHEETDATA_ROW.length; r++) {
             let row = SHEETDATA_ROW[r];
             if (row.c !== void 0) {
@@ -840,14 +837,11 @@ const renderExcel = async function (exlBuf, _data_) {
                             sheetObj.worksheet.mergeCells.mergeCell.splice(mciNum, 1);
                         }
                     }
-                    if (sheetObj.worksheet.hyperlinks && sheetObj.worksheet.hyperlinks.hyperlink) {
+
+                    if (HYPER_LINKS && HYPER_LINKS.hyperlink) {
                         mciNumArr = [];
-                        if (!isArray(sheetObj.worksheet.hyperlinks.hyperlink)) {
-                            sheetObj.worksheet.hyperlinks.hyperlink = [sheetObj.worksheet.hyperlinks.hyperlink];
-                        }
-                        ref9 = sheetObj.worksheet.hyperlinks.hyperlink;
-                        for (m_c_i = y = 0, len12 = ref9.length; y < len12; m_c_i = ++y) {
-                            hyperlink = ref9[m_c_i];
+                        for (m_c_i = y = 0; y < HYPER_LINKS.hyperlink.length; m_c_i = ++y) {
+                            hyperlink = HYPER_LINKS.hyperlink[m_c_i];
                             if (!hyperlink.ref) {
                                 continue;
                             }
@@ -887,7 +881,7 @@ const renderExcel = async function (exlBuf, _data_) {
                         }
                         for (j1 = 0, len15 = mciNumArr.length; j1 < len15; j1++) {
                             mciNum = mciNumArr[j1];
-                            sheetObj.worksheet.hyperlinks.hyperlink.splice(mciNum, 1);
+                            HYPER_LINKS.hyperlink.splice(mciNum, 1);
                         }
                     }
                 }

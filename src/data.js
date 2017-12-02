@@ -752,9 +752,8 @@ const renderExcel = async function (exlBuf, _data_) {
             let row = SHEETDATA_ROW[r];
             if (row.c !== void 0) {
                 row.c=normalizeArray(row.c);
-                ref6 = row.c;
-                for (u = 0; u < ref6.length ; u++) {
-                    cItem = ref6[u];
+                for (u = 0; u < row.c.length ; u++) {
+                    cItem = row.c[u];
                     // 共享字符串
                     if (cItem.t === "s" && cItem.v && !isNaN(Number(cItem.v["$t"])) && !cItem.f) {
                         si = shsObj.sst.si[cItem.v["$t"]];
@@ -892,7 +891,7 @@ const renderExcel = async function (exlBuf, _data_) {
                 "$t": "<% for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
             };
         }
-        if (sheetObj.worksheet.hyperlinks) {
+        if (HYPER_LINKS) {
             str = "<%for(var m_cl=0; m_cl<_hyperlinkArr_.length; m_cl++) { %><%-'<hyperlink ref=\"'+_hyperlinkArr_[m_cl].ref+'\"'%>";
             str += '<%var eny=_hyperlinkArr_[m_cl];var keyArr=Object.keys(eny);for(var tmp=0;tmp<keyArr.length;tmp++){var key=keyArr[tmp];if(key==="ref")continue;%><%-" "+key+"=\\""+eny[key]+"\\""%><%}%>';
             str += " /><%}%>";
@@ -928,10 +927,11 @@ const renderExcel = async function (exlBuf, _data_) {
             }
         };
         reXmlEq.fileName = entry.fileName;
-        str2 = ejs4xlx.parse(sheetBuf2, reXmlEq);
-        str2 = `(async function anonymous(_args) { ${str2} })`;
+        str2 = ejs4xlx.parse(sheetBuf2, reXmlEq);   // 解析出代码片段
+        str2 = `(async function anonymous(_args) { ${str2} })`;  // 构造函数字符串
+        // dangerous  
         let anonymous = eval(str2);
-        buffer2 = (await anonymous.call(this, data));
+        buffer2 = (await anonymous.call(this, data));  
         if (entry.__remove_sheet) {
             await updateEntryAsync(entry.fileName);
         } else {

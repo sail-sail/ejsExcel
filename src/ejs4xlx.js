@@ -18,7 +18,7 @@ const {basename,dirname,extname,join} = path
 
 var UID = Date.now()
 var uniqueID = function() {
-	return (UID++).toString(36);
+    return (UID++).toString(36);
 }
 
 
@@ -58,7 +58,6 @@ function filtered(js) {
  * @param {String} lineno
  * @api private
  */
-
 function rethrow(err, str, filename, lineno){
   var lines = str.split('\n')
     , start = Math.max(lineno - 3, 0)
@@ -83,504 +82,539 @@ function rethrow(err, str, filename, lineno){
   throw err;
 }
 
+
+
 /**
  * Parse the given `str` of ejs, returning the function body.
- *
+ * 解析 sheet ，生成一段代码，将来用作函数体(所接受的函数参数名为`_args`，代表传入的Data)：
+ * 
+ * ```javascript
+ * function(_args){
+ * ///// begin 
+ *     var buf = []; 
+ *     {{beforeBuf}} //reference _data_,_ps_,etc.
+ *     buf.push(Buffer.from('{{CODE PARSED}}'));
+ *     buf = Buffer.concat(buf); 
+ *     return buf;
+ * ///// end
+ * }
+ * ```
+ * 
  * @param {String} str
  * @return {String}
  * @api public
  */
-
-var parse = exports.parse = function(str, options){
-	//sail 2013-04-21
-	if(Buffer.isBuffer(str)) str = str.toString();
-	options = options || {};
-  var open = options.open || exports.open || '<%'
-    , close = options.close || exports.close || '%>'
-    , beforeBuf = options.beforeBuf || exports.beforeBuf || ''
-    , filename = options.filename
-    //=,- 符号时生成的字符串针对xml转义符进行转义,在ejsExcel中会使用到
-    , reXmlEq = options.reXmlEq
-    , buf = [];
-  buf.push('var buf = [];');
-  buf.push(beforeBuf);
-  buf.push(';buf.push(Buffer.from(\'');
-
-  var lineno = 1;
-
-  //sail
-  var isForRowBegin = false;
-  var isForRowEnd = false;
-  var isForCellBegin = false;
-  var isForCellEnd = false;
-  //行号
-  var rowRn = undefined;
-  //列号
-  var cellRn = undefined;
-  var isCEnd = false;
-  var isCbegin = false;
-  var isRowBegin = false;
-  var isRowEnd = false;
-  var consumeEOL = false;
-  
-  var forRBegin = false;
-  var forREnd = false;
-  var forRNumArr = [];
-  var forCBegin = false;
-  var forCEnd = false;
-  var forCNumArr = [];
-  var ifRBegin = false;
-  var ifREnd = false;
-  var ifCBegin = false;
-  var ifCEnd = false;
-  var pixEq = "";
-  for (var i = 0, len = str.length; i < len; ++i) {
-    if (str.slice(i, open.length + i) == open) {
-      i += open.length;
-      
-      //sail
-      pixEq = str.substr(i, 1);
-      var prefix, postfix, line = lineno;
-      if(pixEq === "=" || pixEq === "-" || pixEq === "~" || pixEq === "#") {
-    	  prefix = "'));buf.push(Buffer.from(";
-          postfix = "));buf.push(Buffer.from('";
-          ++i;
-      } else {
-    	  prefix = "'));";
-          postfix = ";buf.push(Buffer.from('";
-      }
-
-      var end = str.indexOf(close, i)
-        , js = str.substring(i, end)
-        , start = i
-        , include = null
-        , n = 0;
-
-      if ('-' == js[js.length-1]){
-        js = js.substring(0, js.length - 2);
-        consumeEOL = true;
-      }
-      
-      js = js.trim();
-      if(0 == js.indexOf('forRow')) {
-    	  var uid = uniqueID();
-    	  var name = js.slice(6);
-    	  isForRowBegin = true;
-    	  isForRowEnd = false;
-    	  var nameArr = [];
-    	  nameArr[0] = name.substring(0,name.indexOf(" in "));
-    	  nameArr[1] = name.substring(name.indexOf(" in ")+4);
-    	  var pixJs = "";
-    	  if(nameArr[1].indexOf("|||") !== -1) {
-    		  pixJs = nameArr[1].substring(nameArr[1].indexOf("|||")+3);
-    		  nameArr[1] = nameArr[1].substring(0,nameArr[1].indexOf("|||"));
-    	  }
-    	  var itemName = nameArr[0].trim();
-    	  var iName = "";
-    	  if(itemName.indexOf(",") !== -1) {
-    		  var tmpArr = itemName.split(",");
-    		  itemName = tmpArr[0].trim();
-    		  if(tmpArr[1].trim() !== "") {
-    			  iName = "var "+tmpArr[1].trim()+"=I_m"+uid+";";
-    		  }
-    	  }
-    	  var arrName = nameArr[1].trim();
-    	  var strTmp = buf.join('');
-    	  var mthArr = strTmp.match(/<row r="/gm);
-    	  var mthLt = mthArr[mthArr.length-1];
-    	  var repNum = 0;
-    	  strTmp = strTmp.replace(/<row r="/gm,function(s){
-    		  repNum++;
-    		  if(mthArr.length === repNum) {
-    			  return "'));var I_rLen"+uid+"="+arrName+";if(Array.isArray(I_rLen"+uid+")){I_rLen"+uid+"=I_rLen"+uid+".length;} for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){await Promise_sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push(Buffer.from('"+mthLt;
-    		  }
-    		  return s;
-    	  });
-    	  buf = [strTmp];
-    	  js = '';
-      }
-      //sail 2015-06-24 --begin
-      else if(0 == js.indexOf('ifRBegin')) {
-    	  ifRBegin = true;
-    	  ifREnd = false;
-    	  forRNumArr.push(rowRn);
-    	  var jsStr = js.slice(8);
-    	  var strTmp = buf.join('');
-    	  var mthArr = strTmp.match(/<row r="/gm);
-    	  var mthLt = mthArr[mthArr.length-1];
-    	  var repNum = 0;
-    	  strTmp = strTmp.replace(/<row r="/gm,function(s){
-    		  repNum++;
-    		  if(mthArr.length === repNum) {
-    			  return "'));if("+jsStr+"){buf.push(Buffer.from('"+mthLt;
-    		  }
-    		  return s;
-    	  });
-    	  buf = [strTmp];
-    	  js = '';
-      } else if(0 == js.indexOf('ifREnd')) {
-    	  ifRBegin = false;
-    	  ifREnd = true;
-    	  if(forRNumArr.length === 0) throw new Error("ifREnd must begin with ifRBegin");
-    	  var rjsNum = rowRn-forRNumArr.pop();
-    	  var rjsStr = js.slice(6);
-    	  var strTmp = buf.join('');
-    	  var mthArr = strTmp.match(/<\/row>/gm);
-    	  var mthLt = mthArr[mthArr.length-1];
-    	  var repNum = 0;
-    	  strTmp = strTmp.replace(/<\/row>/gm,function(s){
-    		  repNum++;
-    		  if(mthArr.length === repNum) {
-    			  return "</row>'));_r+="+rjsNum+";}_r-="+rjsNum+";buf.push(Buffer.from('";
-    		  }
-    		  return s;
-    	  });
-    	  buf = [strTmp];
-    	  js = '';
-      }
-      else if(0 == js.indexOf('ifCBegin')) {
-    	  ifCBegin = true;
-    	  ifCEnd = false;
-    	  forCNumArr.push(cellRn);
-    	  var jsStr = js.slice(8);
-    	  var strTmp = buf.join('');
-    	  var mthArr = strTmp.match(/<c r="/gm);
-    	  var mthLt = mthArr[mthArr.length-1];
-    	  var repNum = 0;
-    	  strTmp = strTmp.replace(/<c r="/gm,function(s){
-    		  repNum++;
-    		  if(mthArr.length === repNum) {
-    			  return "'));if("+jsStr+"){buf.push(Buffer.from('"+mthLt;
-    		  }
-    		  return s;
-    	  });
-    	  buf = [strTmp];
-    	  js = '';
-      } else if(0 == js.indexOf('ifCEnd')) {
-    	  ifCBegin = false;
-    	  ifCEnd = true;
-    	  if(forCNumArr.length === 0) throw new Error("ifCEnd must be begin with ifCBegin");
-    	  var rjsNum = charToNum(cellRn)-charToNum(forCNumArr.pop());
-    	  var rjsStr = js.slice(6);
-    	  var strTmp = buf.join('');
-    	  var mthArr = strTmp.match(/<\/c>/gm);
-    	  var mthLt = mthArr[mthArr.length-1];
-    	  var repNum = 0;
-    	  strTmp = strTmp.replace(/<\/c>/gm,function(s){
-    		  repNum++;
-    		  if(mthArr.length === repNum) {
-    			  return "</c>'));_c+="+rjsNum+";}_c-="+rjsNum+";buf.push(Buffer.from('";
-    		  }
-    		  return s;
-    	  });
-    	  buf = [strTmp];
-    	  js = '';
-      }
-      else if(0 == js.indexOf('forCBegin')) {
-    	  forCBegin = true;
-    	  forCEnd = false;
-    	  forCNumArr.push(cellRn);
-    	  var uid = uniqueID();
-    	  var name = js.slice(9);
-    	  var nameArr = [];
-    	  nameArr[0] = name.substring(0,name.indexOf(" in "));
-    	  nameArr[1] = name.substring(name.indexOf(" in ")+4);
-    	  var pixJs = "";
-    	  if(nameArr[1].indexOf("|||") !== -1) {
-    		  pixJs = nameArr[1].substring(nameArr[1].indexOf("|||")+3);
-    		  nameArr[1] = nameArr[1].substring(0,nameArr[1].indexOf("|||"));
-    	  }
-    	  var itemName = nameArr[0].trim();
-    	  var iName = "";
-    	  if(itemName.indexOf(",") !== -1) {
-    		  var tmpArr = itemName.split(",");
-    		  itemName = tmpArr[0].trim();
-    		  if(tmpArr[1].trim() !== "") {
-    			  iName = "var "+tmpArr[1].trim()+"=I_c"+uid+";";
-    		  }
-    	  }
-    	  var arrName = nameArr[1].trim();
-    	  var strTmp = buf.join('');
-    	  var mthArr = strTmp.match(/<c r="/gm);
-    	  var mthLt = mthArr[mthArr.length-1];
-    	  var repNum = 0;
-    	  strTmp = strTmp.replace(/<c r="/gm,function(s){
-    		  repNum++;
-    		  if(mthArr.length === repNum) {
-    			  return "'));var I_cLen"+uid+"="+arrName+";if(Array.isArray(I_cLen"+uid+")){I_cLen"+uid+"=I_cLen"+uid+".length;} for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){await Promise_sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push(Buffer.from('"+mthLt;
-    		  }
-    		  return s;
-    	  });
-    	  buf = [strTmp];
-    	  js = '';
-    	  
-      } else if(0 == js.indexOf('forCEnd')) {
-    	  forCBegin = false;
-    	  forCEnd = true;
-    	  if(forCNumArr.length === 0) throw new Error("forCEnd must be begin with forCBegin");
-    	  var rjsNum = charToNum(cellRn)-charToNum(forCNumArr.pop());
-    	  var strTmp = buf.join('');
-    	  var mthArr = strTmp.match(/<\/c>/gm);
-    	  var mthLt = mthArr[mthArr.length-1];
-    	  var repNum = 0;
-    	  strTmp = strTmp.replace(/<\/c>/gm,function(s){
-    		  repNum++;
-    		  if(mthArr.length === repNum) {
-    			  return "</c>'));_c+="+rjsNum+";}_c-="+rjsNum+";buf.push(Buffer.from('";
-    		  }
-    		  return s;
-    	  });
-    	  buf = [strTmp];
-    	  js = '';
-      }
-      //sail 2015-06-24 --end
-      //sail 2014-04-09 --begin
-      else if(0 == js.indexOf('forRBegin')) {
-    	  forRBegin = true;
-    	  forREnd = false;
-    	  forRNumArr.push(rowRn);
-    	  var uid = uniqueID();
-    	  var name = js.slice(9);
-    	  var nameArr = [];
-    	  nameArr[0] = name.substring(0,name.indexOf(" in "));
-    	  nameArr[1] = name.substring(name.indexOf(" in ")+4);
-    	  var pixJs = "";
-    	  if(nameArr[1].indexOf("|||") !== -1) {
-    		  pixJs = nameArr[1].substring(nameArr[1].indexOf("|||")+3);
-    		  nameArr[1] = nameArr[1].substring(0,nameArr[1].indexOf("|||"));
-    	  }
-    	  var itemName = nameArr[0].trim();
-    	  var iName = "";
-    	  if(itemName.indexOf(",") !== -1) {
-    		  var tmpArr = itemName.split(",");
-    		  itemName = tmpArr[0].trim();
-    		  if(tmpArr[1].trim() !== "") {
-    			  iName = "var "+tmpArr[1].trim()+"=I_m"+uid+";";
-    		  }
-    	  }
-    	  var arrName = nameArr[1].trim();
-    	  var strTmp = buf.join('');
-    	  var mthArr = strTmp.match(/<row r="/gm);
-    	  var mthLt = mthArr[mthArr.length-1];
-    	  var repNum = 0;
-    	  strTmp = strTmp.replace(/<row r="/gm,function(s){
-    		  repNum++;
-    		  if(mthArr.length === repNum) {
-    			  return "'));var I_rLen"+uid+"="+arrName+";if(Array.isArray(I_rLen"+uid+")){I_rLen"+uid+"=I_rLen"+uid+".length;} for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){await Promise_sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push(Buffer.from('"+mthLt;
-    		  }
-    		  return s;
-    	  });
-    	  buf = [strTmp];
-    	  js = '';
-      }
-      else if(0 == js.indexOf('forREnd')) {
-    	  forRBegin = false;
-    	  forREnd = true;
-    	  if(forRNumArr.length === 0) throw new Error("forREnd must begin with forRBegin");
-    	  var rjsNum = rowRn-forRNumArr.pop();
-    	  var strTmp = buf.join('');
-    	  var mthArr = strTmp.match(/<\/row>/gm);
-    	  var mthLt = mthArr[mthArr.length-1];
-    	  var repNum = 0;
-    	  strTmp = strTmp.replace(/<\/row>/gm,function(s){
-    		  repNum++;
-    		  if(mthArr.length === repNum) {
-    			  return "</row>'));_r+="+rjsNum+";}_r-="+rjsNum+";buf.push(Buffer.from('";
-    		  }
-    		  return s;
-    	  });
-    	  buf = [strTmp];
-    	  js = '';
-      }
-      //sail 2014-04-09 --end
-      else if(0 === js.indexOf('forCell')) {
-    	  var uid = uniqueID();
-    	  var name = js.slice(7);
-    	  isForCellBegin = true;
-    	  isForCellEnd = false;
-    	  var nameArr = [];
-    	  nameArr[0] = name.substring(0,name.indexOf(" in "));
-    	  nameArr[1] = name.substring(name.indexOf(" in ")+4);
-    	  var pixJs = "";
-    	  if(nameArr[1].indexOf("|||") !== -1) {
-    		  pixJs = nameArr[1].substring(nameArr[1].indexOf("|||")+3);
-    		  nameArr[1] = nameArr[1].substring(0,nameArr[1].indexOf("|||"));
-    	  }
-    	  var itemName = nameArr[0].trim();
-    	  var iName = "";
-    	  if(itemName.indexOf(",") !== -1) {
-    		  var tmpArr = itemName.split(",");
-    		  itemName = tmpArr[0].trim();
-    		  if(tmpArr[1].trim() !== "") {
-    			  iName = "var "+tmpArr[1].trim()+"=I_c"+uid+";";
-    		  }
-    	  }
-    	  var arrName = nameArr[1].trim();
-    	  var strTmp = buf.join('');
-    	  var mthArr = strTmp.match(/<c r="/gm);
-    	  var mthLt = mthArr[mthArr.length-1];
-    	  var repNum = 0;
-    	  strTmp = strTmp.replace(/<c r="/gm,function(s){
-    		  repNum++;
-    		  if(mthArr.length === repNum) {
-    			  return "'));var I_cLen"+uid+" = "+arrName+";if(Array.isArray(I_cLen"+uid+")){I_cLen"+uid+"=I_cLen"+uid+".length;} for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){await Promise_sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push(Buffer.from('"+mthLt;
-    		  }
-    		  return s;
-    	  });
-    	  buf = [strTmp];
-    	  js = '';
-      }
-      //图片
-      else if(0 == js.indexOf('_img_(')) {
-    	  if(options !== undefined && options.fileName !== undefined) {
-    		  js = js.substring(0,js.length-1);
-    		  var cellNum = 1;
-    		  for(var sei=0; sei<cellRn.length; sei++) {
-    			  cellNum += cellRn.charCodeAt(sei)-65+(cellRn.length-1-sei)*26;
-    		  }
-    		  js = "await "+js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\",("+rowRn+"+_r),("+cellNum+"+_c))";
-    	  }
-      }
-      //二维码图片
-      else if(0 == js.indexOf('_qrcode_(')) {
-    	  if(options !== undefined && options.fileName !== undefined) {
-    		  js = js.substring(0,js.length-1);
-    		  var cellNum = 1;
-    		  for(var sei=0; sei<cellRn.length; sei++) {
-    			  cellNum += cellRn.charCodeAt(sei)-65+(cellRn.length-1-sei)*26;
-    		  }
-    		  js = "await "+js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\",("+rowRn+"+_r),("+cellNum+"+_c))";
-    	  }
-      }
-      //分组
-      else if(0 === js.indexOf('_outlineLevel_(')) {
-    	  js = js.substring(0,js.length-1);
-    	  js += ",buf)";
-      }
-      //隐藏当前工作表 2017-01-18
-      else if(0 == js.indexOf('_hideSheet_(')) {
-    	  if(options && options.fileName) {
-    		  js = js.substring(0,js.length-1);
-    		  js += "\""+options.fileName.replace(/\"/gm,"\\\"")+"\")";
-    	  }
-      }
-      //显示当前工作表 2017-01-18
-      else if(0 == js.indexOf('_showSheet_(')) {
-    	  if(options && options.fileName) {
-    		  js = js.substring(0,js.length-1);
-    		  js += "\""+options.fileName.replace(/\"/gm,"\\\"")+"\")";
-    	  }
-      }
-      //删除当前工作表 2017-01-18
-      else if(0 == js.indexOf('_deleteSheet_(')) {
-    	  if(options && options.fileName) {
-    		  js = js.substring(0,js.length-1);
-    		  js += "\""+options.fileName.replace(/\"/gm,"\\\"")+"\")";
-    	  }
-      }
-
-      while (~(n = js.indexOf("\n", n))) n++, lineno++;
-      if (js.substr(0, 1) == ':') js = filtered(js);
-      if (js) {
-        //if (js.lastIndexOf('//') > js.lastIndexOf('\n')) js += '\n';
-        //sail 2012-04-21
+var parse = exports.parse = function (str, options) {
+    //sail 2013-04-21
+    if (Buffer.isBuffer(str)) str = str.toString();
+    options = options || {};
+    var open = options.open || exports.open || '<%'
+        , close = options.close || exports.close || '%>'
+        , beforeBuf = options.beforeBuf || exports.beforeBuf || ''
+        , filename = options.filename
         //=,- 符号时生成的字符串针对xml转义符进行转义,在ejsExcel中会使用到
-        if(reXmlEq !== undefined && (pixEq === "=" || pixEq === "~" || pixEq === "#")) {
-        	var rxeObj = reXmlEq(pixEq,js,buf.join(''));
-        	js = rxeObj.jsStr;
-        	buf = [rxeObj.str];
-        }
-        //sail 2012-04-21 end
-        buf.push(prefix, js, postfix);
-      }
-      i += end - start + close.length - 1;
+        , reXmlEq = options.reXmlEq
+        , buf = [];  // array of code snippets ( Note that the element's type of `buf[]`is String)
+    buf.push('var buf = [];');  // the snippets's buf here means array of Buffer instead of String
+    buf.push(beforeBuf);
+    buf.push(`;buf.push(Buffer.from('`);
 
-    }
-    else if(str.substr(i,8) === "<row r=\"") {
-    	isRowBegin = true;
-  		isRowEnd = false;
-  		forCNumArr = []
-  		i += 7;
-    	buf.push("<row r=\"");
-    }
-    else if(isRowBegin === true && isRowEnd === false && str.substr(i,1) === "\"") {
-    	isRowEnd = true;
-    	isRowBegin = false;
-    	var strTmp = buf.join('')+"\"";
-  	    var mthArr = strTmp.match(/<row r="\d+"/gm);
-  	    var mthLt = mthArr[mthArr.length-1];
-  	    //行号
-  	    rowRn = mthLt.replace(/<row r="/gm,"").replace(/"/gm,"");
-  	    var repNum = 0;
-  	    strTmp = strTmp.replace(/<row r="\d+"/gm,function(s){
-  	  		repNum++;
-  	  		if(mthArr.length === repNum) {
-  	  			return "<row r=\"'));_c=0;_row="+rowRn+"+_r;buf.push(Buffer.from(String(_row)));buf.push(Buffer.from('\"";
-  	  		}
-  	  		return s;
-  	    });
-  	    buf = [strTmp];
-    }
-    else if(str.substr(i,6) === "<c r=\"") {
-    	isCbegin = true;
-    	isCEnd = false;
-    	i += 5;
-    	buf.push("<c r=\"");
-    }
-    else if(isCbegin === true && isCEnd === false && str.substr(i,1) === "\"") {
-    	isCEnd = true;
-    	isCbegin = false;
-    	var strTmp = buf.join('')+"\"";
-    	var mthArr = strTmp.match(/<c r="[A-Z]+[0-9]+"/gm);
-    	var mthLt = mthArr[mthArr.length-1];
-  		cellRn = mthLt.replace(/<c r="/gm,"").replace(/\d+"/gm,"");
-  		var repNum = 0;
-  		strTmp = strTmp.replace(/<c r="[A-Z]+[0-9]+"/gm,function(s){
-  	  	  repNum++;
-  	  	  if(mthArr.length === repNum) {
-  	  		  return "<c r=\"'));_col=_charPlus_('"+cellRn+"',_c);_rc=_col+_row;buf.push(Buffer.from(_rc));buf.push(Buffer.from('\"";
-  	  	  }
-  	  	  return s;
-  	    });
-  	    buf = [strTmp];
-    }
+    var lineno = 1;
+
     //sail
-    else if(isForRowBegin === true && isForRowEnd === false && str.substr(i,6) === "</row>") {
-    	isForRowEnd = true;
-    	isForRowBegin = false;
-    	i += 5;
-    	buf.push("</row>'));_r++;}_r--;buf.push(Buffer.from('");
-    }
-    else if(isForCellBegin === true && isForCellEnd === false && str.substr(i,4) === "</c>") {
-    	isForCellEnd = true;
-    	isForCellBegin = false;
-    	i += 3;
-    	buf.push("</c>'));_c++;}_c--;buf.push(Buffer.from('");
-    }
-    else if (str.substr(i, 1) == "\\") {
-      buf.push("\\\\");
-    } else if (str.substr(i, 1) == "'") {
-      buf.push("\\'");
-    } else if (str.substr(i, 1) == "\r") {
-      buf.push(" ");
-    } else if (str.substr(i, 1) == "\n") {
-      if (consumeEOL) {
-        consumeEOL = false;
-      } else {
-        buf.push("\\n");
-        lineno++;
-      }
-    } else {
-      pixEq = "";
-      buf.push(str.substr(i, 1));
-    }
-  }
+    var isForRowBegin = false;
+    var isForRowEnd = false;
+    var isForCellBegin = false;
+    var isForCellEnd = false;
+    //行号
+    var rowRn = undefined;
+    //列号
+    var cellRn = undefined;
+    var isCEnd = false;
+    var isCbegin = false;
+    var isRowBegin = false;
+    var isRowEnd = false;
+    var consumeEOL = false;
 
-  buf.push("'));");
-  buf.push("buf = Buffer.concat(buf);return buf;");
-  //fs.writeFileSync("D:/abc.js",buf.join(''));
-  //process.exit();
-  return buf.join('');
+    var forRBegin = false;
+    var forREnd = false;
+    var forRNumArr = [];
+    var forCBegin = false;
+    var forCEnd = false;
+    var forCNumArr = [];
+    var ifRBegin = false;
+    var ifREnd = false;
+    var ifCBegin = false;
+    var ifCEnd = false;
+    var pixEq = "";
+    for (var i = 0, len = str.length; i < len; ++i) {
+        if (str.slice(i, open.length + i) == open) {
+            i += open.length;
+
+            //sail
+            pixEq = str.substr(i, 1);
+            var prefix, postfix, line = lineno;
+            if (pixEq === "=" || pixEq === "-" || pixEq === "~" || pixEq === "#") {
+                prefix = "'));buf.push(Buffer.from(";
+                postfix = "));buf.push(Buffer.from('";
+                ++i;
+            } else {
+                prefix = "'));";
+                postfix = ";buf.push(Buffer.from('";
+            }
+
+            var end = str.indexOf(close, i)
+                , js = str.substring(i, end)
+                , start = i
+                , include = null
+                , n = 0;
+
+            if ('-' == js[js.length - 1]) {
+                js = js.substring(0, js.length - 2);
+                consumeEOL = true;
+            }
+
+            js = js.trim();
+            if (0 == js.indexOf('forRow')) {
+                var uid = uniqueID();
+                var name = js.slice(6);
+                isForRowBegin = true;
+                isForRowEnd = false;
+                var nameArr = [];
+                nameArr[0] = name.substring(0, name.indexOf(" in "));
+                nameArr[1] = name.substring(name.indexOf(" in ") + 4);
+                var pixJs = "";
+                if (nameArr[1].indexOf("|||") !== -1) {
+                    pixJs = nameArr[1].substring(nameArr[1].indexOf("|||") + 3);
+                    nameArr[1] = nameArr[1].substring(0, nameArr[1].indexOf("|||"));
+                }
+                var itemName = nameArr[0].trim();
+                var iName = "";
+                if (itemName.indexOf(",") !== -1) {
+                    var tmpArr = itemName.split(",");
+                    itemName = tmpArr[0].trim();
+                    if (tmpArr[1].trim() !== "") {
+                        iName = "var " + tmpArr[1].trim() + "=I_m" + uid + ";";
+                    }
+                }
+                var arrName = nameArr[1].trim();
+                var strTmp = buf.join('');
+                var mthArr = strTmp.match(/<row r="/gm);
+                var mthLt = mthArr[mthArr.length - 1];
+                var repNum = 0;
+                strTmp = strTmp.replace(/<row r="/gm, function (s) {
+                    repNum++;
+                    if (mthArr.length === repNum) {
+                        return "'));var I_rLen" + uid + "=" + arrName + ";if(Array.isArray(I_rLen" + uid + ")){I_rLen" + uid + "=I_rLen" + uid + ".length;} for(var I_m" + uid + "=0;I_m" + uid + "<I_rLen" + uid + ";I_m" + uid + "++){await Promise_sleep(0);" + iName + "var " + itemName + "=" + arrName + "[I_m" + uid + "];if(typeof(" + arrName + ")===\"number\"){" + itemName + "=I_m" + uid + ";}" + pixJs + ";buf.push(Buffer.from('" + mthLt;
+                    }
+                    return s;
+                });
+                buf = [strTmp];
+                js = '';
+            }
+            //sail 2015-06-24 --begin
+            else if (0 == js.indexOf('ifRBegin')) {
+                ifRBegin = true;
+                ifREnd = false;
+                forRNumArr.push(rowRn);
+                var jsStr = js.slice(8);
+                var strTmp = buf.join('');
+                var mthArr = strTmp.match(/<row r="/gm);
+                var mthLt = mthArr[mthArr.length - 1];
+                var repNum = 0;
+                strTmp = strTmp.replace(/<row r="/gm, function (s) {
+                    repNum++;
+                    if (mthArr.length === repNum) {
+                        return "'));if(" + jsStr + "){buf.push(Buffer.from('" + mthLt;
+                    }
+                    return s;
+                });
+                buf = [strTmp];
+                js = '';
+            } else if (0 == js.indexOf('ifREnd')) {
+                ifRBegin = false;
+                ifREnd = true;
+                if (forRNumArr.length === 0) throw new Error("ifREnd must begin with ifRBegin");
+                var rjsNum = rowRn - forRNumArr.pop();
+                var rjsStr = js.slice(6);
+                var strTmp = buf.join('');
+                var mthArr = strTmp.match(/<\/row>/gm);
+                var mthLt = mthArr[mthArr.length - 1];
+                var repNum = 0;
+                strTmp = strTmp.replace(/<\/row>/gm, function (s) {
+                    repNum++;
+                    if (mthArr.length === repNum) {
+                        return "</row>'));_r+=" + rjsNum + ";}_r-=" + rjsNum + ";buf.push(Buffer.from('";
+                    }
+                    return s;
+                });
+                buf = [strTmp];
+                js = '';
+            }
+            else if (0 == js.indexOf('ifCBegin')) {
+                ifCBegin = true;
+                ifCEnd = false;
+                forCNumArr.push(cellRn);
+                var jsStr = js.slice(8);
+                var strTmp = buf.join('');
+                var mthArr = strTmp.match(/<c r="/gm);
+                var mthLt = mthArr[mthArr.length - 1];
+                var repNum = 0;
+                strTmp = strTmp.replace(/<c r="/gm, function (s) {
+                    repNum++;
+                    if (mthArr.length === repNum) {
+                        return "'));if(" + jsStr + "){buf.push(Buffer.from('" + mthLt;
+                    }
+                    return s;
+                });
+                buf = [strTmp];
+                js = '';
+            } else if (0 == js.indexOf('ifCEnd')) {
+                ifCBegin = false;
+                ifCEnd = true;
+                if (forCNumArr.length === 0) throw new Error("ifCEnd must be begin with ifCBegin");
+                var rjsNum = charToNum(cellRn) - charToNum(forCNumArr.pop());
+                var rjsStr = js.slice(6);
+                var strTmp = buf.join('');
+                var mthArr = strTmp.match(/<\/c>/gm);
+                var mthLt = mthArr[mthArr.length - 1];
+                var repNum = 0;
+                strTmp = strTmp.replace(/<\/c>/gm, function (s) {
+                    repNum++;
+                    if (mthArr.length === repNum) {
+                        return "</c>'));_c+=" + rjsNum + ";}_c-=" + rjsNum + ";buf.push(Buffer.from('";
+                    }
+                    return s;
+                });
+                buf = [strTmp];
+                js = '';
+            }
+            else if (0 == js.indexOf('forCBegin')) {
+                forCBegin = true;
+                forCEnd = false;
+                forCNumArr.push(cellRn);
+                var uid = uniqueID();
+                var name = js.slice(9);
+                var nameArr = [];
+                nameArr[0] = name.substring(0, name.indexOf(" in "));
+                nameArr[1] = name.substring(name.indexOf(" in ") + 4);
+                var pixJs = "";
+                if (nameArr[1].indexOf("|||") !== -1) {
+                    pixJs = nameArr[1].substring(nameArr[1].indexOf("|||") + 3);
+                    nameArr[1] = nameArr[1].substring(0, nameArr[1].indexOf("|||"));
+                }
+                var itemName = nameArr[0].trim();
+                var iName = "";
+                if (itemName.indexOf(",") !== -1) {
+                    var tmpArr = itemName.split(",");
+                    itemName = tmpArr[0].trim();
+                    if (tmpArr[1].trim() !== "") {
+                        iName = "var " + tmpArr[1].trim() + "=I_c" + uid + ";";
+                    }
+                }
+                var arrName = nameArr[1].trim();
+                var strTmp = buf.join('');
+                var mthArr = strTmp.match(/<c r="/gm);
+                var mthLt = mthArr[mthArr.length - 1];
+                var repNum = 0;
+                strTmp = strTmp.replace(/<c r="/gm, function (s) {
+                    repNum++;
+                    if (mthArr.length === repNum) {
+                        return "'));var I_cLen" + uid + "=" + arrName + ";if(Array.isArray(I_cLen" + uid + ")){I_cLen" + uid + "=I_cLen" + uid + ".length;} for(var I_c" + uid + "=0;I_c" + uid + "<I_cLen" + uid + ";I_c" + uid + "++){await Promise_sleep(0);" + iName + "var " + itemName + "=" + arrName + "[I_c" + uid + "];if(typeof(" + arrName + ")===\"number\"){" + itemName + "=I_c" + uid + ";}" + pixJs + ";buf.push(Buffer.from('" + mthLt;
+                    }
+                    return s;
+                });
+                buf = [strTmp];
+                js = '';
+
+            } else if (0 == js.indexOf('forCEnd')) {
+                forCBegin = false;
+                forCEnd = true;
+                if (forCNumArr.length === 0) throw new Error("forCEnd must be begin with forCBegin");
+                var rjsNum = charToNum(cellRn) - charToNum(forCNumArr.pop());
+                var strTmp = buf.join('');
+                var mthArr = strTmp.match(/<\/c>/gm);
+                var mthLt = mthArr[mthArr.length - 1];
+                var repNum = 0;
+                strTmp = strTmp.replace(/<\/c>/gm, function (s) {
+                    repNum++;
+                    if (mthArr.length === repNum) {
+                        return "</c>'));_c+=" + rjsNum + ";}_c-=" + rjsNum + ";buf.push(Buffer.from('";
+                    }
+                    return s;
+                });
+                buf = [strTmp];
+                js = '';
+            }
+            //sail 2015-06-24 --end
+            //sail 2014-04-09 --begin
+            else if (0 == js.indexOf('forRBegin')) {
+                forRBegin = true;
+                forREnd = false;
+                forRNumArr.push(rowRn);
+                var uid = uniqueID();
+                var name = js.slice(9);
+                var nameArr = [];
+                nameArr[0] = name.substring(0, name.indexOf(" in "));
+                nameArr[1] = name.substring(name.indexOf(" in ") + 4);
+                var pixJs = "";
+                if (nameArr[1].indexOf("|||") !== -1) {
+                    pixJs = nameArr[1].substring(nameArr[1].indexOf("|||") + 3);
+                    nameArr[1] = nameArr[1].substring(0, nameArr[1].indexOf("|||"));
+                }
+                var itemName = nameArr[0].trim();
+                var iName = "";
+                if (itemName.indexOf(",") !== -1) {
+                    var tmpArr = itemName.split(",");
+                    itemName = tmpArr[0].trim();
+                    if (tmpArr[1].trim() !== "") {
+                        iName = "var " + tmpArr[1].trim() + "=I_m" + uid + ";";
+                    }
+                }
+                var arrName = nameArr[1].trim();
+                var strTmp = buf.join('');
+                var mthArr = strTmp.match(/<row r="/gm);
+                var mthLt = mthArr[mthArr.length - 1];
+                var repNum = 0;
+                strTmp = strTmp.replace(/<row r="/gm, function (s) {
+                    repNum++;
+                    if (mthArr.length === repNum) {
+                        return "'));var I_rLen" + uid + "=" + arrName + ";if(Array.isArray(I_rLen" + uid + ")){I_rLen" + uid + "=I_rLen" + uid + ".length;} for(var I_m" + uid + "=0;I_m" + uid + "<I_rLen" + uid + ";I_m" + uid + "++){await Promise_sleep(0);" + iName + "var " + itemName + "=" + arrName + "[I_m" + uid + "];if(typeof(" + arrName + ")===\"number\"){" + itemName + "=I_m" + uid + ";}" + pixJs + ";buf.push(Buffer.from('" + mthLt;
+                    }
+                    return s;
+                });
+                buf = [strTmp];
+                js = '';
+            }
+            else if (0 == js.indexOf('forREnd')) {
+                forRBegin = false;
+                forREnd = true;
+                if (forRNumArr.length === 0) throw new Error("forREnd must begin with forRBegin");
+                var rjsNum = rowRn - forRNumArr.pop();
+                var strTmp = buf.join('');
+                var mthArr = strTmp.match(/<\/row>/gm);
+                var mthLt = mthArr[mthArr.length - 1];
+                var repNum = 0;
+                strTmp = strTmp.replace(/<\/row>/gm, function (s) {
+                    repNum++;
+                    if (mthArr.length === repNum) {
+                        return "</row>'));_r+=" + rjsNum + ";}_r-=" + rjsNum + ";buf.push(Buffer.from('";
+                    }
+                    return s;
+                });
+                buf = [strTmp];
+                js = '';
+            }
+            //sail 2014-04-09 --end
+            else if (0 === js.indexOf('forCell')) {
+                var uid = uniqueID();
+                var name = js.slice(7);
+                isForCellBegin = true;
+                isForCellEnd = false;
+                var nameArr = [];
+                nameArr[0] = name.substring(0, name.indexOf(" in "));
+                nameArr[1] = name.substring(name.indexOf(" in ") + 4);
+                var pixJs = "";
+                if (nameArr[1].indexOf("|||") !== -1) {
+                    pixJs = nameArr[1].substring(nameArr[1].indexOf("|||") + 3);
+                    nameArr[1] = nameArr[1].substring(0, nameArr[1].indexOf("|||"));
+                }
+                var itemName = nameArr[0].trim();
+                var iName = "";
+                if (itemName.indexOf(",") !== -1) {
+                    var tmpArr = itemName.split(",");
+                    itemName = tmpArr[0].trim();
+                    if (tmpArr[1].trim() !== "") {
+                        iName = "var " + tmpArr[1].trim() + "=I_c" + uid + ";";
+                    }
+                }
+                var arrName = nameArr[1].trim();
+                var strTmp = buf.join('');
+                var mthArr = strTmp.match(/<c r="/gm);
+                var mthLt = mthArr[mthArr.length - 1];
+                var repNum = 0;
+                strTmp = strTmp.replace(/<c r="/gm, function (s) {
+                    repNum++;
+                    if (mthArr.length === repNum) {
+                        return "'));var I_cLen" + uid + " = " + arrName + ";if(Array.isArray(I_cLen" + uid + ")){I_cLen" + uid + "=I_cLen" + uid + ".length;} for(var I_c" + uid + "=0;I_c" + uid + "<I_cLen" + uid + ";I_c" + uid + "++){await Promise_sleep(0);" + iName + "var " + itemName + "=" + arrName + "[I_c" + uid + "];if(typeof(" + arrName + ")===\"number\"){" + itemName + "=I_c" + uid + ";}" + pixJs + ";buf.push(Buffer.from('" + mthLt;
+                    }
+                    return s;
+                });
+                buf = [strTmp];
+                js = '';
+            }
+            //图片
+            else if (0 == js.indexOf('_img_(')) {
+                if (options !== undefined && options.fileName !== undefined) {
+                    js = js.substring(0, js.length - 1);
+                    var cellNum = 1;
+                    for (var sei = 0; sei < cellRn.length; sei++) {
+                        cellNum += cellRn.charCodeAt(sei) - 65 + (cellRn.length - 1 - sei) * 26;
+                    }
+                    js = "await " + js + ",\"" + options.fileName.replace(/\"/gm, "\\\"") + "\",(" + rowRn + "+_r),(" + cellNum + "+_c))";
+                }
+            }
+            //二维码图片
+            else if (0 == js.indexOf('_qrcode_(')) {
+                if (options !== undefined && options.fileName !== undefined) {
+                    js = js.substring(0, js.length - 1);
+                    var cellNum = 1;
+                    for (var sei = 0; sei < cellRn.length; sei++) {
+                        cellNum += cellRn.charCodeAt(sei) - 65 + (cellRn.length - 1 - sei) * 26;
+                    }
+                    js = "await " + js + ",\"" + options.fileName.replace(/\"/gm, "\\\"") + "\",(" + rowRn + "+_r),(" + cellNum + "+_c))";
+                }
+            }
+            //分组
+            else if (0 === js.indexOf('_outlineLevel_(')) {
+                js = js.substring(0, js.length - 1);
+                js += ",buf)";
+            }
+            //隐藏当前工作表 2017-01-18
+            else if (0 == js.indexOf('_hideSheet_(')) {
+                if (options && options.fileName) {
+                    js = js.substring(0, js.length - 1);
+                    js += "\"" + options.fileName.replace(/\"/gm, "\\\"") + "\")";
+                }
+            }
+            //显示当前工作表 2017-01-18
+            else if (0 == js.indexOf('_showSheet_(')) {
+                if (options && options.fileName) {
+                    js = js.substring(0, js.length - 1);
+                    js += "\"" + options.fileName.replace(/\"/gm, "\\\"") + "\")";
+                }
+            }
+            //删除当前工作表 2017-01-18
+            else if (0 == js.indexOf('_deleteSheet_(')) {
+                if (options && options.fileName) {
+                    js = js.substring(0, js.length - 1);
+                    js += "\"" + options.fileName.replace(/\"/gm, "\\\"") + "\")";
+                }
+            }
+
+            while (~(n = js.indexOf("\n", n))) n++ , lineno++;
+            if (js.substr(0, 1) == ':') js = filtered(js);
+            if (js) {
+                //if (js.lastIndexOf('//') > js.lastIndexOf('\n')) js += '\n';
+                //sail 2012-04-21
+                //=,- 符号时生成的字符串针对xml转义符进行转义,在ejsExcel中会使用到
+                if (reXmlEq !== undefined && (pixEq === "=" || pixEq === "~" || pixEq === "#")) {
+                    var rxeObj = reXmlEq(pixEq, js, buf.join(''));
+                    js = rxeObj.jsStr;
+                    buf = [rxeObj.str];
+                }
+                //sail 2012-04-21 end
+                buf.push(prefix, js, postfix);
+            }
+            i += end - start + close.length - 1;
+
+        }
+        else if (str.substr(i, 8) === "<row r=\"") {
+            isRowBegin = true;
+            isRowEnd = false;
+            forCNumArr = []
+            i += 7;
+            buf.push("<row r=\"");
+        }
+        else if (isRowBegin === true && isRowEnd === false && str.substr(i, 1) === "\"") {
+            isRowEnd = true;
+            isRowBegin = false;
+            var strTmp = buf.join('') + "\"";
+            var mthArr = strTmp.match(/<row r="\d+"/gm);
+            var mthLt = mthArr[mthArr.length - 1];
+            //行号
+            rowRn = mthLt.replace(/<row r="/gm, "").replace(/"/gm, "");
+            var repNum = 0;
+            strTmp = strTmp.replace(/<row r="\d+"/gm, function (s) {
+                repNum++;
+                if (mthArr.length === repNum) {
+                    /*
+                     * 先计算 _row
+                     * ```
+                     * _c=0;
+                     * _row=${rowRn}+_r;
+                     * ```
+                     * 最终得到附加的buf中的字符串类似于：
+                     * <row r="'{{_row}}'"
+                     * 
+                     */
+                    return `<row r="'));_c=0;_row=${rowRn}+_r;buf.push(Buffer.from(String(_row)));buf.push(Buffer.from('"`;
+                }
+                return s;
+            });
+            buf = [strTmp];
+        }
+        else if (str.substr(i, 6) === "<c r=\"") {
+            isCbegin = true;
+            isCEnd = false;
+            i += 5;
+            buf.push("<c r=\"");
+        }
+        else if (isCbegin === true && isCEnd === false && str.substr(i, 1) === "\"") {
+            isCEnd = true;
+            isCbegin = false;
+            var strTmp = buf.join('') + "\"";
+            var mthArr = strTmp.match(/<c r="[A-Z]+[0-9]+"/gm);
+            var mthLt = mthArr[mthArr.length - 1];
+            cellRn = mthLt.replace(/<c r="/gm, "").replace(/\d+"/gm, "");
+            var repNum = 0;
+            strTmp = strTmp.replace(/<c r="[A-Z]+[0-9]+"/gm, function (s) {
+                repNum++;
+                if (mthArr.length === repNum) {
+                    /*
+                     * 计算_rc的值,
+                     * ```
+                     * _col=_charPlus_('${cellRn}',_c);
+                     * _rc=_col+_row;
+                     * ```
+                     * 然后得到所追加到buf中的字符串，格式为：
+                     * ```javascript
+                     * <c r="'{{_rc}}'"; 
+                     * ```
+                     */
+                    return `<c r="'));_col=_charPlus_('${cellRn}',_c);_rc=_col+_row;buf.push(Buffer.from(_rc));buf.push(Buffer.from('"`;
+                }
+                return s;
+            });
+            buf = [strTmp];
+        }
+        //sail
+        else if (isForRowBegin === true && isForRowEnd === false && str.substr(i, 6) === "</row>") {
+            isForRowEnd = true;
+            isForRowBegin = false;
+            i += 5;
+            buf.push("</row>'));_r++;}_r--;buf.push(Buffer.from('");
+        }
+        else if (isForCellBegin === true && isForCellEnd === false && str.substr(i, 4) === "</c>") {
+            isForCellEnd = true;
+            isForCellBegin = false;
+            i += 3;
+            buf.push("</c>'));_c++;}_c--;buf.push(Buffer.from('");
+        }
+        else if (str.substr(i, 1) == "\\") {
+            buf.push("\\\\");
+        } else if (str.substr(i, 1) == "'") {
+            buf.push("\\'");
+        } else if (str.substr(i, 1) == "\r") {
+            buf.push(" ");
+        } else if (str.substr(i, 1) == "\n") {
+            if (consumeEOL) {
+                consumeEOL = false;
+            } else {
+                buf.push("\\n");
+                lineno++;
+            }
+        } else {
+            pixEq = "";
+            buf.push(str.substr(i, 1));
+        }
+    }
+
+    buf.push("'));");
+    buf.push("buf = Buffer.concat(buf);return buf;");
+    // fs.writeFileSync("D:/abc.js",buf.join(''));
+    // process.exit();
+    return buf.join('');
 };
 
 /**
@@ -591,7 +625,6 @@ var parse = exports.parse = function(str, options){
  * @return {String}
  * @api private
  */
-
 function resolveInclude(name, filename) {
   var path = join(dirname(filename), name);
   var ext = extname(name);

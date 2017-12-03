@@ -71,9 +71,12 @@ var readFileAsync = Promise_fromStandard(fs.readFile, fs);
 
 var inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
 
-
+/**
+ * Data to render OpenXML 
+ */
 class Data{
     constructor(exlBuf,_data_){
+        this.xjOp=xjOp;
         this._data_=_data_,
         this._acVar_ = {
             sharedStrings: [],
@@ -81,7 +84,19 @@ class Data{
         };
         this.sharedStrings2 = [sharedStrings2Prx];
         this.hzip=new Hzip(exlBuf);
+
+        this.workbookEntry = this.hzip.getEntry("xl/workbook.xml");
+        this.workbookRelsEntry =this.hzip.getEntry("xl/_rels/workbook.xml.rels");
+        let entries = this.hzip.entries;
+        this.sheetEntries = entries.filter(e=> e.fileName.indexOf("xl/worksheets/sheet") === 0 )
+            .sort((arg0, arg1)=> arg0.fileName > arg1.fileName);
+        this.sheetEntrieRels = entries.filter(e=> e.fileName.indexOf("xl/worksheets/_rels/") === 0)
+            .sort((arg0, arg1) =>arg0.fileName > arg1.fileName);
+        
+        // a helper method
+        this.updateEntryAsync= Promise_fromStandard(this.hzip.updateEntry,this.hzip);
     }
+
     _charPlus_(){
         return charPlus.apply(this,arguments);
     }
@@ -91,81 +106,13 @@ class Data{
     _str2Xml_(){
         return str2Xml.apply(this,arguments);
     }
-}
 
-function DataFactory(exlBuf,_data_){
-    const d=new Data(exlBuf,_data_);
-    return d;
-}
-
-/**
- * 把元素数组`elementArray`中的所有元素的`r`属性交换到第一个属性位置
- * @param {Array<RowElement>} elementArray 
- */
-function normalizeRAttributePosition(elementArray){
-    // 迭代数组中的所有元素，把元素的"r"属性交换到第一个属性位置
-    for (let n = 0; n < elementArray; n++) {
-        let element = elementArray[n];
-        if (element.attributes[0] && element.attributes[0].nodeName === "r") {
-            continue;
-        }
-        // 迭代该元素的所有属性，找到r属性位置索引
-        let attributes = element.attributes;
-        // r属性
-        let attr_r = null;
-        // r属性所在的位置索引
-        let attr_r_idx = null;
-        for (let i=0; i <attributes.length ; i++ ) {
-            let attr = attributes[i];
-            if (attr.nodeName === "r") {
-                attr_r = attr;
-                attr_r_idx = i;
-                break;
-            }
-        }
-        if (!attr_r) { continue; }
-
-        // 交换 row.r 属性到第一个位置
-        let attr0 = element.attributes[0];
-        element.attributes[0] = attr_r;
-        element.attributes[attr_r_idx] = attr0;
-    }
-}
-
-
-/**
- * 检查元素是否是Array，如果不是，转换为Array
- * @param {Array} arrayLike 
- */
-function normalizeArray(arrayLike){
-    if (!arrayLike) {
-        arrayLike = [];
-    } 
-    else if (!isArray(arrayLike)) {
-        arrayLike = [arrayLike];
-    }
-    return arrayLike;
-}
-
-
-const renderExcel = async function (exlBuf, _data_) {
-    var  attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem,  end, entry, hyperlink, hyperlinksDomEl, i, i1, idx, j1, key, keyArr,  len10, len11, len13, len14, len15, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r,  ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, refArr, row, rowEl, rowElArr, sheetBuf, sheetBuf2,  si, si2, sirTp,  str, str2, u,  v, w,  x, xjOpTmp, y, z;
-    let data = DataFactory(exlBuf,_data_);
-    let sharedStrings2 = data.sharedStrings2;
-    let hzip =data.hzip;
-    let updateEntryAsync = Promise_fromStandard(hzip.updateEntry, hzip);
-    await updateEntryAsync("xl/calcChain.xml");
-    ref2 = hzip.entries;
-    let sheetEntries = ref2.filter(e=> e.fileName.indexOf("xl/worksheets/sheet") === 0 )
-        .sort((arg0, arg1)=> arg0.fileName > arg1.fileName);
-    let sheetEntrieRels = ref2.filter(e=> e.fileName.indexOf("xl/worksheets/_rels/") === 0)
-        .sort((arg0, arg1) =>arg0.fileName > arg1.fileName);
-    let workbookEntry = hzip.getEntry("xl/workbook.xml");
-    let workbookBuf = (await inflateRawAsync(workbookEntry.cfile));
-    let workbookRelsEntry = hzip.getEntry("xl/_rels/workbook.xml.rels");
-    let workbookRelsBuf = (await inflateRawAsync(workbookRelsEntry.cfile));
-
-    data._ps_ = function (str, buf) {
+    /**
+     * process string
+     * @param {String} str 
+     * @param {Buffer} buf 
+     */
+    _ps_(str, buf) {
         if (str === void 0) { str = ""; }     // undefined
         else if (str === null) { str = "NULL"; } // null
         str = str.toString();
@@ -193,12 +140,18 @@ const renderExcel = async function (exlBuf, _data_) {
             return "";
         }
         let val = str2Xml(str);
-        sharedStrings2.push(Buffer.from(`<si><t xml:space="preserve"> ${val} </t></si>`));
-        let index = data._acVar_._ss_len;
-        data._acVar_._ss_len++;
+        this.sharedStrings2.push(Buffer.from(`<si><t xml:space="preserve"> ${val} </t></si>`));
+        let index = this._acVar_._ss_len;
+        this._acVar_._ss_len++;
         return String(index);
-    };
-    data._pf_ = function (str, buf) {
+    }
+    
+    /**
+     * process formula
+     * @param {String} str 
+     * @param {Buffer} buf 
+     */
+    _pf_(str, buf) {
         if (str === void 0 || str === null) { str = ""; }
         str = str.toString();
         str = str2Xml(str);
@@ -229,11 +182,18 @@ const renderExcel = async function (exlBuf, _data_) {
             return index;
         };
         return String(str);
-    };
-    data._pi_ = function (str, buf) {
+    }
+
+
+    /**
+     * process integer
+     * @param {*} str 
+     * @param {*} buf 
+     */
+    _pi_(str, buf) {
         var i, l, ref2, tmpStr;
         if (str === true || str === false || isNaN(Number(str))) {
-            return data._ps_(str, buf);
+            return this._ps_(str, buf);
         }
         for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
             tmpStr = buf[i].toString();
@@ -248,13 +208,14 @@ const renderExcel = async function (exlBuf, _data_) {
         str = str.toString();
         str = str2Xml(str);
         return String(str);
-    };
-    data._outlineLevel_ = function (str, buf) {
-        var i, l, ref2, strNum, tmpStr;
-        strNum = Number(str);
+    }
+
+    _outlineLevel_(str, buf) {
+        let strNum = Number(str);
         if (isNaN(strNum) || strNum < 1) {
             return;
         }
+        var i, l, ref2, tmpStr;
         for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
             tmpStr = buf[i].toString();
             if (/<row\s/gm.test(tmpStr)) {
@@ -262,30 +223,29 @@ const renderExcel = async function (exlBuf, _data_) {
                 break;
             }
         }
-    };
-    data._img_ = async function (imgOpt, fileName, rowNum, cellNum) {
-        var cNvPrDescr, cNvPrName, cfileName, doc, documentElement, drawingBuf, drawingEl, drawingObj, drawingRId, drawingRelBuf, drawingRelObj, drawingRelStr, drawingStr, entryImgTmp, entryTmp, eny, err, hashMd5, imgBaseName, imgBuf, imgPh, itHs, len2, len3, len4, len5, len6, len7, len8, m, md5Str, n, o, p, q, r, ref3, ref4, ref5, ref6, relationshipEl, relationshipElArr, sei, sheetEntrieRel, sheetEntry, sheetRelPth, shipEl, u, xdr_frt;
+    }
+
+
+
+    async _img_ (imgOpt, fileName, rowNum, cellNum) {
+
         if (isString(imgOpt) || Buffer.isBuffer(imgOpt)) {
             imgOpt = {
                 imgPh: imgOpt
             };
         }
         imgOpt = imgOpt || {};
-        imgPh = imgOpt.imgPh;
-        xdr_frt = imgOpt.xdr_frt;
-        if (!imgOpt.cellNumAdd) {
-            imgOpt.cellNumAdd = 1;
-        }
-        if (!imgOpt.rowNumAdd) {
-            imgOpt.rowNumAdd = 1;
-        }
+        if (!imgOpt.cellNumAdd) { imgOpt.cellNumAdd = 1; }
+        if (!imgOpt.rowNumAdd) { imgOpt.rowNumAdd = 1; }
         imgOpt.cellNumAdd = Number(imgOpt.cellNumAdd) - 1;
         imgOpt.rowNumAdd = Number(imgOpt.rowNumAdd) - 1;
-        imgBaseName = void 0;
-        imgBuf = void 0;
-        if (!imgPh) {
-            return "";
-        }
+
+        const hzip=this.hzip;
+        let imgBaseName = void 0;
+        let imgBuf = void 0;
+        let xdr_frt = imgOpt.xdr_frt;
+        let imgPh = imgOpt.imgPh;
+        if (!imgPh) { return ""; }
         if (isString(imgPh)) {
             try {
                 imgBuf = (await readFileAsync(imgPh));
@@ -298,8 +258,7 @@ const renderExcel = async function (exlBuf, _data_) {
             imgBuf = imgPh;
         } else if (imgPh instanceof Stream) {
             imgBuf = (await new Promise(function (resolve, reject) {
-                var imgBufArr;
-                imgBufArr = [];
+                let imgBufArr = [];
                 imgPh.on("data", function (bufTmp) {
                     imgBufArr.push(bufTmp);
                 });
@@ -313,50 +272,56 @@ const renderExcel = async function (exlBuf, _data_) {
         } else {
             return "";
         }
-        hashMd5 = crypto.createHash("md5");
-        md5Str = hashMd5.update(imgBuf).digest("hex");
+        let hashMd5 = crypto.createHash("md5");
+        let md5Str = hashMd5.update(imgBuf).digest("hex");
         md5Str = "a" + md5Str;
         if (!imgBaseName) {
             imgBaseName = md5Str + ".png";
         }
-        cNvPrName = imgOpt.cNvPrName || imgBaseName;
-        cNvPrDescr = imgOpt.cNvPrDescr || imgBaseName;
-        cfileName = "xl/media/" + md5Str + ".png";
-        itHs = false;
-        ref3 = hzip.entries;
-        for (m = 0, len2 = ref3.length; m < len2; m++) {
-            entryTmp = ref3[m];
+        let cNvPrName = imgOpt.cNvPrName || imgBaseName;
+        let cNvPrDescr = imgOpt.cNvPrDescr || imgBaseName;
+        let cfileName = "xl/media/" + md5Str + ".png";
+        let ref3 = this.hzip.entries;
+        let itHs = false;
+        let entryTmp=null;
+        for (let m = 0; m < this.hzip.entries.length ; m++) {
+            entryTmp =this.hzip.entries[m];
             if (entryTmp.fileName === cfileName) {
                 itHs = true;
                 break;
             }
         }
         if (!itHs) {
-            await updateEntryAsync.apply(hzip, [cfileName, imgBuf, false]);
+            await this.updateEntryAsync.apply(hzip, [cfileName, imgBuf, false]);
         }
         entryTmp = void 0;
-        for (n = 0, len3 = sheetEntries.length; n < len3; n++) {
-            sheetEntry = sheetEntries[n];
+        for (let n = 0; n <this.sheetEntries.length ; n++) {
+            let sheetEntry = this.sheetEntries[n];
             if (fileName !== sheetEntry.fileName) {
                 continue;
             }
             entryTmp = sheetEntry;
             break;
         }
-        if (!entry) {
+        if (!entryTmp) {
             throw new Error(fileName + " dose not found!");
         }
-        doc = new DOMParser().parseFromString(((await inflateRawAsync(entryTmp.cfile))).toString(), 'text/xml');
-        documentElement = doc.documentElement;
-        drawingEl = documentElement.getElementsByTagName("drawing")[0];
+
+
+        let doc= new DOMParser().parseFromString(
+            (await inflateRawAsync(entryTmp.cfile)).toString(), 
+            'text/xml'
+        );
+        let documentElement = doc.documentElement;
+        let drawingEl = documentElement.getElementsByTagName("drawing")[0];
         if (!drawingEl) {
             throw "Excel模板显示动态图片之前,至少需要插入一张1像素的透明的图片,以初始化";
         }
-        drawingRId = drawingEl.getAttribute("r:id");
-        sheetEntrieRel = void 0;
-        sheetRelPth = path.dirname(fileName) + "/_rels/" + path.basename(fileName) + ".rels";
-        for (o = 0, len4 = sheetEntrieRels.length; o < len4; o++) {
-            entryTmp = sheetEntrieRels[o];
+        let drawingRId = drawingEl.getAttribute("r:id");
+        let sheetEntrieRel = void 0;
+        let sheetRelPth = path.dirname(fileName) + "/_rels/" + path.basename(fileName) + ".rels";
+        for (let o = 0; o <this.sheetEntrieRels.length ; o++) {
+            entryTmp = this.sheetEntrieRels[o];
             if (entryTmp.fileName === sheetRelPth) {
                 sheetEntrieRel = entryTmp;
                 break;
@@ -365,12 +330,15 @@ const renderExcel = async function (exlBuf, _data_) {
         if (!sheetEntrieRel) {
             throw new Error(sheetRelPth + " dose not found!");
         }
-        doc = new DOMParser().parseFromString(((await inflateRawAsync(sheetEntrieRel.cfile))).toString(), 'text/xml');
+        doc = new DOMParser().parseFromString(
+            (await inflateRawAsync(sheetEntrieRel.cfile)).toString(),
+            'text/xml'
+        );
         documentElement = doc.documentElement;
-        relationshipElArr = documentElement.getElementsByTagName("Relationship");
-        relationshipEl = void 0;
-        for (p = 0, len5 = relationshipElArr.length; p < len5; p++) {
-            shipEl = relationshipElArr[p];
+        let relationshipElArr = documentElement.getElementsByTagName("Relationship");
+        let relationshipEl = void 0;
+        for (let p = 0; p <relationshipElArr.length ; p++) {
+            let shipEl = relationshipElArr[p];
             if (drawingRId === shipEl.getAttribute("Id")) {
                 relationshipEl = shipEl;
                 break;
@@ -379,12 +347,11 @@ const renderExcel = async function (exlBuf, _data_) {
         if (!relationshipEl) {
             throw new Error(sheetRelPth + (" Relationship.Id " + drawingRId + " dose not found!"));
         }
-        sei = path.basename(relationshipEl.getAttribute("Target")).replace("drawing", "").replace(".xml", "");
+        let sei = path.basename(relationshipEl.getAttribute("Target")).replace("drawing", "").replace(".xml", "");
         sei = Number(sei) - 1;
-        drawingRelBuf = void 0;
-        ref4 = hzip.entries;
-        for (q = 0, len6 = ref4.length; q < len6; q++) {
-            entryImgTmp = ref4[q];
+        let drawingRelBuf = void 0;
+        for (let q = 0; q <this.hzip.entries.length ; q++) {
+            let entryImgTmp = this.hzip.entries[q];
             if (entryImgTmp.fileName === "xl/drawings/_rels/drawing" + (sei + 1) + ".xml.rels") {
                 drawingRelBuf = (await inflateRawAsync(entryImgTmp.cfile));
                 break;
@@ -394,16 +361,16 @@ const renderExcel = async function (exlBuf, _data_) {
             console.error("Excel模板显示动态图片之前,至少需要插入一张1像素的透明的图片,以初始化");
             return "";
         }
-        drawingRelObj = xml2json.toJson(drawingRelBuf, xjOp);
+        let drawingRelObj = xml2json.toJson(drawingRelBuf, this.xjOp);
         if (!drawingRelObj["Relationships"]["Relationship"]) {
             drawingRelObj["Relationships"]["Relationship"] = [];
         } else if (!isArray(drawingRelObj["Relationships"]["Relationship"])) {
             drawingRelObj["Relationships"]["Relationship"] = [drawingRelObj["Relationships"]["Relationship"]];
         }
         itHs = false;
-        ref5 = drawingRelObj["Relationships"]["Relationship"];
-        for (r = 0, len7 = ref5.length; r < len7; r++) {
-            eny = ref5[r];
+        let ref5 = drawingRelObj["Relationships"]["Relationship"];
+        for (let r = 0; r < ref5.length ; r++) {
+            let eny = ref5[r];
             if (md5Str === eny["Id"]) {
                 itHs = true;
                 break;
@@ -416,14 +383,14 @@ const renderExcel = async function (exlBuf, _data_) {
                 "Target": "../media/" + md5Str + ".png"
             });
         }
-        drawingRelStr = xml2json.toXml(drawingRelObj, "", {
+        let drawingRelStr = xml2json.toXml(drawingRelObj, "", {
             reSanitize: false
         });
-        await updateEntryAsync.apply(hzip, ["xl/drawings/_rels/drawing" + (sei + 1) + ".xml.rels", Buffer.from('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n' + drawingRelStr)]);
-        drawingBuf = void 0;
-        ref6 = hzip.entries;
-        for (u = 0, len8 = ref6.length; u < len8; u++) {
-            entryImgTmp = ref6[u];
+        await this.updateEntryAsync.apply(this.hzip, ["xl/drawings/_rels/drawing" + (sei + 1) + ".xml.rels", Buffer.from('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n' + drawingRelStr)]);
+        let drawingBuf = void 0;
+        let ref6 = hzip.entries;
+        for (let u = 0 ; u <ref6.length ; u++) {
+            let entryImgTmp = ref6[u];
             if (entryImgTmp.fileName === "xl/drawings/drawing" + (sei + 1) + ".xml") {
                 drawingBuf = (await inflateRawAsync(entryImgTmp.cfile));
                 break;
@@ -432,7 +399,7 @@ const renderExcel = async function (exlBuf, _data_) {
         if (drawingBuf === void 0) {
             return "";
         }
-        drawingObj = xml2json.toJson(drawingBuf, xjOp);
+        let drawingObj = xml2json.toJson(drawingBuf, this.xjOp);
         let TWO_CELL_ANCHOR=drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"];
         if (!drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"]) {
             drawingObj["xdr:wsDr"]["xdr:twoCellAnchor"] = [];
@@ -549,22 +516,23 @@ const renderExcel = async function (exlBuf, _data_) {
                 "$t": ""
             }
         });
-        drawingStr = xml2json.toXml(drawingObj, "", {
+
+        let drawingStr = xml2json.toXml(drawingObj, "", {
             reSanitize: false
         });
-        await updateEntryAsync.apply(hzip, ["xl/drawings/drawing" + (sei + 1) + ".xml", Buffer.from('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n' + drawingStr)]);
+        await this.updateEntryAsync.apply(this.hzip, ["xl/drawings/drawing" + (sei + 1) + ".xml", Buffer.from('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n' + drawingStr)]);
         return "";
-    };
-    data._qrcode_ = async function (imgOpt, fileName, rowNum, cellNum) {
-        var imgSt, qrBufArr, rvObj;
+    }
+
+    async _qrcode_ (imgOpt, fileName, rowNum, cellNum) {
         if (!imgOpt || !imgOpt.text) {
             return "";
         }
         if (!imgOpt.margin) {
             imgOpt.margin = 0;
         }
-        qrBufArr = [];
-        imgSt = qr.image(imgOpt.text, imgOpt);
+        let qrBufArr = [];
+        let imgSt = qr.image(imgOpt.text, imgOpt);
         imgSt.on("data", function (dt) {
             qrBufArr.push(dt);
         });
@@ -577,9 +545,88 @@ const renderExcel = async function (exlBuf, _data_) {
             });
         });
         imgOpt.imgPh = Buffer.concat(qrBufArr);
-        rvObj = (await data._img_(imgOpt, fileName, rowNum, cellNum));
+        let rvObj = (await this._img_(imgOpt, fileName, rowNum, cellNum));
         return rvObj;
-    };
+    }
+}
+
+
+/**
+ * 由于必须要创建一个Data对象用于渲染Excel，这里就简单用一个DataFactory函数预留一个接口，方便以后扩展Data，重写此方法
+ * @param {*} exlBuf 
+ * @param {*} _data_ 
+ * @return {Data}
+ */
+function DataFactory(exlBuf,_data_){
+    const d=new Data(exlBuf,_data_);
+    return d;
+}
+
+/**
+ * 把元素数组`elementArray`中的所有元素的`r`属性交换到第一个属性位置
+ * @param {Array<RowElement>} elementArray 
+ */
+function normalizeRAttributePosition(elementArray){
+    // 迭代数组中的所有元素，把元素的"r"属性交换到第一个属性位置
+    for (let n = 0; n < elementArray; n++) {
+        let element = elementArray[n];
+        if (element.attributes[0] && element.attributes[0].nodeName === "r") {
+            continue;
+        }
+        // 迭代该元素的所有属性，找到r属性位置索引
+        let attributes = element.attributes;
+        // r属性
+        let attr_r = null;
+        // r属性所在的位置索引
+        let attr_r_idx = null;
+        for (let i=0; i <attributes.length ; i++ ) {
+            let attr = attributes[i];
+            if (attr.nodeName === "r") {
+                attr_r = attr;
+                attr_r_idx = i;
+                break;
+            }
+        }
+        if (!attr_r) { continue; }
+
+        // 交换 row.r 属性到第一个位置
+        let attr0 = element.attributes[0];
+        element.attributes[0] = attr_r;
+        element.attributes[attr_r_idx] = attr0;
+    }
+}
+
+
+/**
+ * 检查元素是否是Array，如果不是，转换为Array
+ * @param {Array} arrayLike 
+ */
+function normalizeArray(arrayLike){
+    if (!arrayLike) {
+        arrayLike = [];
+    } 
+    else if (!isArray(arrayLike)) {
+        arrayLike = [arrayLike];
+    }
+    return arrayLike;
+}
+
+
+const renderExcel = async function (exlBuf, _data_) {
+    var  attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem,  end, entry, hyperlink, hyperlinksDomEl, i, i1, idx, j1, key, keyArr,  len10, len11, len13, len14, len15, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r,  ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, refArr, row, rowEl, rowElArr, sheetBuf, sheetBuf2,  si, si2, sirTp,  str, str2, u,  v, w,  x, xjOpTmp, y, z;
+    let data = DataFactory(exlBuf,_data_);
+    let sharedStrings2 = data.sharedStrings2;
+    let sheetEntries = data.sheetEntries;
+    let sheetEntrieRels =data.sheetEntrieRels;
+    let workbookEntry = data.workbookEntry;
+    let workbookRelsEntry =data.workbookRelsEntry; 
+    let hzip =data.hzip;
+    ref2 = hzip.entries;
+    let updateEntryAsync = data.updateEntryAsync.bind(data);
+    await updateEntryAsync("xl/calcChain.xml");
+    let workbookBuf = (await inflateRawAsync(workbookEntry.cfile));
+    let workbookRelsBuf = (await inflateRawAsync(workbookRelsEntry.cfile));
+
 
     data._hideSheet_ = function (fileName) {
         var doc, documentElement, len2, len3, m, n, rId, relationshipEl, relationshipElArr, sheetEl, sheetElArr, sheetsEl;

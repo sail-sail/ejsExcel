@@ -19,9 +19,42 @@ const {Promise_fromCallback,Promise_fromStandard,Promise_sleep}=require('./async
 
 
 const DOMParser = xmldom.DOMParser;
-const sheetSufStr = Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideSheet_ = _args._hideSheet_;\nvar _showSheet_ = _args._showSheet_;\nvar _deleteSheet_ = _args._deleteSheet_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n	_mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
+const _SHEET_STRING=[
+    `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`, 
+    `<%`,
+        `var _data_ = _args._data_;`,
+        `var _charPlus_ = _args._charPlus_.bind(_args);`,
+        `var _charToNum_ = _args._charToNum_.bind(_args);`,
+        `var _str2Xml_ = _args._str2Xml_.bind(_args);`,
+        `var _hideSheet_ = _args._hideSheet_.bind(_args);`,
+        `var _showSheet_ = _args._showSheet_.bind(_args);`,
+        `var _deleteSheet_ = _args._deleteSheet_.bind(_args);`,
+        `var _ps_ = _args._ps_.bind(_args);`,
+        `var _pi_ = _args._pi_.bind(_args);`,
+        `var _pf_ = _args._pf_.bind(_args);`,
+        `var _acVar_ = _args._acVar_;`,
+        `var _r = 0;`,
+        `var _c = 0;`,
+        `var _row = 0;`,
+        `var _col = "";`,
+        `var _rc = "";`,
+        `var _img_ = _args._img_.bind(_args);`,
+        `var _qrcode_ = _args._qrcode_.bind(_args);`,
+        `var _mergeCellArr_ = [];`,
+        `var _mergeCellFn_ = function(mclStr) {`,
+        `	_mergeCellArr_.push(mclStr);`,
+        `};`,
+        `var _hyperlinkArr_ = [];`,
+        `var _outlineLevel_ = _args._outlineLevel_.bind(_args);`,
+    `%>`,
+].join('\n');
+const sheetSufStr = Buffer.from(_SHEET_STRING);
 
-const sharedStrings2Prx = Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">");
+const _SHARED_STRING=[
+    `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`,
+    `<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="1" uniqueCount="1">`,
+].join('\n');
+const sharedStrings2Prx = Buffer.from(_SHARED_STRING);
 
 var xjOp = {
     object: true,
@@ -39,22 +72,30 @@ var readFileAsync = Promise_fromStandard(fs.readFile, fs);
 var inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
 
 
-function DataFactory(exlBuf,_data_){
-
-    const d= {
-        _data_,
-        _acVar_ : {
+class Data{
+    constructor(exlBuf,_data_){
+        this._data_=_data_,
+        this._acVar_ = {
             sharedStrings: [],
             _ss_len: 0,
-        },
-        sharedStrings2 : [sharedStrings2Prx],
-        hzip : new Hzip(exlBuf),
-        _charPlus_:charPlus,
-        _charToNum_:charToNum,
-        _str2Xml_:str2Xml,
+        };
+        this.sharedStrings2 = [sharedStrings2Prx];
+        this.hzip=new Hzip(exlBuf);
     }
-    return d;
+    _charPlus_(){
+        return charPlus.apply(this,arguments);
+    }
+    _charToNum_(){
+        return charToNum.apply(this,arguments);
+    }
+    _str2Xml_(){
+        return str2Xml.apply(this,arguments);
+    }
+}
 
+function DataFactory(exlBuf,_data_){
+    const d=new Data(exlBuf,_data_);
+    return d;
 }
 
 /**

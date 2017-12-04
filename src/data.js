@@ -677,7 +677,7 @@ const renderExcel = async function (exlBuf, _data_) {
     let hzip =data.hzip;
     ref2 = hzip.entries;
     let updateEntryAsync = data.updateEntryAsync.bind(data);
-    await updateEntryAsync("xl/calcChain.xml");
+    await updateEntryAsync("xl/calcChain.xml",Buffer.from('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<calcChain xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"></calcChain>'));
     let workbookBuf = (await inflateRawAsync(workbookEntry.cfile));
     let workbookRelsBuf = (await inflateRawAsync(workbookRelsEntry.cfile));
 

@@ -1,3 +1,5 @@
+const {isString}=require('./is-type');
+
 /**
  * Convert str to number 
  * @param {String} str 
@@ -46,8 +48,66 @@ function charPlus(str, num) {
 };
 
 
+/**
+ * escape string to xml
+ * @param {String} str 
+ */
+function str2Xml(str) {
+    if (!isString(str)) {
+        return str;
+    }
+    return Array.from(str,(s,k)=>{
+        if (s === "&") {
+            s = "&amp;";
+        } else if (s === "<") {
+            s = "&lt;";
+        } else if (s === ">") {
+            s = "&gt;";
+        } else if (s === "\"") {
+            s = "&quot;";
+        } else if (s === "'") {
+            s = "&apos;";
+        }
+        return s;
+    }).join('');
+};
+
+
+/**
+ * 
+ * @param {String} tt main string 
+ * @param {*} what substring (pattern) to be replaced
+ * @param {*} replacement  replaced with
+ */
+function replaceLast(tt, what, replacement) {
+    if(!tt) return;
+    let mthArr = tt.match(what);
+    let num = 0;
+    const result= tt.replace(what, function (s) {
+        num++;
+        if (num === mthArr.length) {
+            return replacement;
+        }
+        return s;
+    });
+    return result;
+};
+
+
+/**
+ * strip white space 
+ * @param {String} str 
+ */
+function stripWhitespace(str){
+    return str.replace(/\n/gm, "\\n").replace(/\r/gm, "\\r").replace(/\t/gm, "\\t");
+}
+
+
 
 module.exports={
     charToNum,
     charPlus,
+    str2Xml,
+    replaceLast,
+    stripWhitespace,
 };

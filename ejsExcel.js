@@ -329,7 +329,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       };
       hzip = new Hzip(exlBuf);
       updateEntryAsync = Promise_fromStandard(hzip.updateEntry, hzip);
-      yield updateEntryAsync("xl/calcChain.xml",Buffer.from('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<calcChain xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"></calcChain>'));
+      yield updateEntryAsync("xl/calcChain.xml");
       sheetEntries = [];
       sheetEntrieRels = [];
       ref2 = hzip.entries;

@@ -548,6 +548,8 @@ class Data{
         let rvObj = (await this._img_(imgOpt, fileName, rowNum, cellNum));
         return rvObj;
     }
+
+
 }
 
 
@@ -611,6 +613,50 @@ function normalizeArray(arrayLike){
     return arrayLike;
 }
 
+/**
+ * 在WorkbookRelsBuf中，找到元素的Target为filename的id
+ * @param {Buffer} workbookRelsBuf 
+ * @param {String} fileName 
+ */
+function findRelationshipId(workbookRelsBuf,fileName){
+    if (!fileName) { return null; }
+    let doc = new DOMParser().parseFromString(workbookRelsBuf.toString(), 'text/xml');
+    let documentElement = doc.documentElement;
+    let relationshipElArray = documentElement.getElementsByTagName("Relationship");
+    let relationshipElement =null;
+    let rId = void 0;
+    for (let m = 0 ; m < relationshipElArray.length; m++) {
+        relationshipElement = relationshipElArray[m];
+        if ("xl/" + relationshipElement.getAttribute("Target") === fileName) {
+            rId = relationshipElement.getAttribute("Id");
+            break;
+        }
+    }
+    return rId;
+}
+
+function updateSheetHiddenState(workbookBuf,rId,state="hidden"||"show"){
+    if (rId) {
+        let doc = new DOMParser().parseFromString(workbookBuf.toString(), 'text/xml');
+        let documentElement = doc.documentElement;
+        let sheetsElement = documentElement.getElementsByTagName("sheets")[0];
+        let sheetElArray = sheetsElement.getElementsByTagName("sheet");
+        for (let n = 0; n <sheetElArray.length ; n++) {
+            let sheetElement = sheetElArray[n];
+            if (sheetElement.getAttribute("r:id") === rId) {
+                if(state=="hidden"){
+                    sheetElement.setAttribute("state", "hidden");
+                }
+                else{
+                    sheetElement.removeAttribute("state");
+                }
+                break;
+            }
+        }
+        workbookBuf = Buffer.from(doc.toString());
+    }
+    return workbookBuf;
+}
 
 const renderExcel = async function (exlBuf, _data_) {
     var  attr, attr0, attr_r, begin, buffer2, cEl, cElArr, cItem,  end, entry, hyperlink, hyperlinksDomEl, i, i1, idx, j1, key, keyArr,  len10, len11, len13, len14, len15, len3, len4, len5, len6, len7, len8, len9, m, m_c_i, mciNum, mciNumArr, mergeCell, n, o, p, pageMarginsDomEl, phoneticPr, phoneticPrDomEl, q, r,  ref, ref0, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, refArr, row, rowEl, rowElArr, sheetBuf, sheetBuf2,  si, si2, sirTp,  str, str2, u,  v, w,  x, xjOpTmp, y, z;
@@ -628,74 +674,22 @@ const renderExcel = async function (exlBuf, _data_) {
     let workbookRelsBuf = (await inflateRawAsync(workbookRelsEntry.cfile));
 
 
-    data._hideSheet_ = function (fileName) {
-        var doc, documentElement, len2, len3, m, n, rId, relationshipEl, relationshipElArr, sheetEl, sheetElArr, sheetsEl;
-        if (!workbookEntry || !workbookRelsEntry || !fileName) {
-            return;
-        }
-        rId = void 0;
-        doc = new DOMParser().parseFromString(workbookRelsBuf.toString(), 'text/xml');
-        documentElement = doc.documentElement;
-        relationshipElArr = documentElement.getElementsByTagName("Relationship");
-        for (m = 0, len2 = relationshipElArr.length; m < len2; m++) {
-            relationshipEl = relationshipElArr[m];
-            if ("xl/" + relationshipEl.getAttribute("Target") === fileName) {
-                rId = relationshipEl.getAttribute("Id");
-                break;
-            }
-        }
-        if (rId) {
-            doc = new DOMParser().parseFromString(workbookBuf.toString(), 'text/xml');
-            documentElement = doc.documentElement;
-            sheetsEl = documentElement.getElementsByTagName("sheets")[0];
-            sheetElArr = sheetsEl.getElementsByTagName("sheet");
-            for (n = 0, len3 = sheetElArr.length; n < len3; n++) {
-                sheetEl = sheetElArr[n];
-                if (sheetEl.getAttribute("r:id") === rId) {
-                    sheetEl.setAttribute("state", "hidden");
-                    break;
-                }
-            }
-            workbookBuf = Buffer.from(doc.toString());
-        }
-    };
+    data._hideSheet_=function(fileName){
+        if (!workbookEntry || !workbookRelsEntry || !fileName) { return; }
+        const rId=findRelationshipId(workbookRelsBuf,fileName);
+        workbookBuf=updateSheetHiddenState(workbookBuf,rId,"hidden");
+    }
     data._showSheet_ = function (fileName) {
-        var doc, documentElement, len2, len3, m, n, rId, relationshipEl, relationshipElArr, sheetEl, sheetElArr, sheetsEl;
-        if (!workbookEntry || !workbookRelsEntry || !fileName) {
-            return;
-        }
-        rId = void 0;
-        doc = new DOMParser().parseFromString(workbookRelsBuf.toString(), 'text/xml');
-        documentElement = doc.documentElement;
-        relationshipElArr = documentElement.getElementsByTagName("Relationship");
-        for (m = 0, len2 = relationshipElArr.length; m < len2; m++) {
-            relationshipEl = relationshipElArr[m];
-            if ("xl/" + relationshipEl.getAttribute("Target") === fileName) {
-                rId = relationshipEl.getAttribute("Id");
-                break;
-            }
-        }
-        if (rId) {
-            doc = new DOMParser().parseFromString(workbookBuf.toString(), 'text/xml');
-            documentElement = doc.documentElement;
-            sheetsEl = documentElement.getElementsByTagName("sheets")[0];
-            sheetElArr = sheetsEl.getElementsByTagName("sheet");
-            for (n = 0, len3 = sheetElArr.length; n < len3; n++) {
-                sheetEl = sheetElArr[n];
-                if (sheetEl.getAttribute("r:id") === rId) {
-                    sheetEl.removeAttribute("state");
-                    break;
-                }
-            }
-            workbookBuf = Buffer.from(doc.toString());
-        }
+        if (!workbookEntry || !workbookRelsEntry || !fileName) { return; }
+        const rId = findRelationshipId(workbookRelsBuf,fileName);
+        workbookBuf=updateSheetHiddenState(workbookBuf,rId,"show");
     };
     data._deleteSheet_ = function (fileName) {
-        var activeTab, bookViewsEl, delRelationshipEl, delSheet, doc, documentElement, len2, len3, len4, m, n, o, rId, relationshipEl, relationshipElArr, sheetEl, sheetElArr, sheetEntry, sheetsEl, workbookViewEl;
         if (!workbookEntry || !workbookRelsEntry || !fileName) {
             return;
         }
-        rId = void 0;
+        var activeTab, bookViewsEl, delRelationshipEl, delSheet, doc, documentElement, len2, len3, len4, m, n, o, relationshipEl, relationshipElArr, sheetEl, sheetElArr, sheetEntry, sheetsEl, workbookViewEl;
+        let rId = void 0;
         delRelationshipEl = void 0;
         doc = new DOMParser().parseFromString(workbookRelsBuf.toString(), 'text/xml');
         documentElement = doc.documentElement;

@@ -618,21 +618,20 @@ function normalizeArray(arrayLike){
  * @param {Buffer} workbookRelsBuf 
  * @param {String} fileName 
  */
-function findRelationshipId(workbookRelsBuf,fileName){
+function findRelationshipByTarget(workbookRelsBuf,fileName){
     if (!fileName) { return null; }
     let doc = new DOMParser().parseFromString(workbookRelsBuf.toString(), 'text/xml');
     let documentElement = doc.documentElement;
     let relationshipElArray = documentElement.getElementsByTagName("Relationship");
     let relationshipElement =null;
-    let rId = void 0;
+    
     for (let m = 0 ; m < relationshipElArray.length; m++) {
         relationshipElement = relationshipElArray[m];
         if ("xl/" + relationshipElement.getAttribute("Target") === fileName) {
-            rId = relationshipElement.getAttribute("Id");
             break;
         }
     }
-    return rId;
+    return relationshipElement;
 }
 
 function updateSheetHiddenState(workbookBuf,rId,state="hidden"||"show"){
@@ -676,21 +675,23 @@ const renderExcel = async function (exlBuf, _data_) {
 
     data._hideSheet_=function(fileName){
         if (!workbookEntry || !workbookRelsEntry || !fileName) { return; }
-        const rId=findRelationshipId(workbookRelsBuf,fileName);
+        const target=findRelationshipByTarget(workbookRelsBuf,fileName);
+        const rId= !!target ?target.getAttribute('Id'):null;
         workbookBuf=updateSheetHiddenState(workbookBuf,rId,"hidden");
     }
     data._showSheet_ = function (fileName) {
         if (!workbookEntry || !workbookRelsEntry || !fileName) { return; }
-        const rId = findRelationshipId(workbookRelsBuf,fileName);
+        const target = findRelationshipByTarget(workbookRelsBuf,fileName);
+        const rId= !!target? target.getAttribute('Id'):null;
         workbookBuf=updateSheetHiddenState(workbookBuf,rId,"show");
     };
     data._deleteSheet_ = function (fileName) {
         if (!workbookEntry || !workbookRelsEntry || !fileName) {
             return;
         }
-        var activeTab, bookViewsEl, delRelationshipEl, delSheet, doc, documentElement, len2, len3, len4, m, n, o, relationshipEl, relationshipElArr, sheetEl, sheetElArr, sheetEntry, sheetsEl, workbookViewEl;
+        var activeTab, bookViewsEl,  delSheet, doc, documentElement, len2, len3, len4, m, n, o, relationshipEl, relationshipElArr, sheetEl, sheetElArr, sheetEntry, sheetsEl, workbookViewEl;
         let rId = void 0;
-        delRelationshipEl = void 0;
+        let delRelationshipEl = void 0;
         doc = new DOMParser().parseFromString(workbookRelsBuf.toString(), 'text/xml');
         documentElement = doc.documentElement;
         relationshipElArr = documentElement.getElementsByTagName("Relationship");

@@ -56,3 +56,4 @@ npm install ejsexcel
 - @德爾文  ¥50
 - @Explore®  ¥50
 - @向左转  ¥50
+- @吴燕飞  ¥50

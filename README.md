@@ -48,7 +48,7 @@ npm install ejsexcel
 ![导出结果](http://dn-cnode.qbox.me/FnRDa5Zyjg-dI7ykCNR0T8SorWyC)
 
 
-## 捐赠鼓励支持此项目
+## 捐赠鼓励支持此项目,支付宝扫描:
 ![捐赠鼓励支持此项目](http://dn-cnode.qbox.me/FucPKV4XWewhakoqTSngU3AsaP0Z)
 
 ## 项目贡献人列表
@@ -57,3 +57,4 @@ npm install ejsexcel
 - @Explore®  ¥50
 - @向左转  ¥50
 - @吴燕飞  ¥50
+- @strive-ming  ¥10

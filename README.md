@@ -59,3 +59,4 @@ npm install ejsexcel
 - @吴燕飞  ¥50
 - @strive-ming  ¥10
 - @MR.P  ¥16.66
+- @不求来生  ¥6.60

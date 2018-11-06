@@ -15,6 +15,15 @@ npm install ejsexcel
     ```
 - test/test.xlsx 为完整示例 demo
 
+- e.g
+   ```js
+    // 读取模板
+    const fileBuff = fs.readFileSync('./excel模板.xlsx');
+    // 根据模板渲染excel, data是用于填充模板占位符的数据
+    const resultBuff = ejsexcel.renderExcel(fileBuff, data);
+    // 保存为新文件
+    const fs.writeFileSync('./result.xlsx', resultBuff);
+   ```
 
 ## Syntax
 

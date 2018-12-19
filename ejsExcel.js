@@ -225,7 +225,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         if (str === void 0) {
           str = "";
         } else if (str === null) {
-          str = "NULL";
+          str = "";
         }
         str = str.toString();
         if (str === "") {

@@ -29,6 +29,7 @@ npm install ejsexcel
      //数据源
      const data = [];
      //用数据源(对象)data渲染Excel模板
+     //cachePath 为编译缓存路径, 对于模板文件比较大的情况, 可显著提高运行效率, 绝对路径, 若不设置, 则无缓存
      const exlBuf2 = await ejsexcel.renderExcel(exlBuf, data, { cachePath: __dirname+"/cache/" });
      await writeFileAsync("./test2.xlsx", exlBuf2);
      console.log("生成test2.xlsx");

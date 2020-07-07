@@ -88,3 +88,4 @@ npm install ejsexcel
 - @Aptenodytes forsteri  ¥15
 - @HHB  ¥30
 - @Original  ¥88.88
+- @半日  ¥10

@@ -1,3 +1,4 @@
 /.project
 .idea/
 node-modules/
+test/cache/

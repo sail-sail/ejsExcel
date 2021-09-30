@@ -2,7 +2,7 @@
   "author": "Sail",
   "homepage": "https://github.com/sail-sail/ejsExcel",
   "name": "ejsexcel",
-  "version": "3.6.0",
+  "version": "3.6.2",
   "main": "ejsExcel.js",
   "readme": "README.md",
   "license": "MIT",

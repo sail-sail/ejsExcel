@@ -91,3 +91,4 @@ npm install ejsexcel
 - @半日  ¥10
 - @狗狗踏青去了  ¥50
 - @zzzzzzzz  ¥50
+- @zzzzzzzz  ¥30

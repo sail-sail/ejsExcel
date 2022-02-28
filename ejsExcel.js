@@ -1,10 +1,21 @@
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
 
 (function () {
-  var DOMParser, Hzip, Promise_fromCallback, Promise_fromStandard, Promise_sleep, Stream, charPlus, charToNum, co, crypto, ejs, ejs4xlx, existsAsync, fs, getExcelArr, getExcelEns, inflateRawAsync, isArray, isFunction, isObject, isString, isType, path, qr, readFileAsync, render, renderExcel, renderExcelCb, renderPath, replaceLast, sharedStrings2Prx, sheetSufStr, str2Xml, wrap, xjOp, xml2json, xmldom, zlib;
-
+  var DOMParser, Hzip, Promise_fromCallback, Promise_fromStandard, Promise_sleep, Stream, charPlus, charToNum, co, crypto, ejs, ejs4xlx, existsAsync, fs, getExcelArr, getExcelEns, isArray, isFunction, isObject, isString, isType, path, qr, readFileAsync, render, renderExcel, renderExcelCb, replaceLast, sharedStrings2Prx, sheetSufStr, str2Xml, wrap, xjOp, xml2json, xmldom, zlib;
+  
   Stream = require("stream");
-
+  fs = require("fs");
+  path = require("path");
+  zlib = require("zlib");
+  crypto = require("crypto");
+  qr = require("./lib/qr-image");
+  co = require("./lib/co");
+  ejs = require("./lib/ejs");
+  Hzip = require("./lib/hzip");
+  xml2json = require("./lib/xml2json");
+  xmldom = require("./lib/xmldom");
+  ejs4xlx = require("./ejs4xlx");
+  
   isType = function (type) {
     return function (obj) {
       return Object.prototype.toString.call(obj) === "[object " + type + "]";
@@ -31,39 +42,6 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       return s;
     });
   };
-
-  fs = require("fs");
-
-  path = require("path");
-
-  zlib = require("zlib");
-
-  crypto = require("crypto");
-
-  qr = require("./lib/qr-image");
-
-  if (typeof co === "undefined") {
-    co = require("./lib/co");
-  }
-
-  ejs = require("./lib/ejs");
-
-  Hzip = require("./lib/hzip");
-
-  xml2json = require("./lib/xml2json");
-
-  xmldom = require("./lib/xmldom");
-
-  /*in
-  qr = require "qr-image"
-  co = require "co" if typeof co is "undefined"
-  ejs = require "ejs"
-  Hzip = require "hzip"
-  xml2json = require "xml2json"
-  xmldom = require "xmldom"
-   */
-
-  ejs4xlx = require("./ejs4xlx");
 
   DOMParser = xmldom.DOMParser;
 
@@ -137,10 +115,9 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
   readFileAsync = Promise_fromStandard(fs.readFile, fs);
   
-  const unlinkAsync = Promise_fromStandard(fs.unlink, fs);
-  const writeFileAsync = Promise_fromStandard(fs.writeFile, fs);
+  var writeFileAsync = Promise_fromStandard(fs.writeFile, fs);
 
-  inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
+  var inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
 
   render = function () {
     var _ref = _asyncToGenerator(function* (buffer, filter, _data_, hzip, options) {
@@ -159,11 +136,11 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       data._acVar_ = {
         _ss_len: 0
       };
-      sharedStrings2 = [Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">")];
+      sharedStrings2 = ["<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">"];
       data._ps_ = function (val) {
         var index;
         val = str2Xml(val);
-        sharedStrings2.push(Buffer.from("<si><t xml:space=\"preserve\">" + val + "</t></si>"));
+        sharedStrings2.push("<si><t xml:space=\"preserve\">" + val + "</t></si>");
         index = data._acVar_._ss_len;
         data._acVar_._ss_len++;
         return String(index);
@@ -179,7 +156,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         }
         yield updateEntryAsync.apply(hzip, [flt.path, buffer2]);
       }
-      sharedStrings2.push(Buffer.from("</sst>"));
+      sharedStrings2.push("</sst>");
       buffer2 = Buffer.concat(sharedStrings2);
       yield updateEntryAsync.apply(hzip, ["xl/sharedStrings.xml", buffer2]);
       return hzip.buffer;
@@ -190,9 +167,9 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     };
   }();
 
-  sheetSufStr = Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideSheet_ = _args._hideSheet_;\nvar _showSheet_ = _args._showSheet_;\nvar _deleteSheet_ = _args._deleteSheet_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n  _mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>");
+  sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideSheet_ = _args._hideSheet_;\nvar _showSheet_ = _args._showSheet_;\nvar _deleteSheet_ = _args._deleteSheet_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n  _mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>";
 
-  sharedStrings2Prx = Buffer.from("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">");
+  sharedStrings2Prx = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">";
 
   xjOp = {
     object: true,
@@ -239,7 +216,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
             tmpStr = buf[i].toString();
             if (/<v>/gm.test(tmpStr)) {
-              buf[i] = Buffer.from(replaceLast(replaceLast(tmpStr, /<v>/gm, ""), /\s+t="s"/gm, ""));
+              buf[i] = replaceLast(replaceLast(tmpStr, /<v>/gm, ""), /\s+t="s"/gm, "");
               break;
             }
           }
@@ -248,17 +225,17 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
             puhStr = puhStr.toString();
             index = -1;
             if (puhStr.indexOf("</v>") !== -1) {
-              index = Array.prototype.push.apply(buf, [Buffer.from(puhStr.replace("</v>", ""))]);
+              index = Array.prototype.push.apply(buf, [puhStr.replace("</v>", "")]);
               buf.push = Array.prototype.push;
             } else {
-              index = Array.prototype.push.apply(buf, [Buffer.from(puhStr)]);
+              index = Array.prototype.push.apply(buf, [puhStr]);
             }
             return index;
           };
           return "";
         }
         val = str2Xml(str);
-        sharedStrings2.push(Buffer.from("<si><t xml:space=\"preserve\">" + val + "</t></si>"));
+        sharedStrings2.push("<si><t xml:space=\"preserve\">" + val + "</t></si>");
         index = data._acVar_._ss_len;
         data._acVar_._ss_len++;
         return String(index);
@@ -273,14 +250,14 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
           tmpStr = buf[i].toString();
           if (/<v>/gm.test(tmpStr) === true) {
-            buf[i] = Buffer.from(replaceLast(tmpStr, /<v>/gm, "<f>"));
+            buf[i] = replaceLast(tmpStr, /<v>/gm, "<f>");
             break;
           }
         }
         for (i = m = ref3 = buf.length - 1; ref3 <= -1 ? m < -1 : m > -1; i = ref3 <= -1 ? ++m : --m) {
           tmpStr = buf[i].toString();
           if (/\s+t="s"/gm.test(tmpStr) === true) {
-            buf[i] = Buffer.from(replaceLast(tmpStr, /\s+t="s"/gm, ""));
+            buf[i] = replaceLast(tmpStr, /\s+t="s"/gm, "");
             break;
           }
         }
@@ -288,10 +265,10 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           var index;
           puhStr = puhStr.toString();
           if (puhStr.indexOf("</v>") !== -1) {
-            index = Array.prototype.push.apply(buf, [Buffer.from(puhStr.replace(/<\/v>/m, "</f>"))]);
+            index = Array.prototype.push.apply(buf, [puhStr.replace(/<\/v>/m, "</f>")]);
             buf.push = Array.prototype.push;
           } else {
-            index = Array.prototype.push.apply(buf, [Buffer.from(puhStr)]);
+            index = Array.prototype.push.apply(buf, [puhStr]);
           }
           return index;
         };
@@ -305,7 +282,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
           tmpStr = buf[i].toString();
           if (/\s+t="s"/gm.test(tmpStr)) {
-            buf[i] = Buffer.from(replaceLast(tmpStr, /\s+t="s"/gm, ""));
+            buf[i] = replaceLast(tmpStr, /\s+t="s"/gm, "");
             break;
           }
         }
@@ -328,7 +305,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
           tmpStr = buf[i].toString();
           if (/<row\s/gm.test(tmpStr)) {
-            buf[i] = Buffer.from(replaceLast(tmpStr, /<row\s/gm, "<row outlineLevel=\"" + str + "\" "));
+            buf[i] = replaceLast(tmpStr, /<row\s/gm, "<row outlineLevel=\"" + str + "\" ");
             break;
           }
         }
@@ -824,7 +801,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         str2 = undefined
         if(opt && opt.cachePath) {
           try {
-          str2 = yield readFileAsync(opt.cachePath+"/ejsexcel_"+md5Str2, "utf8");
+            str2 = yield readFileAsync(opt.cachePath+"/ejsexcel_"+md5Str2, "utf8");
           } catch(errTmp) {
           }
         }
@@ -1126,9 +1103,9 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                 "$t": str
             };
           }
-          sheetBuf2 = Buffer.from(sheetSufStr.toString() + xml2json.toXml(sheetObj, "", {
+          sheetBuf2 = sheetSufStr.toString() + xml2json.toXml(sheetObj, "", {
             reSanitize: false
-          }));
+          });
           reXmlEq = {
               reXmlEq: function (pixEq, jsStr, str) {
                 if (pixEq === "=") {
@@ -1159,12 +1136,12 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         if (entry.__remove_sheet) {
           yield updateEntryAsync(entry.fileName);
         } else {
-          buffer2 = Buffer.from(buffer2.toString().replace("<hyperlinks></hyperlinks>", "").replace("<mergeCells></mergeCells>", ""));
+          buffer2 = buffer2.toString().replace("<hyperlinks></hyperlinks>", "").replace("<mergeCells></mergeCells>", "");
           yield updateEntryAsync(entry.fileName, buffer2);
         }
       }
-      sharedStrings2.push(Buffer.from("</sst>"));
-      buffer2 = Buffer.concat(sharedStrings2);
+      sharedStrings2.push("</sst>");
+      buffer2 = Buffer.from(sharedStrings2.join(""));
       sharedStrings2 = void 0;
       yield updateEntryAsync.apply(hzip, ["xl/sharedStrings.xml", buffer2]);
       yield updateEntryAsync.apply(hzip, ["xl/workbook.xml", workbookBuf]);
@@ -1174,48 +1151,6 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
     return function renderExcel(_x6, _x7) {
       return _ref2.apply(this, arguments);
-    };
-  }();
-
-  renderPath = function () {
-    var _ref5 = _asyncToGenerator(function* (ejsDir, data) {
-      var buffer, config, configPath, exists, exlBuf, extname, filter, ftObj, key, l, len1, obj, val;
-      configPath = ejsDir + "/config.json";
-      exists = yield existsAsync(configPath);
-      if (exists === false) {
-        extname = path.extname(ejsDir);
-        if (extname === "") {
-          ejsDir = ejsDir + ".xlsx";
-        }
-        exlBuf = yield readFileAsync(ejsDir);
-        return yield renderExcel(exlBuf, data);
-      }
-      config = yield readFileAsync(configPath, "utf8");
-      config = JSON.decode(config);
-      filter = [];
-      for (l = 0, len1 = config.length; l < len1; l++) {
-        obj = config[l];
-        key = obj.key;
-        val = obj.value;
-        if (key === void 0 || key === null) {
-          continue;
-        }
-        extname = path.extname(val);
-        ftObj = {
-          path: val
-        };
-        if (extname !== ".xml" && extname !== ".rels") {
-          ftObj.notEjs = true;
-        }
-        ftObj.buffer = yield readFileAsync(ejsDir + "/" + key);
-        filter.push(ftObj);
-      }
-      buffer = yield readFileAsync(ejsDir + "/" + path.basename(ejsDir) + ".zip");
-      return yield render(buffer, filter, data);
-    });
-
-    return function renderPath(_x16, _x17) {
-      return _ref5.apply(this, arguments);
     };
   }();
 
@@ -1543,8 +1478,6 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
   exports.charPlus = charPlus;
 
   exports.charToNum = charToNum;
-
-  exports.renderPath = renderPath;
 
   exports.render = render;
 

@@ -5,24 +5,13 @@
  * MIT Licensed
  */
 
-/**
- * Module dependencies.
- */
+let UID = Date.now();
 
-var isType = function(type) {
-  return function(obj) {
-    return Object.prototype.toString.call(obj) === "[object " + type + "]";
-  };
-};
-var isObject = isType("Object");
-var isString = isType("String");
-var isArray = Array.isArray || isType("Array");
-var isFunction = isType("Function");
-var UID = Date.now()
-var uniqueID = function() {
+function uniqueID() {
 	return (UID++).toString(36);
 }
-var charToNum = function(str) {
+
+function charToNum(str) {
   var i, j, len, m, ref, temp, val;
   str = new String(str);
   val = 0;
@@ -104,7 +93,7 @@ function rethrow(err, str, filename, lineno){
  * @api public
  */
 
-var parse = exports.parse = function(str, options){
+exports.parse = function parse(str, options){
 	options = options || {};
   var open = options.open || exports.open || '<%'
     , close = options.close || exports.close || '%>'
@@ -449,7 +438,7 @@ var parse = exports.parse = function(str, options){
     		  for(var sei=0; sei<cellRn.length; sei++) {
     			  cellNum += cellRn.charCodeAt(sei)-65+(cellRn.length-1-sei)*26;
     		  }
-    		  js = "yield "+js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\",("+rowRn+"+_r),("+cellNum+"+_c))";
+    		  js = "await "+js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\",("+rowRn+"+_r),("+cellNum+"+_c))";
     	  }
       }
       //二维码图片
@@ -460,7 +449,7 @@ var parse = exports.parse = function(str, options){
     		  for(var sei=0; sei<cellRn.length; sei++) {
     			  cellNum += cellRn.charCodeAt(sei)-65+(cellRn.length-1-sei)*26;
     		  }
-    		  js = "yield "+js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\",("+rowRn+"+_r),("+cellNum+"+_c))";
+    		  js = "await "+js+",\""+options.fileName.replace(/\"/gm,"\\\"")+"\",("+rowRn+"+_r),("+cellNum+"+_c))";
     	  }
       }
       //分组

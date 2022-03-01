@@ -2,7 +2,7 @@
   "author": "Sail",
   "homepage": "https://github.com/sail-sail/ejsExcel",
   "name": "ejsexcel",
-  "version": "3.6.3",
+  "version": "3.6.4",
   "main": "ejsExcel.js",
   "readme": "README.md",
   "license": "MIT",
@@ -10,9 +10,6 @@
   "bugs": {
     "url": "https://github.com/sail-sail/ejsExcel",
     "email": "151263555@qq.com"
-  },
-  "scripts": {
-    "test": "test/test.bat"
   },
   "keywords": [
     "ejsexcel",

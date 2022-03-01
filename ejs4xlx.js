@@ -52,7 +52,7 @@ var filters = exports.filters = require('./filters');
  */
 
 function filtered(js) {
-  return js.substr(1).split('|').reduce(function(js, filter){
+  return js.substring(1).split('|').reduce(function(js, filter){
     var parts = filter.split(':')
       , name = parts.shift()
       , args = parts.shift() || '';
@@ -150,7 +150,7 @@ var parse = exports.parse = function(str, options){
       i += open.length;
       
       //sail
-      pixEq = str.substr(i, 1);
+      pixEq = str.substring(i, 1+i);
       var prefix, postfix, line = lineno;
       if(pixEq === "=" || pixEq === "-" || pixEq === "~" || pixEq === "#") {
     	  prefix = "');buf.push(";
@@ -203,7 +203,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_rLen"+uid+"="+arrName+";if(Array.isArray(I_rLen"+uid+")){I_rLen"+uid+"=I_rLen"+uid+".length;} for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){yield Promise_sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push('"+mthLt;
+    			  return "');var I_rLen"+uid+"="+arrName+";if(Array.isArray(I_rLen"+uid+")){I_rLen"+uid+"=I_rLen"+uid+".length;} for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -318,7 +318,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<c r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_cLen"+uid+"="+arrName+";if(Array.isArray(I_cLen"+uid+")){I_cLen"+uid+"=I_cLen"+uid+".length;} for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){yield Promise_sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push('"+mthLt;
+    			  return "');var I_cLen"+uid+"="+arrName+";if(Array.isArray(I_cLen"+uid+")){I_cLen"+uid+"=I_cLen"+uid+".length;} for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -377,7 +377,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<row r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_rLen"+uid+"="+arrName+";if(Array.isArray(I_rLen"+uid+")){I_rLen"+uid+"=I_rLen"+uid+".length;} for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){yield Promise_sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push('"+mthLt;
+    			  return "');var I_rLen"+uid+"="+arrName+";if(Array.isArray(I_rLen"+uid+")){I_rLen"+uid+"=I_rLen"+uid+".length;} for(var I_m"+uid+"=0;I_m"+uid+"<I_rLen"+uid+";I_m"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_m"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_m"+uid+";}"+pixJs+";buf.push('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -434,7 +434,7 @@ var parse = exports.parse = function(str, options){
     	  strTmp = strTmp.replace(/<c r="/gm,function(s){
     		  repNum++;
     		  if(mthArr.length === repNum) {
-    			  return "');var I_cLen"+uid+" = "+arrName+";if(Array.isArray(I_cLen"+uid+")){I_cLen"+uid+"=I_cLen"+uid+".length;} for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){yield Promise_sleep(0);"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push('"+mthLt;
+    			  return "');var I_cLen"+uid+" = "+arrName+";if(Array.isArray(I_cLen"+uid+")){I_cLen"+uid+"=I_cLen"+uid+".length;} for(var I_c"+uid+"=0;I_c"+uid+"<I_cLen"+uid+";I_c"+uid+"++){"+iName+"var "+itemName+"="+arrName+"[I_c"+uid+"];if(typeof("+arrName+")===\"number\"){"+itemName+"=I_c"+uid+";}"+pixJs+";buf.push('"+mthLt;
     		  }
     		  return s;
     	  });
@@ -491,7 +491,7 @@ var parse = exports.parse = function(str, options){
       }
 
       while (~(n = js.indexOf("\n", n))) n++, lineno++;
-      if (js.substr(0, 1) == ':') js = filtered(js);
+      if (js.substring(0, 1) == ':') js = filtered(js);
       if (js) {
         //if (js.lastIndexOf('//') > js.lastIndexOf('\n')) js += '\n';
         //sail 2012-04-21
@@ -507,14 +507,14 @@ var parse = exports.parse = function(str, options){
       i += end - start + close.length - 1;
 
     }
-    else if(str.substr(i,8) === "<row r=\"") {
+    else if(str.substring(i,8+i) === "<row r=\"") {
     	isRowBegin = true;
   		isRowEnd = false;
   		forCNumArr = []
   		i += 7;
     	buf.push("<row r=\"");
     }
-    else if(isRowBegin === true && isRowEnd === false && str.substr(i,1) === "\"") {
+    else if(isRowBegin === true && isRowEnd === false && str.substring(i,1+i) === "\"") {
     	isRowEnd = true;
     	isRowBegin = false;
     	var strTmp = buf.join('')+"\"";
@@ -532,13 +532,13 @@ var parse = exports.parse = function(str, options){
   	    });
   	    buf = [strTmp];
     }
-    else if(str.substr(i,6) === "<c r=\"") {
+    else if(str.substring(i,6+i) === "<c r=\"") {
     	isCbegin = true;
     	isCEnd = false;
     	i += 5;
     	buf.push("<c r=\"");
     }
-    else if(isCbegin === true && isCEnd === false && str.substr(i,1) === "\"") {
+    else if(isCbegin === true && isCEnd === false && str.substring(i,1+i) === "\"") {
     	isCEnd = true;
     	isCbegin = false;
     	var strTmp = buf.join('')+"\"";
@@ -556,25 +556,25 @@ var parse = exports.parse = function(str, options){
   	    buf = [strTmp];
     }
     //sail
-    else if(isForRowBegin === true && isForRowEnd === false && str.substr(i,6) === "</row>") {
+    else if(isForRowBegin === true && isForRowEnd === false && str.substring(i,6+i) === "</row>") {
     	isForRowEnd = true;
     	isForRowBegin = false;
     	i += 5;
     	buf.push("</row>');_r++;}_r--;buf.push('");
     }
-    else if(isForCellBegin === true && isForCellEnd === false && str.substr(i,4) === "</c>") {
+    else if(isForCellBegin === true && isForCellEnd === false && str.substring(i,4+i) === "</c>") {
     	isForCellEnd = true;
     	isForCellBegin = false;
     	i += 3;
     	buf.push("</c>');_c++;}_c--;buf.push('");
     }
-    else if (str.substr(i, 1) == "\\") {
+    else if (str.substring(i, 1+i) == "\\") {
       buf.push("\\\\");
-    } else if (str.substr(i, 1) == "'") {
+    } else if (str.substring(i, 1+i) == "'") {
       buf.push("\\'");
-    } else if (str.substr(i, 1) == "\r") {
+    } else if (str.substring(i, 1+i) == "\r") {
       buf.push(" ");
-    } else if (str.substr(i, 1) == "\n") {
+    } else if (str.substring(i, 1+i) == "\n") {
       if (consumeEOL) {
         consumeEOL = false;
       } else {
@@ -583,7 +583,7 @@ var parse = exports.parse = function(str, options){
       }
     } else {
       pixEq = "";
-      buf.push(str.substr(i, 1));
+      buf.push(str.substring(i, 1+i));
     }
   }
 

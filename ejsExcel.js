@@ -180,6 +180,9 @@ async function renderExcel(exlBuf, _data_, opt) {
         buf[i] = replaceLast(tmpStr, /\s+t="s"/gm, "");
         break;
       }
+      if (/<c\s+/gm.test(tmpStr)) {
+        break;
+      }
     }
     buf.push = function (puhStr) {
       var index;
@@ -203,6 +206,31 @@ async function renderExcel(exlBuf, _data_, opt) {
       tmpStr = buf[i].toString();
       if (/\s+t="s"/gm.test(tmpStr)) {
         buf[i] = replaceLast(tmpStr, /\s+t="s"/gm, "");
+        break;
+      }
+      if (/<c\s+/gm.test(tmpStr)) {
+        break;
+      }
+    }
+    for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
+      tmpStr = buf[i].toString();
+      if (/<f>/gm.test(tmpStr)) {
+        str = str2Xml(str);
+        str = `</f><v>${ str }`;
+        buf.push = function (puhStr) {
+          var index;
+          puhStr = puhStr.toString();
+          if (puhStr.indexOf("</f>") !== -1) {
+            index = Array.prototype.push.apply(buf, [puhStr.replace(/<\/f>/m, "</v>")]);
+            buf.push = Array.prototype.push;
+          } else {
+            index = Array.prototype.push.apply(buf, [puhStr]);
+          }
+          return index;
+        };
+        return str;
+      }
+      if (/<c\s+/gm.test(tmpStr)) {
         break;
       }
     }

@@ -1,4 +1,5 @@
 /.project
 .idea/
-node-modules/
+node_modules/
 test/cache/
+package-lock.json

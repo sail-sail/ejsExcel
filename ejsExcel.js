@@ -88,7 +88,7 @@ const writeFileAsync = Promise_fromStandard(fs.writeFile, fs);
 
 const inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
 
-const sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideSheet_ = _args._hideSheet_;\nvar _showSheet_ = _args._showSheet_;\nvar _deleteSheet_ = _args._deleteSheet_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n  _mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>";
+const sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar autoMergeCellArr = {}, _autoMergeCell_ = _args._autoMergeCell_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideSheet_ = _args._hideSheet_;\nvar _showSheet_ = _args._showSheet_;\nvar _deleteSheet_ = _args._deleteSheet_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n  _mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>";
 
 const sharedStrings2Prx = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">";
 
@@ -160,6 +160,33 @@ async function renderExcel(exlBuf, _data_, opt) {
     data._acVar_._ss_len++;
     return String(index);
   };
+
+  var autoMergeCellArr = {};
+  data._autoMergeCell_ = function (o, parent, name, col, row, f) {
+    //模板里调用需要添加以下语句，其中后三个参数不变
+    //《%autoMergeCell(r,null,"XZ",_col,_row,_mergeCellArr_)%》
+    const key = parent+"_"+name
+    const now = {col_s : col,col_e :col, row_s :row ,row_e :row,p : o[parent],v:o[name]}
+    const last = autoMergeCellArr[key]
+    if(last === undefined || now.p!==last.p || now.v!==last.v){
+      autoMergeCellArr[key]=now;
+      return;
+    }
+    last.col_e = col
+    last.row_e = row
+    last.p=now.p
+    last.v=now.v
+    if(last.col_s!==last.col_e || last.row_s!==last.row_e){
+      //需要合并
+      let s = last.col_s+last.row_s+":"+last.col_e+last.row_e
+      let i = f.findIndex(v=>v.startsWith(last.col_s+last.row_s+":"))
+      if(i>-1)
+        f[i] = s
+      else
+        f.push(s)
+    }
+  };
+
   data._pf_ = function (str, buf) {
     var i, l, m, ref2, ref3, tmpStr;
     if (str === void 0 || str === null) {
@@ -276,6 +303,28 @@ async function renderExcel(exlBuf, _data_, opt) {
       sheetEntrieRels.push(entry);
     }
   }
+  
+  workbookEntry = hzip.getEntry("xl/workbook.xml");
+  workbookBuf = await inflateRawAsync(workbookEntry.cfile);
+  doc = new DOMParser().parseFromString(workbookBuf.toString(), 'text/xml');
+  documentElement = doc.documentElement;
+  var sheetsEl = documentElement.getElementsByTagName("sheets")[0]
+    , sheetElArr = sheetsEl.getElementsByTagName("sheet");
+  for (n = 0, len3 = sheetElArr.length; n < len3; n++) {
+    var sheetEl = sheetElArr[n]
+      , sheetName = sheetEl.getAttribute("name")
+      , sheetId = sheetEl.getAttribute("sheetId")
+      , sheetFileName = 'xl/worksheets/sheet' + sheetId + '.xml';
+    
+    for (let k = 0; k < sheetEntries.length; k++) {
+      const entry = sheetEntries[k];
+      if (entry.fileName === sheetFileName) {
+        entry.sheetName = sheetName;
+        break;
+      }
+    }
+  }
+  
   sheetEntries.sort(function (arg0, arg1) {
     return arg0.fileName > arg1.fileName;
   });
@@ -729,8 +778,13 @@ async function renderExcel(exlBuf, _data_, opt) {
   }
   shsStr = await inflateRawAsync(shsEntry.cfile);
   shsObj = xml2json.toJson(shsStr);
+  const notRenderSheets = opt && opt.notRenderSheets;
   for (i = m = 0, len2 = sheetEntries.length; m < len2; i = ++m) {
     entry = sheetEntries[i];
+    if (notRenderSheets && notRenderSheets.includes(entry.sheetName)) {
+      continue;
+    }
+
     //缓存
     var md5Str2 = "4"+crypto.createHash("md5").update(entry.cfile).digest("hex");
     str2 = undefined

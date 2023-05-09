@@ -457,6 +457,11 @@ exports.parse = function parse(str, options){
     	  js = js.substring(0,js.length-1);
     	  js += ",buf)";
       }
+      //合并单元格
+      else if(0 === js.indexOf('_autoMergeCell_(')) {
+    	  js = js.substring(0,js.length-1);
+    	  js += ",buf)";
+      }
       //隐藏当前工作表 2017-01-18
       else if(0 == js.indexOf('_hideSheet_(')) {
     	  if(options && options.fileName) {

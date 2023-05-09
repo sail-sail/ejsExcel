@@ -2,11 +2,14 @@
   "author": "Sail",
   "homepage": "https://github.com/sail-sail/ejsExcel",
   "name": "ejsexcel",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "main": "ejsExcel.js",
   "readme": "README.md",
   "license": "MIT",
   "description": "Intelligent report system, nodejs node export excel, ejsExcel",
+  "scripts": {
+    "test": "cd test && node testExcel.js"
+  },
   "bugs": {
     "url": "https://github.com/sail-sail/ejsExcel",
     "email": "151263555@qq.com"

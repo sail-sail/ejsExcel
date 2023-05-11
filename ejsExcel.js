@@ -126,6 +126,9 @@ async function renderExcel(exlBuf, _data_, opt) {
   sharedStrings2 = [sharedStrings2Prx];
   data._ps_ = function (str, buf) {
     var i, index, l, ref2, tmpStr, val;
+    if (str instanceof Date) {
+      return data._pi_(str, buf);
+    }
     if (str === void 0) {
       str = "";
     } else if (str === null) {
@@ -301,21 +304,24 @@ async function renderExcel(exlBuf, _data_, opt) {
     if (str instanceof Date) {
       for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
         tmpStr = buf[i].toString();
-        if (/\s+s="\d+"/gm.test(tmpStr)) {
-          let tmp = tmpStr.match(/\s+s="(\d+)"/gm)[0];
-          tmp = Number(tmp.replace(/\s+s="(\d+)"/gm, "$1"));
-          const numFmtId = cellXfElArr[tmp].getAttribute("numFmtId");
-          if (!numFmtId || numFmtId === "0") {
-            cellXfElArr[tmp].setAttribute("numFmtId", "14");
-            cellXfElArr[tmp].setAttribute("applyNumberFormat", "1");
-            hasCreateCellXfEl = true;
-          }
-        } else {
-          createCellXfEl("14");
-          tmpStr = replaceLast(tmpStr, /<c\s+/gm, `<c s="${ cellXfElArr.length - 1 }" `);
-        }
-        
         if (/<c\s+/gm.test(tmpStr)) {
+          let tmp = buf.slice(i).join("");
+          if (!/\s+s="\d+"/gm.test(tmp)) {
+            const idx = createCellXfEl("14");
+            for(let j = i; j < buf.length - 1; j++) {
+              buf[j] = "";
+            }
+            buf[buf.length - 1] = tmp.replace(/<c\s+/gm, `<c s="${ idx }" `);
+          } else {
+            let idx = tmp.match(/\s+s="(\d+)"/gm)[0];
+            idx = Number(idx.replace(/\s+s="(\d+)"/gm, "$1"));
+            const numFmtId = cellXfElArr[idx].getAttribute("numFmtId");
+            if (!numFmtId || numFmtId === "0") {
+              cellXfElArr[idx].setAttribute("numFmtId", "14");
+              cellXfElArr[idx].setAttribute("applyNumberFormat", "1");
+              hasCreateCellXfEl = true;
+            }
+          }
           break;
         }
       }
@@ -387,17 +393,23 @@ async function renderExcel(exlBuf, _data_, opt) {
   let cellXfElArr = Array.from(cellXfsEl.getElementsByTagName("xf"));
   let hasCreateCellXfEl = false;
   function createCellXfEl(numFmtId) {
-    const cellXfEl = stylesDoc.createElement("xf");
-    cellXfEl.setAttribute("numFmtId", numFmtId);
-    cellXfEl.setAttribute("fontId", "0");
-    cellXfEl.setAttribute("fillId", "0");
-    cellXfEl.setAttribute("borderId", "0");
-    cellXfEl.setAttribute("xfId", "0");
-    cellXfEl.setAttribute("applyNumberFormat", "1");
-    cellXfsEl.appendChild(cellXfEl);
-    cellXfElArr.push(cellXfEl);
-    hasCreateCellXfEl = true;
-    return cellXfEl;
+    let idx = cellXfElArr.findIndex(function (cellXfEl) {
+      return cellXfEl.getAttribute("numFmtId") === numFmtId;
+    });
+    if (idx === -1) {
+      const cellXfEl = stylesDoc.createElement("xf");
+      cellXfEl.setAttribute("numFmtId", numFmtId);
+      cellXfEl.setAttribute("fontId", "0");
+      cellXfEl.setAttribute("fillId", "0");
+      cellXfEl.setAttribute("borderId", "0");
+      cellXfEl.setAttribute("xfId", "0");
+      cellXfEl.setAttribute("applyNumberFormat", "1");
+      cellXfsEl.appendChild(cellXfEl);
+      cellXfElArr.push(cellXfEl);
+      hasCreateCellXfEl = true;
+      idx = cellXfElArr.length - 1;
+    }
+    return idx;
   }
   
   sheetEntries.sort(function (arg0, arg1) {

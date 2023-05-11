@@ -154,6 +154,40 @@ async function renderExcel(exlBuf, _data_, opt) {
       };
       return "";
     }
+    let hasPf = false;
+    for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
+      tmpStr = buf[i].toString();
+      if (/<f>/gm.test(tmpStr) && !/<\/f>/gm.test(tmpStr)) {
+        hasPf = true;
+        break;
+      }
+      if (/<c\s+/gm.test(tmpStr)) {
+        break;
+      }
+    }
+    if (hasPf) {
+      for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
+        tmpStr = buf[i].toString();
+        if (/<c\s+/gm.test(tmpStr)) {
+          buf[i] = replaceLast(tmpStr, /<c\s+/gm, `<c t="str" `);
+          break;
+        }
+      }
+      val = str2Xml(str);
+      str = `</f><v>${ str }`;
+      buf.push = function (puhStr) {
+        var index;
+        puhStr = puhStr.toString();
+        if (puhStr.indexOf("</f>") !== -1) {
+          index = Array.prototype.push.apply(buf, [puhStr.replace(/<\/f>/m, "</v>")]);
+          buf.push = Array.prototype.push;
+        } else {
+          index = Array.prototype.push.apply(buf, [puhStr]);
+        }
+        return index;
+      };
+      return str;
+    }
     val = str2Xml(str);
     sharedStrings2.push("<si><t xml:space=\"preserve\">" + val + "</t></si>");
     index = data._acVar_._ss_len;
@@ -241,7 +275,7 @@ async function renderExcel(exlBuf, _data_, opt) {
     }
     for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
       tmpStr = buf[i].toString();
-      if (/<f>/gm.test(tmpStr)) {
+      if (/<f>/gm.test(tmpStr) && !/<\/f>/gm.test(tmpStr)) {
         str = str2Xml(str);
         str = `</f><v>${ str }`;
         buf.push = function (puhStr) {

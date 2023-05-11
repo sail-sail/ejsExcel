@@ -299,6 +299,26 @@ async function renderExcel(exlBuf, _data_, opt) {
       return "0";
     }
     if (str instanceof Date) {
+      for (i = l = ref2 = buf.length - 1; ref2 <= -1 ? l < -1 : l > -1; i = ref2 <= -1 ? ++l : --l) {
+        tmpStr = buf[i].toString();
+        if (/\s+s="\d+"/gm.test(tmpStr)) {
+          let tmp = tmpStr.match(/\s+s="(\d+)"/gm)[0];
+          tmp = Number(tmp.replace(/\s+s="(\d+)"/gm, "$1"));
+          const numFmtId = cellXfElArr[tmp].getAttribute("numFmtId");
+          if (!numFmtId || numFmtId === "0") {
+            cellXfElArr[tmp].setAttribute("numFmtId", "14");
+            cellXfElArr[tmp].setAttribute("applyNumberFormat", "1");
+            hasCreateCellXfEl = true;
+          }
+        } else {
+          createCellXfEl("14");
+          tmpStr = replaceLast(tmpStr, /<c\s+/gm, `<c s="${ cellXfElArr.length - 1 }" `);
+        }
+        
+        if (/<c\s+/gm.test(tmpStr)) {
+          break;
+        }
+      }
       return date2Num(str).toString();
     }
     str = str.toString();
@@ -357,6 +377,27 @@ async function renderExcel(exlBuf, _data_, opt) {
         break;
       }
     }
+  }
+  
+  const stylesEntry = hzip.getEntry("xl/styles.xml");
+  const stylesBuf = await inflateRawAsync(stylesEntry.cfile);
+  let stylesStr = stylesBuf.toString();
+  const stylesDoc = new DOMParser().parseFromString(stylesStr, 'text/xml');
+  let cellXfsEl = stylesDoc.documentElement.getElementsByTagName("cellXfs")[0];
+  let cellXfElArr = Array.from(cellXfsEl.getElementsByTagName("xf"));
+  let hasCreateCellXfEl = false;
+  function createCellXfEl(numFmtId) {
+    const cellXfEl = stylesDoc.createElement("xf");
+    cellXfEl.setAttribute("numFmtId", numFmtId);
+    cellXfEl.setAttribute("fontId", "0");
+    cellXfEl.setAttribute("fillId", "0");
+    cellXfEl.setAttribute("borderId", "0");
+    cellXfEl.setAttribute("xfId", "0");
+    cellXfEl.setAttribute("applyNumberFormat", "1");
+    cellXfsEl.appendChild(cellXfEl);
+    cellXfElArr.push(cellXfEl);
+    hasCreateCellXfEl = true;
+    return cellXfEl;
   }
   
   sheetEntries.sort(function (arg0, arg1) {
@@ -1166,6 +1207,9 @@ async function renderExcel(exlBuf, _data_, opt) {
   sharedStrings2.push("</sst>");
   buffer2 = Buffer.from(sharedStrings2.join(""));
   sharedStrings2 = void 0;
+  if (hasCreateCellXfEl) {
+    await updateEntryAsync("xl/styles.xml", Buffer.from(stylesDoc.toString()));
+  }
   await updateEntryAsync.apply(hzip, ["xl/sharedStrings.xml", buffer2]);
   await updateEntryAsync.apply(hzip, ["xl/workbook.xml", workbookBuf]);
   await updateEntryAsync.apply(hzip, ["xl/_rels/workbook.xml.rels", workbookRelsBuf]);

@@ -93,3 +93,4 @@ npm install ejsexcel
 - @zzzzzzzz  ¥50
 - @zzzzzzzz  ¥30
 - @九尾之狐  ¥66.66
+- @小小青尘  ¥50

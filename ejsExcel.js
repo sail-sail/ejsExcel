@@ -1536,12 +1536,40 @@ function date2Num(date) {
   var time = date.getTime();
   var valTmp = time + 25567.33 * 86400000;
   if(valTmp <= 60 * 86400000) {
-    valTmp++;
+    valTmp += 86400000;
   } else {
     valTmp += 2 * 86400000;
   }
   return (valTmp - (date.getTimezoneOffset() * 600)) / 86400000;
 }
+
+function num2Date(valTmp) {
+  let date = undefined;
+  if(valTmp instanceof Date) {
+    date = valTmp;
+  } else if(typeof valTmp === "string") {
+    date = new Date(valTmp);
+  } else if(typeof valTmp === "number") {
+    if(valTmp < 60) {
+      valTmp--;
+    } else if(valTmp > 60) {
+      valTmp -= 2;
+    }
+    if(valTmp < 0 || valTmp === 60) {
+      date = undefined;
+    } else {
+      valTmp = Math.round(valTmp * 86400000) - 2209017600000;
+      date = new Date(valTmp);
+    }
+  }
+  if(isNaN(date)) {
+    date = undefined;
+  }
+  return date;
+}
+
+exports.date2Num = date2Num;
+exports.num2Date = num2Date;
 
 exports.charPlus = charPlus;
 

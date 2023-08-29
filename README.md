@@ -40,18 +40,20 @@ npm install ejsexcel
 
 | Syntax                | Description                               |
 |-----------------------|-------------------------------------------|
-| _data_                | _data_ 为内置对象, 数据源                   |
-| <%forRow              | 循环一行                                  |
-| <%#                   | 输出动态公式                               |
-| <%~                   | 输出数字类型格式                           |
-| <%=                   | 输出字符串                                |
-| <%forCell             | 循环单元格                                |
-| <%forRBegin           | 循环多行                                  |
-| <%forCBegin           | 循环多个单元格                             |
-| <%_hideSheet_()%>     | 隐藏所在工作表                             |
-| <%_showSheet_()%>     | 显示所在工作表                             |
-| <%_deleteSheet_()%>   | 删除所在工作表                             |
-| <%   %>               | 内部可执行 任意 javascript,可以用 <%console.log(_data_)%> 打印临时变量到控制台,进行调试 |
+| `_data_`                | `_data_` 为内置对象, 数据源                   |
+| `<%forRow`              | 循环一行                                  |
+| `<%#`                   | 输出动态公式                               |
+| `<%~`                   | 输出数字类型格式                           |
+| `<%=`                   | 输出字符串                                |
+| `<%forCell`             | 循环单元格                                |
+| `<%forRBegin`           | 循环多行                                  |
+| `<%forCBegin`           | 循环多个单元格                             |
+| `<%_mergeCellFn_("C2:E2")%>`     | 合并单元格`C2:E2`                   |
+| `<%_dataValidation_("序列1,序列2")%>`     | 数据验证                  |
+| `<%_hideSheet_()%>`     | 隐藏所在工作表                             |
+| `<%_showSheet_()%>`     | 显示所在工作表                             |
+| `<%_deleteSheet_()%>`   | 删除所在工作表                             |
+| `<%   %>`               | 内部可执行 任意 `javascript`,可以用 `<%console.log(_data_)%>` 打印临时变量到控制台,进行调试 |
 
 ## Author
 + Author: Sail, 辐毂  

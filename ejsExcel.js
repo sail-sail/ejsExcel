@@ -88,9 +88,9 @@ const writeFileAsync = Promise_fromStandard(fs.writeFile, fs);
 
 const inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
 
-const sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<%\nvar _data_ = _args._data_;\nvar _charPlus_ = _args._charPlus_;\nvar autoMergeCellArr = {}, _autoMergeCell_ = _args._autoMergeCell_;\nvar _charToNum_ = _args._charToNum_;\nvar _str2Xml_ = _args._str2Xml_;\nvar _hideSheet_ = _args._hideSheet_;\nvar _showSheet_ = _args._showSheet_;\nvar _deleteSheet_ = _args._deleteSheet_;\nvar _ps_ = _args._ps_;\nvar _pi_ = _args._pi_;\nvar _pf_ = _args._pf_;\nvar _acVar_ = _args._acVar_;\nvar _r = 0;\nvar _c = 0;\nvar _row = 0;\nvar _col = \"\";\nvar _rc = \"\";\nvar _img_ = _args._img_;\nvar _qrcode_ = _args._qrcode_;\nvar _mergeCellArr_ = [];\nvar _mergeCellFn_ = function(mclStr) {\n  _mergeCellArr_.push(mclStr);\n};\nvar _hyperlinkArr_ = [];\nvar _outlineLevel_ = _args._outlineLevel_;\n%>";
+const sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%var _data_ = _args._data_;var _charPlus_ = _args._charPlus_;var autoMergeCellArr = {}, _autoMergeCell_ = _args._autoMergeCell_;var _charToNum_ = _args._charToNum_;var _str2Xml_ = _args._str2Xml_;var _hideSheet_ = _args._hideSheet_;var _showSheet_ = _args._showSheet_;var _deleteSheet_ = _args._deleteSheet_;var _ps_ = _args._ps_;var _pi_ = _args._pi_;var _pf_ = _args._pf_;var _acVar_ = _args._acVar_;var _r = 0;var _c = 0;var _row = 0;var _col = \"\";var _rc = \"\";var _img_ = _args._img_;var _qrcode_ = _args._qrcode_;var _mergeCellArr_ = [];var _mergeCellFn_ = function(mclStr) {  _mergeCellArr_.push(mclStr);};var _dataValidationArr_=[];var _dataValidation_ = function(o) {if (!o || !o.sqref) return;o.type = o.type || 'list';o.allowBlank = o.allowBlank || '1';o.showInputMessage = o.showInputMessage || '1';o.showErrorMessage = o.showErrorMessage || '1';o.formula1 = o.formula1 || '';o.formula1 = {$t:o.formula1};_dataValidationArr_.push(o);};var _hyperlinkArr_ = [];var _outlineLevel_ = _args._outlineLevel_;%>";
 
-const sharedStrings2Prx = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">";
+const sharedStrings2Prx = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">";
 
 const xjOp = {
   object: true,
@@ -905,6 +905,22 @@ async function renderExcel(exlBuf, _data_, opt) {
           documentElement.insertBefore(mergeCellsDomEl, sheetDataDomEl.nextSibling);
         }
       }
+      let dataValidationsDomEl = documentElement.getElementsByTagName("dataValidations")[0];
+      if (!dataValidationsDomEl) {
+        dataValidationsDomEl = doc.createElement("dataValidations");
+        hyperlinksDomEl = documentElement.getElementsByTagName("hyperlinks")[0];
+        const printOptionsDomEl = documentElement.getElementsByTagName("printOptions")[0];
+        pageMarginsDomEl = documentElement.getElementsByTagName("pageMargins")[0];
+        if (hyperlinksDomEl) {
+          documentElement.insertBefore(dataValidationsDomEl, hyperlinksDomEl);
+        } else if(printOptionsDomEl) {
+          documentElement.insertBefore(dataValidationsDomEl, printOptionsDomEl);
+        } else if (pageMarginsDomEl) {
+          documentElement.insertBefore(dataValidationsDomEl, pageMarginsDomEl);
+        } else {
+          documentElement.insertBefore(dataValidationsDomEl, sheetDataDomEl.nextSibling);
+        }
+      }
       rowElArr = sheetDataDomEl.getElementsByTagName("row");
       for (n = 0, len3 = rowElArr.length; n < len3; n++) {
         rowEl = rowElArr[n];
@@ -1012,6 +1028,11 @@ async function renderExcel(exlBuf, _data_, opt) {
           sheetObj.worksheet.mergeCells.mergeCell = [sheetObj.worksheet.mergeCells.mergeCell];
         }
       }
+      if (sheetObj.worksheet.dataValidations) {
+        if (!isArray(sheetObj.worksheet.dataValidations.dataValidation)) {
+          sheetObj.worksheet.dataValidations.dataValidation = [sheetObj.worksheet.dataValidations.dataValidation];
+        }
+      }
       ref5 = sheetObj.worksheet.sheetData.row;
       for (r = 0, len7 = ref5.length; r < len7; r++) {
         row = ref5[r];
@@ -1113,6 +1134,20 @@ async function renderExcel(exlBuf, _data_, opt) {
                 sheetObj.worksheet.mergeCells.mergeCell.splice(mciNum, 1);
               }
             }
+            if (sheetObj.worksheet.dataValidations?.dataValidation) {
+              if (!isArray(sheetObj.worksheet.dataValidations.dataValidation)) {
+                sheetObj.worksheet.dataValidations.dataValidation = [sheetObj.worksheet.dataValidations.dataValidation];
+              }
+              for (let tmp = 0; tmp < sheetObj.worksheet.dataValidations.dataValidation.length; tmp++) {
+                const item = sheetObj.worksheet.dataValidations.dataValidation[tmp];
+                if (!cItem["$t"]) {
+                  cItem["$t"] = "";
+                }
+                if (item) {
+                  cItem["$t"] += `<% _dataValidationArr_.push(JSON.parse('${ JSON.stringify(item) }')) %>`;
+                }
+              }
+            }
             if (sheetObj.worksheet.hyperlinks && sheetObj.worksheet.hyperlinks.hyperlink) {
               mciNumArr = [];
               if (!isArray(sheetObj.worksheet.hyperlinks.hyperlink)) {
@@ -1171,6 +1206,43 @@ async function renderExcel(exlBuf, _data_, opt) {
             "$t": "<% for(var m_cl=0; m_cl<_mergeCellArr_.length; m_cl++) { %><%-'<mergeCell ref=\"'+_mergeCellArr_[m_cl]+'\"/>'%><% } %>"
         };
       }
+      sheetObj.worksheet.dataValidations = {
+        "count": `<%-_dataValidationArr_.length%>`,
+        "$t": `<%
+          for(var tmp=0; tmp<_dataValidationArr_.length; tmp++) {
+            const item = _dataValidationArr_[tmp];
+        %><dataValidation<%
+          if (item.type) {
+        %> type="<%-item.type%>"<%
+          }
+        %><%
+          if (item.allowBlank != null) {
+        %> allowBlank="<%-item.allowBlank%>"<%
+          }
+        %><%
+          if (item.showInputMessage != null) {
+        %> showInputMessage="<%-item.showInputMessage%>"<%
+          }
+        %><%
+          if (item.showErrorMessage != null) {
+        %> showErrorMessage="<%-item.showErrorMessage%>"<%
+          }
+        %><%
+          if (item.sqref) {
+        %> sqref="<%-item.sqref%>"<%
+          }
+        %><%
+          if (item['xr:uid']) {
+        %> xr:uid="<%-item['xr:uid']%>"<%
+          }
+        %>><%
+          if (item.formula1?.$t) {
+        %><formula1><%-item.formula1.$t.replace(/&quot;/gm,'"')%></formula1><%
+          }
+        %></dataValidation><%
+        }
+        %>`
+      };
       if (sheetObj.worksheet.hyperlinks) {
         str = "<%for(var m_cl=0; m_cl<_hyperlinkArr_.length; m_cl++) { %><%-'<hyperlink ref=\"'+_hyperlinkArr_[m_cl].ref+'\"'%>";
         str += '<%var eny=_hyperlinkArr_[m_cl];var keyArr=Object.keys(eny);for(var tmp=0;tmp<keyArr.length;tmp++){var key=keyArr[tmp];if(key==="ref")continue;%><%-" "+key+"=\\""+eny[key]+"\\""%><%}%>';
@@ -1212,7 +1284,10 @@ async function renderExcel(exlBuf, _data_, opt) {
     if (entry.__remove_sheet) {
       await updateEntryAsync(entry.fileName);
     } else {
-      buffer2 = buffer2.toString().replace("<hyperlinks></hyperlinks>", "").replace("<mergeCells></mergeCells>", "");
+      buffer2 = buffer2.toString()
+        .replace("<hyperlinks></hyperlinks>", "")
+        .replace("<mergeCells></mergeCells>", "")
+        .replace("<dataValidations></dataValidations>", "");
       await updateEntryAsync(entry.fileName, buffer2);
     }
   }

@@ -49,7 +49,7 @@ npm install ejsexcel
 | `<%forRBegin`           | 循环多行                                  |
 | `<%forCBegin`           | 循环多个单元格                             |
 | `<%_mergeCellFn_("C2:E2")%>`     | 合并单元格`C2:E2`                   |
-| `<%_dataValidation_({ sqref: "A1:A3", formula1: "序列1,序列2" })%>`     | 数据验证 |
+| `<%_dataValidation_({ sqref: "A1:A3", formula1: "\"序列1,序列2\"" })%>`     | 数据验证 |
 | `<%_hideSheet_()%>`     | 隐藏所在工作表                             |
 | `<%_showSheet_()%>`     | 显示所在工作表                             |
 | `<%_deleteSheet_()%>`   | 删除所在工作表                             |

@@ -49,17 +49,17 @@ npm install ejsexcel
 | `<%forRBegin`           | 循环多行                                  |
 | `<%forCBegin`           | 循环多个单元格                             |
 | `<%_mergeCellFn_("C2:E2")%>`     | 合并单元格`C2:E2`                   |
-| `<%_dataValidation_("序列1,序列2")%>`     | 数据验证                  |
+| `<%_dataValidation_({ sqref: "A1:A3", formula1: "序列1,序列2" })%>`     | 数据验证 |
 | `<%_hideSheet_()%>`     | 隐藏所在工作表                             |
 | `<%_showSheet_()%>`     | 显示所在工作表                             |
 | `<%_deleteSheet_()%>`   | 删除所在工作表                             |
 | `<%   %>`               | 内部可执行 任意 `javascript`,可以用 `<%console.log(_data_)%>` 打印临时变量到控制台,进行调试 |
 
 ## Author
-+ Author: Sail, 辐毂  
-    - QQ: 151263555  
-    - QQ群: 470988427  
-    - email: 151263555@qq.com 
++ Author: Sail
+    - QQ: 151263555
+    - QQ群: 470988427
+    - email: 151263555@qq.com
 
 ## Templates
 > 做一个这样的模版

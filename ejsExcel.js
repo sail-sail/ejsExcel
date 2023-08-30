@@ -88,7 +88,7 @@ const writeFileAsync = Promise_fromStandard(fs.writeFile, fs);
 
 const inflateRawAsync = Promise_fromStandard(zlib.inflateRaw, zlib);
 
-const sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%var _data_ = _args._data_;var _charPlus_ = _args._charPlus_;var autoMergeCellArr = {}, _autoMergeCell_ = _args._autoMergeCell_;var _charToNum_ = _args._charToNum_;var _str2Xml_ = _args._str2Xml_;var _hideSheet_ = _args._hideSheet_;var _showSheet_ = _args._showSheet_;var _deleteSheet_ = _args._deleteSheet_;var _ps_ = _args._ps_;var _pi_ = _args._pi_;var _pf_ = _args._pf_;var _acVar_ = _args._acVar_;var _r = 0;var _c = 0;var _row = 0;var _col = \"\";var _rc = \"\";var _img_ = _args._img_;var _qrcode_ = _args._qrcode_;var _mergeCellArr_ = [];var _mergeCellFn_ = function(mclStr) {  _mergeCellArr_.push(mclStr);};var _dataValidationArr_=[];var _dataValidation_ = function(o) {if (!o || !o.sqref) return;o.type = o.type || 'list';o.allowBlank = o.allowBlank || '1';o.showInputMessage = o.showInputMessage || '1';o.showErrorMessage = o.showErrorMessage || '1';o.formula1 = o.formula1 || '';o.formula1 = {$t:o.formula1};_dataValidationArr_.push(o);};var _hyperlinkArr_ = [];var _outlineLevel_ = _args._outlineLevel_;%>";
+const sheetSufStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><%var _data_ = _args._data_;var _charPlus_ = _args._charPlus_;var autoMergeCellArr = {}, _autoMergeCell_ = _args._autoMergeCell_;var _charToNum_ = _args._charToNum_;var _str2Xml_ = _args._str2Xml_;var _hideSheet_ = _args._hideSheet_;var _showSheet_ = _args._showSheet_;var _deleteSheet_ = _args._deleteSheet_;var _ps_ = _args._ps_;var _pi_ = _args._pi_;var _pf_ = _args._pf_;var _acVar_ = _args._acVar_;var _r = 0;var _c = 0;var _row = 0;var _col = \"\";var _rc = \"\";const _lastRow = 1048576;var _img_ = _args._img_;var _qrcode_ = _args._qrcode_;var _mergeCellArr_ = [];var _mergeCellFn_ = function(mclStr) {  _mergeCellArr_.push(mclStr);};var _dataValidationArr_=[];var _dataValidation_ = function(o) {if (!o || !o.sqref) return;o.type = o.type || 'list';o.allowBlank = o.allowBlank || '1';o.showInputMessage = o.showInputMessage || '1';o.showErrorMessage = o.showErrorMessage || '1';o.formula1 = o.formula1 || '';o.formula1 = {$t:o.formula1};_dataValidationArr_.push(o);};var _hyperlinkArr_ = [];var _outlineLevel_ = _args._outlineLevel_;%>";
 
 const sharedStrings2Prx = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"1\" uniqueCount=\"1\">";
 
@@ -1287,7 +1287,7 @@ async function renderExcel(exlBuf, _data_, opt) {
       buffer2 = buffer2.toString()
         .replace("<hyperlinks></hyperlinks>", "")
         .replace("<mergeCells></mergeCells>", "")
-        .replace("<dataValidations></dataValidations>", "");
+        .replace(`<dataValidations count="0"></dataValidations>`, "");
       await updateEntryAsync(entry.fileName, buffer2);
     }
   }
